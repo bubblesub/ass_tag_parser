@@ -328,6 +328,8 @@ BAD_TEST_DATA = [
     r'{asd}}',
     r'{{asd}}',
 
+    r'{comment\b1}',
+
     r'{\i2}',
     r'{\b-1}',
     r'{\u2}',
