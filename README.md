@@ -99,3 +99,9 @@ print(json.dumps(result))
 ### Serializing the tree back
 
 *Not implemented yet*
+
+---
+
+### Limitations
+
+Mixing comments and valid tags will result in `ParseError`.
