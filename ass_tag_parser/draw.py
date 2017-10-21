@@ -7,33 +7,33 @@ GRAMMAR = parsimonious.Grammar(GRAMMAR_TEXT)
 
 
 class NodeVisitor(parsimonious.NodeVisitor):
-    def generic_visit(self, node, visited_nodes):
+    def generic_visit(self, _node, visited_nodes):
         return visited_nodes
 
-    def visit_draw_commands(self, node, visited_nodes):
+    def visit_draw_commands(self, _node, visited_nodes):
         return ass_tag_parser.common.flatten(visited_nodes)
 
-    def visit_draw_command(self, node, visited_nodes):
+    def visit_draw_command(self, _node, visited_nodes):
         return visited_nodes
 
-    def visit_pos(self, node, visited_nodes):
+    def visit_pos(self, node, _visited_nodes):
         return int(node.text)
 
-    def visit_draw_command_move(self, node, visited_nodes):
+    def visit_draw_command_move(self, _node, visited_nodes):
         return {
             'type': 'move',
             'x': visited_nodes[2],
             'y': visited_nodes[4],
         }
 
-    def visit_draw_command_move_no_close(self, node, visited_nodes):
+    def visit_draw_command_move_no_close(self, _node, visited_nodes):
         return {
             'type': 'move-no-close',
             'x': visited_nodes[2],
             'y': visited_nodes[4],
         }
 
-    def visit_draw_command_line(self, node, visited_nodes):
+    def visit_draw_command_line(self, _node, visited_nodes):
         return {
             'type': 'line',
             'points': [
@@ -42,7 +42,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_bezier(self, node, visited_nodes):
+    def visit_draw_command_bezier(self, _node, visited_nodes):
         return {
             'type': 'bezier',
             'points': [
@@ -52,7 +52,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_cubic_spline(self, node, visited_nodes):
+    def visit_draw_command_cubic_spline(self, _node, visited_nodes):
         return {
             'type': 'cubic-bspline',
             'points': [
@@ -64,7 +64,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_extend_spline(self, node, visited_nodes):
+    def visit_draw_command_extend_spline(self, _node, visited_nodes):
         return {
             'type': 'extend-bspline',
             'points': [
@@ -73,7 +73,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_close_spline(self, node, visited_nodes):
+    def visit_draw_command_close_spline(self, _node, _visited_nodes):
         return {'type': 'close-bspline'}
 
 
