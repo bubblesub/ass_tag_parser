@@ -23,9 +23,6 @@ class NodeVisitor(parsimonious.NodeVisitor):
         }
 
     def visit_ass_comment(self, node, _visited_nodes):
-        return {'type': 'comment', 'text': node.children[1].text}
-
-    def visit_ass_inline_comment(self, node, _visited_nodes):
         return {'type': 'comment', 'text': node.text}
 
     def visit_ass_tag(self, _node, visited_nodes):
