@@ -59,7 +59,7 @@ print(json.dumps(result))
 
 ### Parsing draw tags
 
-By default the contents between `{\p1}` `{\p0}` is treated as plain text.  
+By default the content between `{\p1}` `{\p0}` is treated as plain text.  
 However, you can pass it through `parse_draw_commands` function:
 
 ```python
