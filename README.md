@@ -56,7 +56,7 @@ print(json.dumps(result))
             }
         ]
     },
-    {"type": "plain-text", "text": "Attack No. 1"},
+    {"type": "text", "text": "Attack No. 1"},
     {
         "type": "tags",
         "children":

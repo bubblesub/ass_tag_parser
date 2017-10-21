@@ -3,7 +3,7 @@ import ass_tag_parser
 
 
 GOOD_LINE_DATA = [
-    (r'test', [{'type': 'plain-text', 'text': 'test'}]),
+    (r'test', [{'type': 'text', 'text': 'test'}]),
 
     (r'{asdasd}', [{
         'type': 'tags',
@@ -12,7 +12,7 @@ GOOD_LINE_DATA = [
 
     (r'{\p2}m 3 4{\p0}', [
         {'type': 'tags', 'children': [{'type': 'drawing-mode', 'value': 2}]},
-        {'type': 'plain-text', 'text': 'm 3 4'},
+        {'type': 'text', 'text': 'm 3 4'},
         {'type': 'tags', 'children': [{'type': 'drawing-mode', 'value': 0}]},
     ]),
 
@@ -33,62 +33,62 @@ GOOD_LINE_DATA = [
     ]),
 
     (r'abc def{\an5}ghi jkl{\an5}123 456', [
-        {'type': 'plain-text', 'text': 'abc def'},
+        {'type': 'text', 'text': 'abc def'},
         {'type': 'tags', 'children': [
             {'type': 'alignment', 'alignment': 5, 'legacy': False},
         ]},
-        {'type': 'plain-text', 'text': 'ghi jkl'},
+        {'type': 'text', 'text': 'ghi jkl'},
         {'type': 'tags', 'children': [
             {'type': 'alignment', 'alignment': 5, 'legacy': False},
         ]},
-        {'type': 'plain-text', 'text': '123 456'},
+        {'type': 'text', 'text': '123 456'},
     ]),
 
     (r'I am {\b1}not{\b0} amused.', [
-        {'type': 'plain-text', 'text': 'I am '},
+        {'type': 'text', 'text': 'I am '},
         {'type': 'tags', 'children': [
             {'type': 'bold', 'enabled': True},
         ]},
-        {'type': 'plain-text', 'text': 'not'},
+        {'type': 'text', 'text': 'not'},
         {'type': 'tags', 'children': [
             {'type': 'bold', 'enabled': False},
         ]},
-        {'type': 'plain-text', 'text': ' amused.'},
+        {'type': 'text', 'text': ' amused.'},
     ]),
 
     (r'{\b100}How {\b300}bold {\b500}can {\b700}you {\b900}get?', [
         {'type': 'tags', 'children': [
             {'type': 'bold', 'weight': 100},
         ]},
-        {'type': 'plain-text', 'text': 'How '},
+        {'type': 'text', 'text': 'How '},
         {'type': 'tags', 'children': [
             {'type': 'bold', 'weight': 300},
         ]},
-        {'type': 'plain-text', 'text': 'bold '},
+        {'type': 'text', 'text': 'bold '},
         {'type': 'tags', 'children': [
             {'type': 'bold', 'weight': 500},
         ]},
-        {'type': 'plain-text', 'text': 'can '},
+        {'type': 'text', 'text': 'can '},
         {'type': 'tags', 'children': [
             {'type': 'bold', 'weight': 700},
         ]},
-        {'type': 'plain-text', 'text': 'you '},
+        {'type': 'text', 'text': 'you '},
         {'type': 'tags', 'children': [
             {'type': 'bold', 'weight': 900},
         ]},
-        {'type': 'plain-text', 'text': 'get?'},
+        {'type': 'text', 'text': 'get?'},
     ]),
 
     (r'-Hey\N{\rAlternate}-Huh?\N{\r}-Who are you?', [
-        {'type': 'plain-text', 'text': '-Hey\\N'},
+        {'type': 'text', 'text': '-Hey\\N'},
         {'type': 'tags', 'children': [
             {'type': 'reset-style', 'style': 'Alternate'},
         ]},
-        {'type': 'plain-text', 'text': '-Huh?\\N'},
+        {'type': 'text', 'text': '-Huh?\\N'},
         {'type': 'tags', 'children': [
             {'type': 'reset-style', 'style': None},
         ]},
-        {'type': 'plain-text', 'text': '-Who are you?'},
+        {'type': 'text', 'text': '-Who are you?'},
     ]),
 
     (r'{\1c&HFF0000&\t(\1c&H0000FF&)}Hello!', [
@@ -109,7 +109,7 @@ GOOD_LINE_DATA = [
                 ],
             },
         ]},
-        {'type': 'plain-text', 'text': 'Hello!'},
+        {'type': 'text', 'text': 'Hello!'},
     ]),
 
     (r'{\an5\t(0,5000,\frz3600)}Wheee', [
@@ -123,7 +123,7 @@ GOOD_LINE_DATA = [
                 'children': [{'type': 'rotation-z', 'angle': 3600}],
             },
         ]},
-        {'type': 'plain-text', 'text': 'Wheee'},
+        {'type': 'text', 'text': 'Wheee'},
     ]),
 
     (r'{\an5\t(0,5000,0.5,\frz3600)}Wheee', [
@@ -137,7 +137,7 @@ GOOD_LINE_DATA = [
                 'children': [{'type': 'rotation-z', 'angle': 3600}],
             },
         ]},
-        {'type': 'plain-text', 'text': 'Wheee'},
+        {'type': 'text', 'text': 'Wheee'},
     ]),
 
     (r'{\an5\fscx0\fscy0\t(0,500,\fscx100\fscy100)}Boo!', [
@@ -156,7 +156,7 @@ GOOD_LINE_DATA = [
                 ],
             },
         ]},
-        {'type': 'plain-text', 'text': 'Boo!'},
+        {'type': 'text', 'text': 'Boo!'},
     ]),
 
     (r'{comment\b1}', [

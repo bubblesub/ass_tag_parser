@@ -14,7 +14,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
         return ass_tag_parser.common.flatten(visited_nodes)
 
     def visit_plain_text(self, node, visited_nodes):
-        return {'type': 'plain-text', 'text': node.text}
+        return {'type': 'text', 'text': node.text}
 
     def visit_ass_chunk(self, node, visited_nodes):
         return {
