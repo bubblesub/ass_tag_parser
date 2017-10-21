@@ -1,0 +1,20 @@
+draw_commands = (draw_command _)* draw_command
+draw_command =
+    draw_command_move
+    / draw_command_move_no_close
+    / draw_command_line
+    / draw_command_bezier
+    / draw_command_cubic_spline
+    / draw_command_extend_spline
+    / draw_command_close_spline
+
+_   = ~'\\s+'
+pos = ~'-?\\d+'
+
+draw_command_move          = 'm' _ pos _ pos
+draw_command_move_no_close = 'n' _ pos _ pos
+draw_command_line          = 'l' (_ pos _ pos)+
+draw_command_bezier        = 'b' _ pos _ pos _ pos _ pos _ pos _ pos
+draw_command_cubic_spline  = 's' _ pos _ pos _ pos _ pos (_ pos _ pos)+
+draw_command_extend_spline = 'p' (_ pos _ pos)+
+draw_command_close_spline  = 'c'
