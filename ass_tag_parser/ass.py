@@ -22,6 +22,9 @@ class NodeVisitor(parsimonious.NodeVisitor):
     def visit_ass_comment(self, node, visited_nodes):
         return {'type': 'comment', 'text': node.children[1].text}
 
+    def visit_ass_inline_comment(self, node, visited_nodes):
+        return {'type': 'comment', 'text': node.text}
+
     def visit_ass_tag(self, node, visited_nodes):
         return visited_nodes[1]
 
@@ -193,18 +196,25 @@ class NodeVisitor(parsimonious.NodeVisitor):
         return {'type': 'karaoke-4', 'duration': visited_nodes[1] * 10}
 
     def visit_ass_tag_alignment(self, node, visited_nodes):
+        value = visited_nodes[1]
+        if value not in range(1, 10):
+            raise ValueError('Invalid alignment %r' % value)
         return {
             'type': 'alignment',
-            'alignment': int(node.children[1].text),
+            'alignment': value,
             'legacy': False,
         }
 
     def visit_ass_tag_alignment_legacy(self, node, visited_nodes):
-        value = int(node.children[1].text)
-        if value >= 9:
-            value -= 2
-        elif value >= 5:
+        value = visited_nodes[1]
+        if value in (1, 2, 3):
+            pass
+        elif value in (5, 6, 7):
             value -= 1
+        elif value in (9, 10, 11):
+            value -= 2
+        else:
+            raise ValueError('Invalid alignment %r' % value)
         return {'type': 'alignment', 'alignment': value, 'legacy': True}
 
     def visit_ass_tag_wrap_style(self, node, visited_nodes):
@@ -291,5 +301,7 @@ def parse_ass(text):
     try:
         node = GRAMMAR.parse(text)
         return NodeVisitor().visit(node)
-    except parsimonious.exceptions.ParseError as ex:
+    except (
+            parsimonious.exceptions.ParseError,
+            parsimonious.exceptions.VisitationError) as ex:
         raise ass_tag_parser.common.ParsingError(ex)

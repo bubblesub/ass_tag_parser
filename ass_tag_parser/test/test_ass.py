@@ -315,6 +315,51 @@ GOOD_TEST_DATA = [
         },
         {'type': 'plain-text', 'text': 'Boo!'},
     ]),
+
+    (r'{comment\b1}', [
+        {'type': 'comment', 'text': 'comment'},
+        {'type': 'bold', 'enabled': True},
+    ]),
+
+    (r'{\b1comment}', [
+        {'type': 'bold', 'enabled': True},
+        {'type': 'comment', 'text': 'comment'},
+    ]),
+
+    (r'{\2a&HFF&comment}', [
+        {'type': 'alpha-secondary', 'value': 0xFF},
+        {'type': 'comment', 'text': 'comment'},
+    ]),
+
+    (r'{\be2.2}', [
+        {'type': 'blur-edges', 'value': 2},
+        {'type': 'comment', 'text': '.2'},
+    ]),
+
+    (r'{\fs5.4}', [
+        {'type': 'font-size', 'size': 5},
+        {'type': 'comment', 'text': '.4'},
+    ]),
+
+    (r'{\k50.5}', [
+        {'type': 'karaoke-1', 'duration': 500},
+        {'type': 'comment', 'text': '.5'},
+    ]),
+
+    (r'{\K50.5}', [
+        {'type': 'karaoke-2', 'duration': 500},
+        {'type': 'comment', 'text': '.5'},
+    ]),
+
+    (r'{\kf50.5}', [
+        {'type': 'karaoke-3', 'duration': 500},
+        {'type': 'comment', 'text': '.5'},
+    ]),
+
+    (r'{\ko50.5}', [
+        {'type': 'karaoke-4', 'duration': 500},
+        {'type': 'comment', 'text': '.5'},
+    ]),
 ]
 
 BAD_TEST_DATA = [
@@ -327,8 +372,6 @@ BAD_TEST_DATA = [
     r'{{asd}',
     r'{asd}}',
     r'{{asd}}',
-
-    r'{comment\b1}',
 
     r'{\i2}',
     r'{\b-1}',
@@ -343,12 +386,10 @@ BAD_TEST_DATA = [
     r'{\yshad-4}',
 
     r'{\be-2}',
-    r'{\be2.2}',
     r'{\blur-4}',
 
     r'{\fe-5}',
     r'{\fs-5}',
-    r'{\fs5.4}',
     r'{\fscx-5.5}',
     r'{\fscy-5.5}',
 
@@ -373,10 +414,6 @@ BAD_TEST_DATA = [
     r'{\K-50}',
     r'{\kf-50}',
     r'{\ko-50}',
-    r'{\k50.5}',
-    r'{\K50.5}',
-    r'{\kf50.5}',
-    r'{\ko50.5}',
 
     r'{\an10}',
     r'{\a4}',

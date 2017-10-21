@@ -104,10 +104,4 @@ print(json.dumps(result))
 
 ### Limitations
 
-- Mixing comments and control tags (e.g. `{note\b1}`) will result in
-  `ParseError`.  
-  Reasoning: trying to distinguish comment from tag parameters is questionable:
-  `{\fnTimes New Romannote}`.  
-  To work around this limitation, put comments in separate groups: `{note}{\b1}`.
-
-- Parsing `{\b1}{\i1}` produces the same tree as `{\b1\i1}`.
+Parsing `{\b1}{\i1}` produces the same tree as `{\b1\i1}`.

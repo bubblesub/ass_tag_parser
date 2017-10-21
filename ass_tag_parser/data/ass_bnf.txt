@@ -1,7 +1,8 @@
 ass_line    = (ass_chunk / ass_comment / plain_text)*
 plain_text  = ~'[^{}]+'
-ass_chunk   = '{' ass_tag+ '}'
+ass_chunk   = '{' (ass_tag/ass_inline_comment)+ '}'
 ass_comment = '{' ass_text '}'
+ass_inline_comment = ass_text ''
 
 ass_tag_opening = '\\'
 ass_tag = ass_tag_opening (
@@ -144,8 +145,8 @@ ass_tag_karaoke_2 = 'K' duration_cs
 ass_tag_karaoke_3 = 'kf' duration_cs
 ass_tag_karaoke_4 = 'ko' duration_cs
 
-ass_tag_alignment        = 'an' ~'[0-9]'
-ass_tag_alignment_legacy = 'a' ~'11|10|1|2|3|5|6|7|9'
+ass_tag_alignment        = 'an' integer_positive
+ass_tag_alignment_legacy = 'a' integer_positive
 ass_tag_wrap_style       = 'q' ('0' / '1' / '2' / '3')
 ass_tag_reset_style      = 'r' ass_text?
 
