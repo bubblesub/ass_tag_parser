@@ -24,34 +24,46 @@ print(json.dumps(result))
 
 ```json
 [
-    {"type": "alignment", "alignment": 5, "legacy": false},
-    {"type": "position", "x": 175, "y": 460},
-    {"type": "font-name", "name": "Utopia with Oldstyle figures"},
-    {"type": "font-size", "size": 90},
-    {"type": "border", "size": 0.0},
-    {"type": "blur-edges-gauss", "value": 3.0},
-    {"type": "color-primary", "red": 19, "green": 19, "blue": 19},
     {
-        "type": "animation",
-        "start": 0,
-        "end": 1000,
-        "accel": 2.0,
-        "children": [
-            {"type": "color-primary", "red": 64, "green": 19, "blue": 19}
-        ]
-    },
-    {
-        "type": "animation",
-        "start": 1000,
-        "end": 2000,
-        "accel": null,
-        "children": [
-            {"type": "color-primary", "red": 178, "green": 21, "blue": 16},
-            {"type": "blur-edges-gauss", "value": 1.4}
+        "type": "tags",
+        "children":
+        [
+            {"type": "alignment", "alignment": 5, "legacy": false},
+            {"type": "position", "x": 175, "y": 460},
+            {"type": "font-name", "name": "Utopia with Oldstyle figures"},
+            {"type": "font-size", "size": 90},
+            {"type": "border", "size": 0.0},
+            {"type": "blur-edges-gauss", "value": 3.0},
+            {"type": "color-primary", "red": 19, "green": 19, "blue": 19},
+            {
+                "type": "animation",
+                "start": 0,
+                "end": 1000,
+                "accel": 2.0,
+                "children": [
+                    {"type": "color-primary", "red": 64, "green": 19, "blue": 19}
+                ]
+            },
+            {
+                "type": "animation",
+                "start": 1000,
+                "end": 2000,
+                "accel": null,
+                "children": [
+                    {"type": "color-primary", "red": 178, "green": 21, "blue": 16},
+                    {"type": "blur-edges-gauss", "value": 1.4}
+                ]
+            }
         ]
     },
     {"type": "plain-text", "text": "Attack No. 1"},
-    {"type": "comment", "text": "NOTE:\u30a2\u30bf\u30c3\u30afNo.1"}
+    {
+        "type": "tags",
+        "children":
+        [
+            {"type": "comment", "text": "NOTE:\u30a2\u30bf\u30c3\u30afNo.1"}
+        ]
+    }
 ]
 ```
 
@@ -99,9 +111,3 @@ print(json.dumps(result))
 ### Serializing the tree back
 
 *Not implemented yet*
-
----
-
-### Limitations
-
-Parsing `{\b1}{\i1}` produces the same tree as `{\b1\i1}`.
