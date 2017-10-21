@@ -40,7 +40,8 @@ print(json.dumps(result))
                 "start": 0,
                 "end": 1000,
                 "accel": 2.0,
-                "children": [
+                "children":
+                [
                     {"type": "color-primary", "red": 64, "green": 19, "blue": 19}
                 ]
             },
@@ -49,7 +50,8 @@ print(json.dumps(result))
                 "start": 1000,
                 "end": 2000,
                 "accel": null,
-                "children": [
+                "children":
+                [
                     {"type": "color-primary", "red": 178, "green": 21, "blue": 16},
                     {"type": "blur-edges-gauss", "value": 1.4}
                 ]
@@ -89,7 +91,8 @@ print(json.dumps(result))
     {"type": "move", "x": 50, "y": 0},
     {
         "type": "bezier",
-        "points": [
+        "points":
+        [
             {"x": 100, "y": 0},
             {"x": 100, "y": 100},
             {"x": 50, "y": 100}
@@ -97,7 +100,8 @@ print(json.dumps(result))
     },
     {
         "type": "bezier",
-        "points": [
+        "points":
+        [
             {"x": 0, "y": 100},
             {"x": 0, "y": 0},
             {"x": 50, "y": 0}
