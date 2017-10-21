@@ -142,28 +142,28 @@ GOOD_TEST_DATA = [
 
     (r'{\t(50,100,1.2,\be5\fs40)}', [{
         'type': 'animation', 'start': 50, 'end': 100, 'accel': 1.2,
-        'tags': [
+        'children': [
             {'type': 'blur-edges', 'value': 5},
             {'type': 'font-size', 'size': 40},
         ],
     }]),
     (r'{\t(1.2,\be5\fs40)}', [{
         'type': 'animation', 'start': None, 'end': None, 'accel': 1.2,
-        'tags': [
+        'children': [
             {'type': 'blur-edges', 'value': 5},
             {'type': 'font-size', 'size': 40},
         ],
     }]),
     (r'{\t(50,100,\be5\fs40)}', [{
         'type': 'animation', 'start': 50, 'end': 100, 'accel': None,
-        'tags': [
+        'children': [
             {'type': 'blur-edges', 'value': 5},
             {'type': 'font-size', 'size': 40},
         ],
     }]),
     (r'{\t(\be5\fs40)}', [{
         'type': 'animation', 'start': None, 'end': None, 'accel': None,
-        'tags': [
+        'children': [
             {'type': 'blur-edges', 'value': 5},
             {'type': 'font-size', 'size': 40},
         ],
@@ -268,9 +268,9 @@ GOOD_TEST_DATA = [
             'start': None,
             'end': None,
             'accel': None,
-            'tags': [
+            'children': [
                 {'type': 'color-primary', 'red': 255, 'green': 0, 'blue': 0},
-            ]
+            ],
         },
         {'type': 'plain-text', 'text': 'Hello!'},
     ]),
@@ -282,7 +282,7 @@ GOOD_TEST_DATA = [
             'start': 0,
             'end': 5000,
             'accel': None,
-            'tags': [{'type': 'rotation-z', 'angle': 3600}],
+            'children': [{'type': 'rotation-z', 'angle': 3600}],
         },
         {'type': 'plain-text', 'text': 'Wheee'},
     ]),
@@ -294,7 +294,7 @@ GOOD_TEST_DATA = [
             'start': 0,
             'end': 5000,
             'accel': 0.5,
-            'tags': [{'type': 'rotation-z', 'angle': 3600}],
+            'children': [{'type': 'rotation-z', 'angle': 3600}],
         },
         {'type': 'plain-text', 'text': 'Wheee'},
     ]),
@@ -308,7 +308,7 @@ GOOD_TEST_DATA = [
             'start': 0,
             'end': 500,
             'accel': None,
-            'tags': [
+            'children': [
                 {'type': 'font-scale-x', 'scale': 100},
                 {'type': 'font-scale-y', 'scale': 100},
             ],

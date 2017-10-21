@@ -36,7 +36,7 @@ print(json.dumps(result))
         "start": 0,
         "end": 1000,
         "accel": 2.0,
-        "tags": [
+        "children": [
             {"type": "color-primary", "red": 64, "green": 19, "blue": 19}
         ]
     },
@@ -45,7 +45,7 @@ print(json.dumps(result))
         "start": 1000,
         "end": 2000,
         "accel": null,
-        "tags": [
+        "children": [
             {"type": "color-primary", "red": 178, "green": 21, "blue": 16},
             {"type": "blur-edges-gauss", "value": 1.4}
         ]

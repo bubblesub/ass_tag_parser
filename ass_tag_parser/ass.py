@@ -269,7 +269,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
             'start': visited_nodes[1][0][0] if visited_nodes[1] else None,
             'end': visited_nodes[1][0][2] if visited_nodes[1] else None,
             'accel': visited_nodes[2][0][0] if visited_nodes[2] else None,
-            'tags': ass_tag_parser.common.flatten(visited_nodes[3]),
+            'children': ass_tag_parser.common.flatten(visited_nodes[3]),
         }
 
     def visit_ass_tag_clip_rectangle(self, node, visited_nodes):
