@@ -3,6 +3,9 @@ ass_tag_parser
 
 Library for parsing ASS tags.
 
+Not to confuse with parsing `.ass` files that can be manipulated with
+[`pysubs2`](https://github.com/tkarabela/pysubs2).
+
 
 **Example**:
 
