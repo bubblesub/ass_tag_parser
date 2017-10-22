@@ -82,19 +82,19 @@ class Serializer:
         ret = []
         for item in draw_commands:
             if 'type' not in item:
-                raise ass_tag_parser.common.ParsingError(
-                    'Item has no type')
+                raise ass_tag_parser.common.ParsingError('Item has no type')
 
-            try:
-                visiter = getattr(
-                    self, 'visit_' + item['type'].replace('-', '_'))
-            except AttributeError:
+            visitor = getattr(
+                self,
+                'visit_' + item['type'].replace('-', '_'),
+                None)
+            if not visitor:
                 raise ass_tag_parser.common.ParsingError(
                     'Unknown type %r' % item['type'])
 
             try:
-                result = visiter(item)
-            except (IndexError, KeyError, ValueError) as ex:
+                result = visitor(item)
+            except (IndexError, KeyError, ValueError, TypeError) as ex:
                 raise ass_tag_parser.common.ParsingError(ex)
 
             ret.append(' '.join(str(item) for item in result))

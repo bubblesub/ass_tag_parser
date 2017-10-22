@@ -114,5 +114,5 @@ print(json.dumps(result))
 
 ### Serializing the tree back
 
-ASS tree: *not implemented yet*  
+ASS tree: `serialize_ass`.  
 Draw commands: `serialize_draw_commands`.

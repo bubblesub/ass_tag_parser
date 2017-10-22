@@ -498,7 +498,7 @@ def test_parsing_valid_single_tag(source_line, expected_tag):
     assert expected_tree == ass_tag_parser.parse_ass(source_line)
 
 
-@pytest.mark.parametrize('source', BAD_TEST_DATA)
-def test_parsing_invalid_ass_line(source):
+@pytest.mark.parametrize('source_line', BAD_TEST_DATA)
+def test_parsing_invalid_ass_line(source_line):
     with pytest.raises(ass_tag_parser.ParsingError):
-        ass_tag_parser.parse_ass(source)
+        ass_tag_parser.parse_ass(source_line)
