@@ -118,11 +118,11 @@ BAD_TEST_DATA = [
 
 
 @pytest.mark.parametrize('source,expected', GOOD_TEST_DATA)
-def test_parsing_valid_ass_line(source, expected):
+def test_parsing_valid_text(source, expected):
     assert expected == ass_tag_parser.parse_draw_commands(source)
 
 
 @pytest.mark.parametrize('source', BAD_TEST_DATA)
-def test_parsing_invalid_ass_line(source):
+def test_parsing_invalid_text(source):
     with pytest.raises(ass_tag_parser.ParsingError):
         ass_tag_parser.parse_draw_commands(source)

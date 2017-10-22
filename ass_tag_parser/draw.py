@@ -77,9 +77,76 @@ class NodeVisitor(parsimonious.NodeVisitor):
         return {'type': 'close-bspline'}
 
 
+class Serializer:
+    def visit(self, draw_commands):
+        ret = []
+        for item in draw_commands:
+            if 'type' not in item:
+                raise ass_tag_parser.common.ParsingError(
+                    'Item has no type')
+
+            try:
+                visiter = getattr(
+                    self, 'visit_' + item['type'].replace('-', '_'))
+            except AttributeError:
+                raise ass_tag_parser.common.ParsingError(
+                    'Unknown type %r' % item['type'])
+
+            try:
+                result = visiter(item)
+            except (IndexError, KeyError, ValueError) as ex:
+                raise ass_tag_parser.common.ParsingError(ex)
+
+            ret.append(' '.join(str(item) for item in result))
+        return ' '.join(ret)
+
+    def visit_move(self, item):
+        return ('m', int(item['x']), int(item['y']))
+
+    def visit_move_no_close(self, item):
+        return ('n', int(item['x']), int(item['y']))
+
+    def visit_line(self, item):
+        return ('l', *sum([
+            (int(point['x']), int(point['y']))
+            for point in item['points']], ())
+    )
+
+    def visit_bezier(self, item):
+        if len(item['points']) < 3:
+            raise ValueError('Too few points in Bezier path')
+        if len(item['points']) > 3:
+            raise ValueError('Too many points in Bezier path')
+        return (
+            'b',
+            item['points'][0]['x'], item['points'][0]['y'],
+            item['points'][1]['x'], item['points'][1]['y'],
+            item['points'][2]['x'], item['points'][2]['y'])
+
+    def visit_cubic_bspline(self, item):
+        if len(item['points']) < 3:
+            raise ValueError('Too few points in cubic b-spline')
+        return ('s', *sum([
+            (int(point['x']), int(point['y']))
+            for point in item['points']], ()))
+
+    def visit_extend_bspline(self, item):
+        return ('p', *sum([
+            (int(point['x']), int(point['y']))
+            for point in item['points']], ()))
+
+    def visit_close_bspline(self, item):
+        return ('c',)
+
+
+
 def parse_draw_commands(text):
     try:
         node = GRAMMAR.parse(text)
         return NodeVisitor().visit(node)
     except parsimonious.exceptions.ParseError as ex:
         raise ass_tag_parser.common.ParsingError(ex)
+
+
+def serialize_draw_commands(commands):
+    return Serializer().visit(commands)

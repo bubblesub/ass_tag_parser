@@ -2,7 +2,7 @@ import pytest
 import ass_tag_parser
 
 
-GOOD_LINE_DATA = [
+GOOD_TEST_DATA = [
     (r'test', [{'type': 'text', 'text': 'test'}]),
 
     (r'{asdasd}', [{
@@ -223,7 +223,7 @@ GOOD_LINE_DATA = [
     ]),
 ]
 
-GOOD_TAG_DATA = [
+GOOD_TEST_DATA_SINGLE_TAG = [
     (r'{\i1}', {'type': 'italics', 'enabled': True}),
     (r'{\i0}', {'type': 'italics', 'enabled': False}),
     (r'{\b300}', {'type': 'bold', 'weight': 300}),
@@ -426,7 +426,7 @@ GOOD_TAG_DATA = [
     }),
 ]
 
-BAD_LINE_DATA = [
+BAD_TEST_DATA = [
     r'{}',
     r'{',
     r'}',
@@ -487,18 +487,18 @@ BAD_LINE_DATA = [
 ]
 
 
-@pytest.mark.parametrize('source_line,expected_tree', GOOD_LINE_DATA)
+@pytest.mark.parametrize('source_line,expected_tree', GOOD_TEST_DATA)
 def test_parsing_valid_ass_line(source_line, expected_tree):
     assert expected_tree == ass_tag_parser.parse_ass(source_line)
 
 
-@pytest.mark.parametrize('source_line,expected_tag', GOOD_TAG_DATA)
+@pytest.mark.parametrize('source_line,expected_tag', GOOD_TEST_DATA_SINGLE_TAG)
 def test_parsing_valid_single_tag(source_line, expected_tag):
     expected_tree = [{'type': 'tags', 'children': [expected_tag]}]
     assert expected_tree == ass_tag_parser.parse_ass(source_line)
 
 
-@pytest.mark.parametrize('source', BAD_LINE_DATA)
+@pytest.mark.parametrize('source', BAD_TEST_DATA)
 def test_parsing_invalid_ass_line(source):
     with pytest.raises(ass_tag_parser.ParsingError):
         ass_tag_parser.parse_ass(source)
