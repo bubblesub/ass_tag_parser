@@ -10,6 +10,19 @@ GOOD_TEST_DATA = [
         'children': [{'type': 'comment', 'text': 'asdasd'}],
     }]),
 
+    (r'{asd\\asd}', [{
+        'type': 'tags',
+        'children': [{'type': 'comment', 'text': r'asd\\asd'}],
+    }]),
+    (r'{asd\Nasd}', [{
+        'type': 'tags',
+        'children': [{'type': 'comment', 'text': r'asd\Nasd'}],
+    }]),
+    (r'{asd\Nasd\nasd\hasd}', [{
+        'type': 'tags',
+        'children': [{'type': 'comment', 'text': r'asd\Nasd\nasd\hasd'}],
+    }]),
+
     (r'{\p2}m 3 4{\p0}', [
         {'type': 'tags', 'children': [{'type': 'drawing-mode', 'value': 2}]},
         {'type': 'text', 'text': 'm 3 4'},
@@ -436,6 +449,10 @@ BAD_TEST_DATA = [
     r'{{asd}',
     r'{asd}}',
     r'{{asd}}',
+
+    r'{\junk}',
+    r'{\garbage}',
+    r'{\trash}',
 
     r'{\i2}',
     r'{\b-1}',

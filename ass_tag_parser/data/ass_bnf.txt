@@ -1,7 +1,7 @@
 ass_line    = (ass_chunk / plain_text)*
 plain_text  = ~'[^{}]+'
 ass_chunk   = '{' (ass_tag / ass_comment)+ '}'
-ass_comment = ass_text ''
+ass_comment = ~'(([^{}\\\\]*\\\\[Nnh\\\\])+[^{}\\\\]*)|[^{}\\\\]+'
 
 ass_tag_opening = '\\'
 ass_tag = ass_tag_opening (
@@ -114,7 +114,7 @@ ass_tag_shadow_y = 'yshad' float_positive
 ass_tag_blur_edges       = 'be' integer_positive
 ass_tag_blur_edges_gauss = 'blur' float_positive
 
-ass_tag_font_name      = ('fn' ass_text) / ('fn(' ass_text ')')
+ass_tag_font_name      = ('fn(' ass_text ')') / ('fn' ass_text)
 ass_tag_font_encoding  = 'fe' integer_positive
 ass_tag_font_size      = 'fs' integer_positive
 ass_tag_font_scale_x   = 'fscx' float_positive
