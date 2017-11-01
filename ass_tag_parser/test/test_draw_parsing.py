@@ -3,17 +3,23 @@ import ass_tag_parser
 
 
 GOOD_TEST_DATA = [
-    ('m 0 0', [{'type': 'move', 'x': 0, 'y': 0}]),
-    ('m -1 2', [{'type': 'move', 'x': -1, 'y': 2}]),
-    ('n 1 2', [{'type': 'move-no-close', 'x': 1, 'y': 2}]),
+    ('m 0 0', [{'pos': (0, 5), 'type': 'move', 'x': 0, 'y': 0}]),
+    ('m -1 2', [{'pos': (0, 6), 'type': 'move', 'x': -1, 'y': 2}]),
+    ('n 1 2', [
+        {'pos': (0, 5), 'type': 'move-no-close', 'x': 1, 'y': 2},
+    ]),
 
-    ('l 1 2', [{'type': 'line', 'points': [{'x': 1, 'y': 2}]}]),
+    ('l 1 2', [
+        {'pos': (0, 5), 'type': 'line', 'points': [{'x': 1, 'y': 2}]},
+    ]),
     ('l 1 2 3 4', [{
+        'pos': (0, 9),
         'type': 'line',
         'points': [{'x': 1, 'y': 2}, {'x': 3, 'y': 4}],
     }]),
 
     ('b 1 2 3 4 5 6', [{
+        'pos': (0, 13),
         'type': 'bezier',
         'points': [
             {'x': 1, 'y': 2},
@@ -23,6 +29,7 @@ GOOD_TEST_DATA = [
     }]),
 
     ('s 1 2 3 4 5 6', [{
+        'pos': (0, 13),
         'type': 'cubic-bspline',
         'points': [
             {'x': 1, 'y': 2},
@@ -32,6 +39,7 @@ GOOD_TEST_DATA = [
     }]),
 
     ('s 1 2 3 4 5 6 7 8 9 10', [{
+        'pos': (0, 22),
         'type': 'cubic-bspline',
         'points': [
             {'x': 1, 'y': 2},
@@ -42,17 +50,22 @@ GOOD_TEST_DATA = [
         ],
     }]),
 
-    ('p 1 2', [{'type': 'extend-bspline', 'points': [{'x': 1, 'y': 2}]}]),
+    ('p 1 2', [{
+        'pos': (0, 5),
+        'type': 'extend-bspline',
+        'points': [{'x': 1, 'y': 2}],
+    }]),
     ('p 1 2 3 4', [{
+        'pos': (0, 9),
         'type': 'extend-bspline',
         'points': [{'x': 1, 'y': 2}, {'x': 3, 'y': 4}],
     }]),
 
-    ('c', [{'type': 'close-bspline'}]),
+    ('c', [{'pos': (0, 1), 'type': 'close-bspline'}]),
 
     ('m 0 0 l 100 0 100 100 0 100', [
-        {'type': 'move', 'x': 0, 'y': 0},
-        {'type': 'line', 'points': [
+        {'pos': (0, 5), 'type': 'move', 'x': 0, 'y': 0},
+        {'pos': (6, 27), 'type': 'line', 'points': [
             {'x': 100, 'y': 0},
             {'x': 100, 'y': 100},
             {'x': 0, 'y': 100},
@@ -60,23 +73,23 @@ GOOD_TEST_DATA = [
     ]),
 
     ('m 0 0 s 100 0 100 100 0 100 c', [
-        {'type': 'move', 'x': 0, 'y': 0},
-        {'type': 'cubic-bspline', 'points': [
+        {'pos': (0, 5), 'type': 'move', 'x': 0, 'y': 0},
+        {'pos': (6, 27), 'type': 'cubic-bspline', 'points': [
             {'x': 100, 'y': 0},
             {'x': 100, 'y': 100},
             {'x': 0, 'y': 100},
         ]},
-        {'type': 'close-bspline'},
+        {'pos': (28, 29), 'type': 'close-bspline'},
     ]),
 
     ('m 0 0 s 100 0 100 100 0 100 p 0 0 100 0 100 100', [
-        {'type': 'move', 'x': 0, 'y': 0},
-        {'type': 'cubic-bspline', 'points': [
+        {'pos': (0, 5), 'type': 'move', 'x': 0, 'y': 0},
+        {'pos': (6, 27), 'type': 'cubic-bspline', 'points': [
             {'x': 100, 'y': 0},
             {'x': 100, 'y': 100},
             {'x': 0, 'y': 100},
         ]},
-        {'type': 'extend-bspline', 'points': [
+        {'pos': (28, 47), 'type': 'extend-bspline', 'points': [
             {'x': 0, 'y': 0},
             {'x': 100, 'y': 0},
             {'x': 100, 'y': 100},

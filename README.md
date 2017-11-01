@@ -25,45 +25,49 @@ print(json.dumps(result))
 ```json
 [
     {
+        "pos": [0, 138],
         "type": "tags",
         "children":
         [
-            {"type": "alignment", "alignment": 5, "legacy": false},
-            {"type": "position", "x": 175, "y": 460},
-            {"type": "font-name", "name": "Utopia with Oldstyle figures"},
-            {"type": "font-size", "size": 90},
-            {"type": "border", "size": 0.0},
-            {"type": "blur-edges-gauss", "value": 3.0},
-            {"type": "color-primary", "red": 19, "green": 19, "blue": 19},
+            {"pos": [2, 5], "type": "alignment", "alignment": 5, "legacy": false},
+            {"pos": [6, 18], "type": "position", "x": 175, "y": 460},
+            {"pos": [19, 49], "type": "font-name", "name": "Utopia with Oldstyle figures"},
+            {"pos": [50, 54], "type": "font-size", "size": 90},
+            {"pos": [55, 60], "type": "border", "size": 0.0},
+            {"pos": [61, 66], "type": "blur-edges-gauss", "value": 3.0},
+            {"pos": [67, 78], "type": "color-primary", "red": 19, "green": 19, "blue": 19},
             {
+                "pos": [79, 103],
                 "type": "animation",
                 "start": 0,
                 "end": 1000,
                 "accel": 2.0,
                 "children":
                 [
-                    {"type": "color-primary", "red": 64, "green": 19, "blue": 19}
+                    {"pos": [91, 102], "type": "color-primary", "red": 64, "green": 19, "blue": 19}
                 ]
             },
             {
+                "pos": [104, 137],
                 "type": "animation",
                 "start": 1000,
                 "end": 2000,
                 "accel": null,
                 "children":
                 [
-                    {"type": "color-primary", "red": 178, "green": 21, "blue": 16},
-                    {"type": "blur-edges-gauss", "value": 1.4}
+                    {"pos": [117, 128], "type": "color-primary", "red": 178, "green": 21, "blue": 16},
+                    {"pos": [129, 136], "type": "blur-edges-gauss", "value": 1.4}
                 ]
             }
         ]
     },
-    {"type": "text", "text": "Attack No. 1"},
+    {"pos": [138, 150], "type": "text", "text": "Attack No. 1"},
     {
+        "pos": [150, 165],
         "type": "tags",
         "children":
         [
-            {"type": "comment", "text": "NOTE:\u30a2\u30bf\u30c3\u30afNo.1"}
+            {"pos": [151, 164], "type": "comment", "text": "NOTE:\u30a2\u30bf\u30c3\u30afNo.1"}
         ]
     }
 ]
@@ -88,8 +92,9 @@ print(json.dumps(result))
 
 ```json
 [
-    {"type": "move", "x": 50, "y": 0},
+    {"pos": [0, 6], "type": "move", "x": 50, "y": 0},
     {
+        "pos": [7, 29],
         "type": "bezier",
         "points":
         [
@@ -99,6 +104,7 @@ print(json.dumps(result))
         ]
     },
     {
+        "pos": [30, 46],
         "type": "bezier",
         "points":
         [

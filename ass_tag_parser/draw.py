@@ -19,22 +19,25 @@ class NodeVisitor(parsimonious.NodeVisitor):
     def visit_pos(self, node, _visited_nodes):
         return int(node.text)
 
-    def visit_draw_command_move(self, _node, visited_nodes):
+    def visit_draw_command_move(self, node, visited_nodes):
         return {
+            'pos': (node.start, node.end),
             'type': 'move',
             'x': visited_nodes[2],
             'y': visited_nodes[4],
         }
 
-    def visit_draw_command_move_no_close(self, _node, visited_nodes):
+    def visit_draw_command_move_no_close(self, node, visited_nodes):
         return {
+            'pos': (node.start, node.end),
             'type': 'move-no-close',
             'x': visited_nodes[2],
             'y': visited_nodes[4],
         }
 
-    def visit_draw_command_line(self, _node, visited_nodes):
+    def visit_draw_command_line(self, node, visited_nodes):
         return {
+            'pos': (node.start, node.end),
             'type': 'line',
             'points': [
                 {'x': item[1], 'y': item[3]}
@@ -42,8 +45,9 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_bezier(self, _node, visited_nodes):
+    def visit_draw_command_bezier(self, node, visited_nodes):
         return {
+            'pos': (node.start, node.end),
             'type': 'bezier',
             'points': [
                 {'x': visited_nodes[2], 'y': visited_nodes[4]},
@@ -52,8 +56,9 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_cubic_spline(self, _node, visited_nodes):
+    def visit_draw_command_cubic_spline(self, node, visited_nodes):
         return {
+            'pos': (node.start, node.end),
             'type': 'cubic-bspline',
             'points': [
                 {'x': visited_nodes[2], 'y': visited_nodes[4]},
@@ -64,8 +69,9 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_extend_spline(self, _node, visited_nodes):
+    def visit_draw_command_extend_spline(self, node, visited_nodes):
         return {
+            'pos': (node.start, node.end),
             'type': 'extend-bspline',
             'points': [
                 {'x': item[1], 'y': item[3]}
@@ -73,8 +79,11 @@ class NodeVisitor(parsimonious.NodeVisitor):
             ],
         }
 
-    def visit_draw_command_close_spline(self, _node, _visited_nodes):
-        return {'type': 'close-bspline'}
+    def visit_draw_command_close_spline(self, node, _visited_nodes):
+        return {
+            'pos': (node.start, node.end),
+            'type': 'close-bspline',
+        }
 
 
 class Serializer:
