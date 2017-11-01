@@ -29,34 +29,34 @@ print(json.dumps(result))
         "type": "tags",
         "children":
         [
-            {"pos": [2, 5], "type": "alignment", "alignment": 5, "legacy": false},
-            {"pos": [6, 18], "type": "position", "x": 175, "y": 460},
-            {"pos": [19, 49], "type": "font-name", "name": "Utopia with Oldstyle figures"},
-            {"pos": [50, 54], "type": "font-size", "size": 90},
-            {"pos": [55, 60], "type": "border", "size": 0.0},
-            {"pos": [61, 66], "type": "blur-edges-gauss", "value": 3.0},
-            {"pos": [67, 78], "type": "color-primary", "red": 19, "green": 19, "blue": 19},
+            {"pos": [1, 5], "type": "alignment", "alignment": 5, "legacy": false},
+            {"pos": [5, 18], "type": "position", "x": 175, "y": 460},
+            {"pos": [18, 49], "type": "font-name", "name": "Utopia with Oldstyle figures"},
+            {"pos": [49, 54], "type": "font-size", "size": 90},
+            {"pos": [54, 60], "type": "border", "size": 0.0},
+            {"pos": [60, 66], "type": "blur-edges-gauss", "value": 3.0},
+            {"pos": [66, 78], "type": "color-primary", "red": 19, "green": 19, "blue": 19},
             {
-                "pos": [79, 103],
+                "pos": [78, 103],
                 "type": "animation",
                 "start": 0,
                 "end": 1000,
                 "accel": 2.0,
                 "children":
                 [
-                    {"pos": [91, 102], "type": "color-primary", "red": 64, "green": 19, "blue": 19}
+                    {"pos": [90, 102], "type": "color-primary", "red": 64, "green": 19, "blue": 19}
                 ]
             },
             {
-                "pos": [104, 137],
+                "pos": [103, 137],
                 "type": "animation",
                 "start": 1000,
                 "end": 2000,
                 "accel": null,
                 "children":
                 [
-                    {"pos": [117, 128], "type": "color-primary", "red": 178, "green": 21, "blue": 16},
-                    {"pos": [129, 136], "type": "blur-edges-gauss", "value": 1.4}
+                    {"pos": [116, 128], "type": "color-primary", "red": 178, "green": 21, "blue": 16},
+                    {"pos": [128, 136], "type": "blur-edges-gauss", "value": 1.4}
                 ]
             }
         ]

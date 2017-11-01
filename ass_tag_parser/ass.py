@@ -46,7 +46,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
         }
 
     def visit_ass_tag(self, _node, visited_nodes):
-        return visited_nodes[1]
+        return visited_nodes[0]
 
     def visit_boolean(self, node, _visited_nodes):
         return bool(int(node.text))
@@ -453,7 +453,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
             'y1': visited_nodes[4],
             'x2': visited_nodes[6],
             'y2': visited_nodes[8],
-            'inverse': node.children[0].text.startswith('i'),
+            'inverse': node.children[0].text.startswith('\\i'),
         }
 
     def visit_ass_tag_clip_vector(self, node, visited_nodes):
@@ -461,7 +461,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
             'pos': (node.start, node.end),
             'type': 'clip-vector',
             'scale': visited_nodes[2][0][0] if visited_nodes[2] else None,
-            'inverse': node.children[0].text.startswith('i'),
+            'inverse': node.children[0].text.startswith('\\i'),
             'commands': visited_nodes[3],
         }
 
