@@ -116,10 +116,13 @@ class Serializer:
         return ('n', int(item['x']), int(item['y']))
 
     def visit_line(self, item):
-        return ('l', *sum([
-            (int(point['x']), int(point['y']))
-            for point in item['points']], ())
-    )
+        return (
+            'l',
+            *sum([
+                (int(point['x']), int(point['y']))
+                for point in item['points']
+            ], ())
+        )
 
     def visit_bezier(self, item):
         if len(item['points']) < 3:
@@ -146,7 +149,6 @@ class Serializer:
 
     def visit_close_bspline(self, item):
         return ('c',)
-
 
 
 def parse_draw_commands(text):
