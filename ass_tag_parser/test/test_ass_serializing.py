@@ -4,6 +4,8 @@ import ass_tag_parser
 
 GOOD_TEST_DATA = \
     [
+        ([], ''),
+
         (
             [
                 {
@@ -12,6 +14,16 @@ GOOD_TEST_DATA = \
                 },
             ],
             r'test',
+        ),
+
+        (
+            [
+                {
+                    'type': 'tags',
+                    'children': [],
+                },
+            ],
+            '{}',
         ),
 
         (

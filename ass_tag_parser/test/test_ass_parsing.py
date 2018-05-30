@@ -16,6 +16,22 @@ GOOD_TEST_DATA = \
         ),
 
         (
+            '',
+            [],
+        ),
+
+        (
+            '{}',
+            [
+                {
+                    'pos': (0, 2),
+                    'type': 'tags',
+                    'children': [],
+                },
+            ],
+        ),
+
+        (
             r'{asdasd}',
             [
                 {
@@ -1458,7 +1474,6 @@ GOOD_TEST_DATA_SINGLE_TAG = \
 
 BAD_TEST_DATA = \
     [
-        r'{}',
         r'{',
         r'}',
         r'test{',

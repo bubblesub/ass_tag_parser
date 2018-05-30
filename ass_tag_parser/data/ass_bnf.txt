@@ -1,6 +1,6 @@
 ass_line    = (ass_chunk / plain_text)*
 plain_text  = ~'[^{}]+'
-ass_chunk   = '{' (ass_tag / ass_comment)+ '}'
+ass_chunk   = '{' (ass_tag / ass_comment)* '}'
 ass_comment = ~'(([^{}\\\\]*\\\\[Nnh\\\\])+[^{}\\\\]*)|[^{}\\\\]+'
 
 ass_tag = (
