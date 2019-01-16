@@ -1,6 +1,6 @@
-import ass_tag_parser.common
 import parsimonious
 
+import ass_tag_parser.common
 
 GRAMMAR_TEXT = (ass_tag_parser.common.DATA_DIR / 'draw_bnf.txt').read_text()
 GRAMMAR = parsimonious.Grammar(GRAMMAR_TEXT)

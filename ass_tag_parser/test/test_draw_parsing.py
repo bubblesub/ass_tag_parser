@@ -1,6 +1,6 @@
 import pytest
-import ass_tag_parser
 
+import ass_tag_parser
 
 GOOD_TEST_DATA = \
     [

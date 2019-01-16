@@ -1,6 +1,6 @@
 import parsimonious
-import ass_tag_parser.common
 
+import ass_tag_parser.common
 
 GRAMMAR_TEXT = (ass_tag_parser.common.DATA_DIR / 'ass_bnf.txt').read_text()
 GRAMMAR = parsimonious.Grammar(GRAMMAR_TEXT)

@@ -1,7 +1,6 @@
-from ass_tag_parser import parse_ass
-from ass_tag_parser import parse_draw_commands
 import json
 
+from ass_tag_parser import parse_ass, parse_draw_commands
 
 result = parse_ass(
     r'{\an5\pos(175,460)\fnUtopia with Oldstyle figures\fs90\bord0\blur3'
