@@ -1,6 +1,6 @@
 import pytest
 
-import ass_tag_parser
+from ass_tag_parser import ParsingError, parse_ass
 
 GOOD_TEST_DATA = [
     (r"test", [{"pos": (0, 4), "type": "text", "text": "test"}]),
@@ -888,7 +888,7 @@ BAD_TEST_DATA = [
 
 @pytest.mark.parametrize("source_line,expected_tree", GOOD_TEST_DATA)
 def test_parsing_valid_ass_line(source_line, expected_tree):
-    assert expected_tree == ass_tag_parser.parse_ass(source_line)
+    assert expected_tree == parse_ass(source_line)
 
 
 @pytest.mark.parametrize("source_line,expected_tag", GOOD_TEST_DATA_SINGLE_TAG)
@@ -900,10 +900,10 @@ def test_parsing_valid_single_tag(source_line, expected_tag):
             "children": [expected_tag],
         }
     ]
-    assert expected_tree == ass_tag_parser.parse_ass(source_line)
+    assert expected_tree == parse_ass(source_line)
 
 
 @pytest.mark.parametrize("source_line", BAD_TEST_DATA)
 def test_parsing_invalid_ass_line(source_line):
-    with pytest.raises(ass_tag_parser.ParsingError):
-        ass_tag_parser.parse_ass(source_line)
+    with pytest.raises(ParsingError):
+        parse_ass(source_line)

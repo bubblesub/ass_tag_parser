@@ -1,6 +1,6 @@
 import pytest
 
-import ass_tag_parser
+from ass_tag_parser import ParsingError, parse_draw_commands
 
 GOOD_TEST_DATA = [
     ("m 0 0", [{"pos": (0, 5), "type": "move", "x": 0, "y": 0}]),
@@ -170,10 +170,10 @@ BAD_TEST_DATA = [
 
 @pytest.mark.parametrize("source,expected", GOOD_TEST_DATA)
 def test_parsing_valid_text(source, expected):
-    assert expected == ass_tag_parser.parse_draw_commands(source)
+    assert expected == parse_draw_commands(source)
 
 
 @pytest.mark.parametrize("source", BAD_TEST_DATA)
 def test_parsing_invalid_text(source):
-    with pytest.raises(ass_tag_parser.ParsingError):
-        ass_tag_parser.parse_draw_commands(source)
+    with pytest.raises(ParsingError):
+        parse_draw_commands(source)
