@@ -493,6 +493,7 @@ def test_parsing_valid_single_tag(
             r"{\move(0,0,0,0,0,5.5)}",
             r"syntax error at pos 21: \move takes only integer arguments",
         ),
+        (r"{\cgarbage)}", r"syntax error at pos 4: expected ampersand"),
         (r"{\c&123456&}", "syntax error at pos 5: expected uppercase H"),
         (
             r"{\1c&H12345&}",

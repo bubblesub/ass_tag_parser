@@ -172,10 +172,11 @@ def _color_arg(
 
     short = tag == r"\c"
     target = {r"\1c": 1, r"\2c": 2, r"\3c": 3, r"\4c": 4, r"\c": 1}[tag]
-    if text_io.peek(1) != "&":
+    if text_io.eof:
         return (None, None, None, target, short)
-    text_io.skip(1)
 
+    if text_io.read(1) != "&":
+        raise BadAssTagArgument(text_io.global_pos, "expected ampersand")
     if text_io.read(1) != "H":
         raise BadAssTagArgument(text_io.global_pos, "expected uppercase H")
 
