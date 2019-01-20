@@ -55,6 +55,8 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
         text_io.write(item.text)
     elif isinstance(item, AssTagComment):
         text_io.write(f"{item.text}")
+    elif isinstance(item, AssTagBaselineOffset):
+        text_io.write(f"\\pbo{item.y}")
     elif isinstance(item, AssTagDrawingMode):
         text_io.write(f"\\p{item.scale}")
     elif isinstance(item, AssTagAlignment):

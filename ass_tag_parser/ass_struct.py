@@ -233,6 +233,11 @@ class AssTagAnimation(AssTag):
 
 
 @dataclass
+class AssTagBaselineOffset(AssTag):
+    y: int
+
+
+@dataclass
 class AssTagDrawingMode(AssTag):
     scale: int
 

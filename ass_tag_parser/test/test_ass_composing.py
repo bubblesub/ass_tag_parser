@@ -268,6 +268,8 @@ def test_composing_valid_ass_line(
         (AssTagWrapStyle(style=3), r"{\q3}"),
         (AssTagResetStyle(style=None), r"{\r}"),
         (AssTagResetStyle(style="Some style"), r"{\rSome style}"),
+        (AssTagDrawingMode(scale=1), r"{\p1}"),
+        (AssTagBaselineOffset(y=-50), r"{\pbo-50}"),
         (AssTagPosition(x=1, y=2), r"{\pos(1,2)}"),
         (
             AssTagMove(x1=1, y1=2, x2=3, y2=4, time1=None, time2=None),

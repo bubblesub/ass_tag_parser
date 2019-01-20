@@ -364,6 +364,7 @@ _PARSING_MAP = [
     (r"\c", AssTagColor, _color_arg),
     (r"\an", AssTagAlignment, _alignment_arg),
     (r"\a", AssTagAlignment, _alignment_arg),
+    (r"\pbo", AssTagBaselineOffset, _int_arg),
     (r"\p", AssTagDrawingMode, _positive_int_arg),
     (r"\t", AssTagAnimation, _animation_args),
 ]

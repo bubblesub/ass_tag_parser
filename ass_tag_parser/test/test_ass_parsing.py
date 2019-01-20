@@ -295,6 +295,8 @@ def test_parsing_valid_ass_line(
         (r"{\q3}", AssTagWrapStyle(style=3)),
         (r"{\r}", AssTagResetStyle(style=None)),
         (r"{\rSome style}", AssTagResetStyle(style="Some style")),
+        (r"{\p1}", AssTagDrawingMode(scale=1)),
+        (r"{\pbo-50}", AssTagBaselineOffset(y=-50)),
         (r"{\pos(1,2)}", AssTagPosition(x=1, y=2)),
         (
             r"{\move(1,2,3,4)}",
