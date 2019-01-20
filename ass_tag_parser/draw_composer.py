@@ -1,91 +1,64 @@
-import parsimonious
+import typing as T
 
-from ass_tag_parser.common import ParsingError
+from ass_tag_parser.draw_struct import *
+from ass_tag_parser.errors import BaseError
 
 
-class Serializer:
-    def visit(self, draw_commands):
+class Composer:
+    def visit(self, draw_commands: T.List[AssDrawCmd]) -> str:
         ret = []
-        for item in draw_commands:
-            if "type" not in item:
-                raise ParsingError("Item has no type")
+        for cmd in draw_commands:
+            assert isinstance(cmd, AssDrawCmd)
 
-            visitor = getattr(
-                self, "visit_" + item["type"].replace("-", "_"), None
-            )
+            visitor = getattr(self, "visit_" + cmd.__class__.__name__, None)
             if not visitor:
-                raise ParsingError("Unknown type %r" % item["type"])
+                raise NotImplementedError(f"not implemented ({cmd})")
 
             try:
-                result = visitor(item)
+                result = visitor(cmd)
             except (IndexError, KeyError, ValueError, TypeError) as ex:
-                raise ParsingError(ex)
+                raise BaseError(ex)
 
-            ret.append(" ".join(str(item) for item in result))
+            ret.append(" ".join(map(str, result)))
+
         return " ".join(ret)
 
-    def visit_move(self, item):
-        return ("m", int(item["x"]), int(item["y"]))
+    def visit_AssDrawCmdMove(self, cmd: AssDrawCmdMove) -> T.Tuple[T.Any, ...]:
+        return ("m" if cmd.close else "n", int(cmd.pos.x), int(cmd.pos.y))
 
-    def visit_move_no_close(self, item):
-        return ("n", int(item["x"]), int(item["y"]))
+    def visit_AssDrawCmdLine(self, cmd: AssDrawCmdLine) -> T.Tuple[T.Any, ...]:
+        return ("l", *sum([(point.x, point.y) for point in cmd.points], ()))
 
-    def visit_line(self, item):
-        return (
-            "l",
-            *sum(
-                [
-                    (int(point["x"]), int(point["y"]))
-                    for point in item["points"]
-                ],
-                (),
-            ),
-        )
-
-    def visit_bezier(self, item):
-        if len(item["points"]) < 3:
-            raise ValueError("Too few points in Bezier path")
-        if len(item["points"]) > 3:
-            raise ValueError("Too many points in Bezier path")
+    def visit_AssDrawCmdBezier(
+        self, cmd: AssDrawCmdBezier
+    ) -> T.Tuple[T.Any, ...]:
+        assert len(cmd.points) == 3
         return (
             "b",
-            item["points"][0]["x"],
-            item["points"][0]["y"],
-            item["points"][1]["x"],
-            item["points"][1]["y"],
-            item["points"][2]["x"],
-            item["points"][2]["y"],
+            cmd.points[0].x,
+            cmd.points[0].y,
+            cmd.points[1].x,
+            cmd.points[1].y,
+            cmd.points[2].x,
+            cmd.points[2].y,
         )
 
-    def visit_cubic_bspline(self, item):
-        if len(item["points"]) < 3:
-            raise ValueError("Too few points in cubic b-spline")
-        return (
-            "s",
-            *sum(
-                [
-                    (int(point["x"]), int(point["y"]))
-                    for point in item["points"]
-                ],
-                (),
-            ),
-        )
+    def visit_AssDrawCmdSpline(
+        self, cmd: AssDrawCmdSpline
+    ) -> T.Tuple[T.Any, ...]:
+        assert len(cmd.points) >= 3
+        return ("s", *sum([(point.x, point.y) for point in cmd.points], ()))
 
-    def visit_extend_bspline(self, item):
-        return (
-            "p",
-            *sum(
-                [
-                    (int(point["x"]), int(point["y"]))
-                    for point in item["points"]
-                ],
-                (),
-            ),
-        )
+    def visit_AssDrawCmdExtendSpline(
+        self, cmd: AssDrawCmdExtendSpline
+    ) -> T.Tuple[T.Any, ...]:
+        return ("p", *sum([(point.x, point.y) for point in cmd.points], ()))
 
-    def visit_close_bspline(self, item):
+    def visit_AssDrawCmdCloseSpline(
+        self, cmd: AssDrawCmdCloseSpline
+    ) -> T.Tuple[T.Any, ...]:
         return ("c",)
 
 
-def compose_draw_commands(commands):
-    return Serializer().visit(commands)
+def compose_draw_commands(commands: T.List[AssDrawCmd]) -> str:
+    return Composer().visit(commands)
