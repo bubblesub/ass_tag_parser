@@ -6,8 +6,8 @@ from ass_tag_parser.common import Meta
 
 @dataclass
 class AssDrawPoint:
-    x: int
-    y: int
+    x: float
+    y: float
 
 
 class AssDrawCmd:

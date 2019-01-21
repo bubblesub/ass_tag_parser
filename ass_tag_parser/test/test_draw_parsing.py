@@ -7,6 +7,7 @@ from ass_tag_parser import *
     "source,expected",
     [
         ("m 0 0", [AssDrawCmdMove(AssDrawPoint(0, 0), close=True)]),
+        ("m 1.1 2.2", [AssDrawCmdMove(AssDrawPoint(1.1, 2.2), close=True)]),
         ("m -1 2", [AssDrawCmdMove(AssDrawPoint(-1, 2), close=True)]),
         ("n 1 2", [AssDrawCmdMove(AssDrawPoint(1, 2), close=False)]),
         ("l 1 2", [AssDrawCmdLine([AssDrawPoint(1, 2)])]),

@@ -8,11 +8,17 @@ from ass_tag_parser import *
     [
         ([AssDrawCmdMove(AssDrawPoint(0, 0), close=True)], "m 0 0"),
         ([AssDrawCmdMove(AssDrawPoint(-1, 2), close=True)], "m -1 2"),
+        ([AssDrawCmdMove(AssDrawPoint(1.1, 2.2), close=True)], "m 1.1 2.2"),
         ([AssDrawCmdMove(AssDrawPoint(1, 2), close=False)], "n 1 2"),
         ([AssDrawCmdLine([AssDrawPoint(1, 2)])], "l 1 2"),
+        ([AssDrawCmdLine([AssDrawPoint(1.1, 2.2)])], "l 1.1 2.2"),
         (
             [AssDrawCmdLine([AssDrawPoint(1, 2), AssDrawPoint(3, 4)])],
             "l 1 2 3 4",
+        ),
+        (
+            [AssDrawCmdLine([AssDrawPoint(1.1, 2.2), AssDrawPoint(3.3, 4.4)])],
+            "l 1.1 2.2 3.3 4.4",
         ),
         (
             [

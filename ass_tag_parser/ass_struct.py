@@ -110,24 +110,24 @@ class AssTagLetterSpacing(AssTag):
 
 @dataclass
 class AssTagMove(AssTag):
-    x1: int
-    y1: int
-    x2: int
-    y2: int
+    x1: float
+    y1: float
+    x2: float
+    y2: float
     time1: T.Optional[int] = None
     time2: T.Optional[int] = None
 
 
 @dataclass
 class AssTagPosition(AssTag):
-    x: T.Optional[int] = None
-    y: T.Optional[int] = None
+    x: T.Optional[float] = None
+    y: T.Optional[float] = None
 
 
 @dataclass
 class AssTagRotationOrigin(AssTag):
-    x: T.Optional[int] = None
-    y: T.Optional[int] = None
+    x: T.Optional[float] = None
+    y: T.Optional[float] = None
 
 
 @dataclass
@@ -234,7 +234,7 @@ class AssTagAnimation(AssTag):
 
 @dataclass
 class AssTagBaselineOffset(AssTag):
-    y: int
+    y: float
 
 
 @dataclass
@@ -244,10 +244,10 @@ class AssTagDrawingMode(AssTag):
 
 @dataclass
 class AssTagClipRectangle(AssTag):
-    x1: int
-    y1: int
-    x2: int
-    y2: int
+    x1: float
+    y1: float
+    x2: float
+    y2: float
     inverse: bool
 
 

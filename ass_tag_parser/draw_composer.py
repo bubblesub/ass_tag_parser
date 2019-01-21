@@ -24,7 +24,7 @@ class Composer:
         return " ".join(ret)
 
     def visit_AssDrawCmdMove(self, cmd: AssDrawCmdMove) -> T.Tuple[T.Any, ...]:
-        return ("m" if cmd.close else "n", int(cmd.pos.x), int(cmd.pos.y))
+        return ("m" if cmd.close else "n", cmd.pos.x, cmd.pos.y)
 
     def visit_AssDrawCmdLine(self, cmd: AssDrawCmdLine) -> T.Tuple[T.Any, ...]:
         return ("l", *sum([(point.x, point.y) for point in cmd.points], ()))

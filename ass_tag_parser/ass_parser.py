@@ -132,6 +132,21 @@ def _complex_int_args(
     return fun
 
 
+def _complex_float_args(
+    valid_counts: T.Set[int]
+) -> T.Callable[[str, MyIO], T.Tuple[float, ...]]:
+    def fun(tag: str, text_io: MyIO) -> T.Tuple[float, ...]:
+        args = _complex_args(tag, text_io, valid_counts)
+        try:
+            return tuple([float(item[0]) for item in args])
+        except ValueError:
+            raise BadAssTagArgument(
+                text_io.global_pos, f"{tag} takes only decimal arguments"
+            )
+
+    return fun
+
+
 def _bold_arg(
     tag: str, text_io: MyIO
 ) -> T.Tuple[T.Optional[bool], T.Optional[float]]:
@@ -245,6 +260,29 @@ def _wrap_style_arg(tag: str, text_io: MyIO) -> T.Any:
     return (value,)
 
 
+def _move_args(
+    tag: str, text_io: MyIO
+) -> T.Tuple[float, float, float, float, T.Optional[int], T.Optional[int]]:
+    args = list(_complex_args(tag, text_io, {4, 6}))
+
+    try:
+        args[0:4] = [float(item[0]) for item in args[0:4]]
+    except ValueError:
+        raise BadAssTagArgument(
+            text_io.global_pos, f"{tag} requires decimal coodinates"
+        )
+
+    if len(args) == 6:
+        try:
+            args[4:6] = [int(item[0]) for item in args[4:6]]
+        except ValueError:
+            raise BadAssTagArgument(
+                text_io.global_pos, f"{tag} requires integer times"
+            )
+
+    return args
+
+
 def _animation_args(
     tag: str, text_io: MyIO
 ) -> T.Tuple[
@@ -319,9 +357,9 @@ _PARSING_MAP = [
     (r"\fsp", AssTagLetterSpacing, _float_arg),
     (r"\fax", AssTagXShear, _float_arg),
     (r"\fay", AssTagYShear, _float_arg),
-    (r"\pos", AssTagPosition, _complex_int_args({2})),
-    (r"\org", AssTagRotationOrigin, _complex_int_args({2})),
-    (r"\move", AssTagMove, _complex_int_args({4, 6})),
+    (r"\pos", AssTagPosition, _complex_float_args({2})),
+    (r"\org", AssTagRotationOrigin, _complex_float_args({2})),
+    (r"\move", AssTagMove, _move_args),
     (r"\fade", AssTagFadeComplex, _complex_int_args({7})),
     (r"\fad", AssTagFade, _complex_int_args({2})),
     (r"\frx", AssTagXRotation, _float_arg),
@@ -365,7 +403,7 @@ _PARSING_MAP = [
     (r"\c", AssTagColor, _color_arg),
     (r"\an", AssTagAlignment, _alignment_arg),
     (r"\a", AssTagAlignment, _alignment_arg),
-    (r"\pbo", AssTagBaselineOffset, _int_arg),
+    (r"\pbo", AssTagBaselineOffset, _float_arg),
     (r"\p", AssTagDrawingMode, _positive_int_arg),
     (r"\t", AssTagAnimation, _animation_args),
 ]
@@ -404,11 +442,11 @@ def _parse_ass_tag(text_io: MyIO) -> AssTag:
 
         elif len(args) == 4:
             try:
-                corners = [int(arg[0]) for arg in args]
+                corners = [float(arg[0]) for arg in args]
             except ValueError:
                 raise BadAssTagArgument(
                     text_io.global_pos,
-                    f"{prefix} takes only integer coordinates",
+                    f"{prefix} takes only decimal coordinates",
                 )
             return AssTagClipRectangle(
                 corners[0], corners[1], corners[2], corners[3], inverse=inverse

@@ -301,10 +301,21 @@ def test_parsing_valid_ass_line(
         (r"{\rSome style}", AssTagResetStyle(style="Some style")),
         (r"{\p1}", AssTagDrawingMode(scale=1)),
         (r"{\pbo-50}", AssTagBaselineOffset(y=-50)),
+        (r"{\pbo1.1}", AssTagBaselineOffset(y=1.1)),
         (r"{\pos(1,2)}", AssTagPosition(x=1, y=2)),
+        (r"{\pos(1.1,2.2)}", AssTagPosition(x=1.1, y=2.2)),
+        (r"{\pos(-1,-2)}", AssTagPosition(x=-1, y=-2)),
         (
             r"{\move(1,2,3,4)}",
             AssTagMove(x1=1, y1=2, x2=3, y2=4, time1=None, time2=None),
+        ),
+        (
+            r"{\move(1.1,2.2,3.3,4.4)}",
+            AssTagMove(x1=1.1, y1=2.2, x2=3.3, y2=4.4, time1=None, time2=None),
+        ),
+        (
+            r"{\move(-1,-2,-3,-4)}",
+            AssTagMove(x1=-1, y1=-2, x2=-3, y2=-4, time1=None, time2=None),
         ),
         (
             r"{\move(1,2,3,4,100,300)}",
@@ -464,8 +475,8 @@ def test_parsing_valid_single_tag(
             r"syntax error at pos 12: \org takes 2 arguments (got 3)",
         ),
         (
-            r"{\org(-5.5,0)}",
-            r"syntax error at pos 13: \org takes only integer arguments",
+            r"{\org(garbage,0)}",
+            r"syntax error at pos 16: \org takes only decimal arguments",
         ),
         (r"{\pos0,0}", "syntax error at pos 6: expected brace"),
         (
@@ -477,8 +488,8 @@ def test_parsing_valid_single_tag(
             r"syntax error at pos 12: \pos takes 2 arguments (got 3)",
         ),
         (
-            r"{\pos(-5.5,0)}",
-            r"syntax error at pos 13: \pos takes only integer arguments",
+            r"{\pos(garbage,0)}",
+            r"syntax error at pos 16: \pos takes only decimal arguments",
         ),
         (r"{\move0,0,0,0}", "syntax error at pos 7: expected brace"),
         (
@@ -490,12 +501,8 @@ def test_parsing_valid_single_tag(
             r"syntax error at pos 17: \move takes 4 or 6 arguments (got 5)",
         ),
         (
-            r"{\move(0,0,0,5.5)}",
-            r"syntax error at pos 17: \move takes only integer arguments",
-        ),
-        (
             r"{\move(0,0,0,0,0,5.5)}",
-            r"syntax error at pos 21: \move takes only integer arguments",
+            r"syntax error at pos 21: \move requires integer times",
         ),
         (r"{\cgarbage)}", r"syntax error at pos 4: expected ampersand"),
         (r"{\c&123456&}", "syntax error at pos 5: expected uppercase H"),
@@ -561,6 +568,7 @@ def test_parsing_valid_single_tag(
         ),
         (r"{\b1comment}", r"syntax error at pos 11: \b requires an integer"),
         (r"{asd\asd}", r"syntax error at pos 8: \a requires an integer"),
+        (r"{\pbogarbage}", r"syntax error at pos 12: \pbo requires a decimal"),
     ],
 )
 def test_parsing_invalid_ass_line(source_line: str, error_msg: str) -> None:

@@ -285,6 +285,7 @@ def test_composing_valid_ass_line(
         (AssTagResetStyle(style=None), r"{\r}"),
         (AssTagResetStyle(style="Some style"), r"{\rSome style}"),
         (AssTagDrawingMode(scale=1), r"{\p1}"),
+        (AssTagBaselineOffset(y=1.1), r"{\pbo1.1}"),
         (AssTagBaselineOffset(y=-50), r"{\pbo-50}"),
         (AssTagPosition(x=1, y=2), r"{\pos(1,2)}"),
         (

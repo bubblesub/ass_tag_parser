@@ -19,6 +19,8 @@ class NodeVisitor(parsimonious.NodeVisitor):
         return visited_nodes
 
     def visit_pos(self, node, _visited_nodes):
+        if '.' in node.text:
+            return float(node.text)
         return int(node.text)
 
     def visit_draw_command_move(self, node, visited_nodes):
