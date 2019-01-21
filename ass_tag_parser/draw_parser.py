@@ -19,7 +19,7 @@ class NodeVisitor(parsimonious.NodeVisitor):
         return visited_nodes
 
     def visit_pos(self, node, _visited_nodes):
-        if '.' in node.text:
+        if "." in node.text:
             return float(node.text)
         return int(node.text)
 
