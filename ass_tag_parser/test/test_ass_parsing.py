@@ -4,72 +4,135 @@ from ass_tag_parser import *
 
 
 @pytest.mark.parametrize(
-    "source_line,expected_chunks",
+    "source_line,expected_items",
     [
         (r"", []),
-        (r"{}", [AssTagList([])]),
+        (r"\b1", [AssText(r"\b1")]),
+        (r"{}", [AssTagListOpening(), AssTagListEnding()]),
         (r"test", [AssText("test")]),
         (r"(test)", [AssText("(test)")]),
-        (r"{(test)}", [AssTagList([AssTagComment("(test)")])]),
-        (r"{\b1()}", [AssTagList([AssTagBold(True), AssTagComment("()")])]),
-        (r"{\b1(}", [AssTagList([AssTagBold(True), AssTagComment("(")])]),
-        (r"{\b1)}", [AssTagList([AssTagBold(True), AssTagComment(")")])]),
+        (
+            r"{(test)}",
+            [AssTagListOpening(), AssTagComment("(test)"), AssTagListEnding()],
+        ),
+        (
+            r"{\b1()}",
+            [
+                AssTagListOpening(),
+                AssTagBold(True),
+                AssTagComment("()"),
+                AssTagListEnding(),
+            ],
+        ),
+        (
+            r"{\b1(}",
+            [
+                AssTagListOpening(),
+                AssTagBold(True),
+                AssTagComment("("),
+                AssTagListEnding(),
+            ],
+        ),
+        (
+            r"{\b1)}",
+            [
+                AssTagListOpening(),
+                AssTagBold(True),
+                AssTagComment(")"),
+                AssTagListEnding(),
+            ],
+        ),
         (
             r"{\t(test)}",
-            [AssTagList([AssTagAnimation([AssTagComment("test")])])],
+            [
+                AssTagListOpening(),
+                AssTagAnimation([AssTagComment("test")]),
+                AssTagListEnding(),
+            ],
         ),
         (
             r"{\t(test()test)}",
-            [AssTagList([AssTagAnimation([AssTagComment("test()test")])])],
+            [
+                AssTagListOpening(),
+                AssTagAnimation([AssTagComment("test()test")]),
+                AssTagListEnding(),
+            ],
         ),
         (
             r"{\t(\t(test))}",
             [
-                AssTagList(
-                    [
-                        AssTagAnimation(
-                            [AssTagAnimation([AssTagComment("test")])]
-                        )
-                    ]
-                )
+                AssTagListOpening(),
+                AssTagAnimation([AssTagAnimation([AssTagComment("test")])]),
+                AssTagListEnding(),
             ],
         ),
-        ("{garbage}", [AssTagList([AssTagComment("garbage")])]),
-        (r"{asd\Nasd}", [AssTagList([AssTagComment(r"asd\Nasd")])]),
+        (
+            "{garbage}",
+            [
+                AssTagListOpening(),
+                AssTagComment("garbage"),
+                AssTagListEnding(),
+            ],
+        ),
+        (
+            r"{asd\Nasd}",
+            [
+                AssTagListOpening(),
+                AssTagComment(r"asd\Nasd"),
+                AssTagListEnding(),
+            ],
+        ),
         (
             r"{asd\Nasd\nasd\hasd}",
-            [AssTagList([AssTagComment(r"asd\Nasd\nasd\hasd")])],
+            [
+                AssTagListOpening(),
+                AssTagComment(r"asd\Nasd\nasd\hasd"),
+                AssTagListEnding(),
+            ],
         ),
         (
             r"{\p2}m 3 4{\p0}",
             [
-                AssTagList([AssTagDrawingMode(2)]),
+                AssTagListOpening(),
+                AssTagDrawingMode(2),
+                AssTagListEnding(),
                 AssText("m 3 4"),
-                AssTagList([AssTagDrawingMode(0)]),
+                AssTagListOpening(),
+                AssTagDrawingMode(0),
+                AssTagListEnding(),
             ],
         ),
         (
             r"{\an5\an5}",
             [
-                AssTagList(
-                    [AssTagAlignment(5, False), AssTagAlignment(5, False)]
-                )
+                AssTagListOpening(),
+                AssTagAlignment(5, False),
+                AssTagAlignment(5, False),
+                AssTagListEnding(),
             ],
         ),
         (
             r"{\an5}{\an5}",
             [
-                AssTagList([AssTagAlignment(5, False)]),
-                AssTagList([AssTagAlignment(5, False)]),
+                AssTagListOpening(),
+                AssTagAlignment(5, False),
+                AssTagListEnding(),
+                AssTagListOpening(),
+                AssTagAlignment(5, False),
+                AssTagListEnding(),
             ],
         ),
         (
             r"abc def{\an5}ghi jkl{\an5}123 456",
             [
                 AssText("abc def"),
-                AssTagList([AssTagAlignment(5, False)]),
+                AssTagListOpening(),
+                AssTagAlignment(5, False),
+                AssTagListEnding(),
                 AssText("ghi jkl"),
-                AssTagList([AssTagAlignment(5, False)]),
+                AssTagListOpening(),
+                AssTagAlignment(5, False),
+                AssTagListEnding(),
                 AssText("123 456"),
             ],
         ),
@@ -77,24 +140,38 @@ from ass_tag_parser import *
             r"I am {\b1}not{\b0} amused.",
             [
                 AssText("I am "),
-                AssTagList([AssTagBold(True)]),
+                AssTagListOpening(),
+                AssTagBold(True),
+                AssTagListEnding(),
                 AssText("not"),
-                AssTagList([AssTagBold(False)]),
+                AssTagListOpening(),
+                AssTagBold(False),
+                AssTagListEnding(),
                 AssText(" amused."),
             ],
         ),
         (
             r"{\b100}How {\b300}bold {\b500}can {\b700}you {\b900}get?",
             [
-                AssTagList([AssTagBold(True, 100)]),
+                AssTagListOpening(),
+                AssTagBold(True, 100),
+                AssTagListEnding(),
                 AssText("How "),
-                AssTagList([AssTagBold(True, 300)]),
+                AssTagListOpening(),
+                AssTagBold(True, 300),
+                AssTagListEnding(),
                 AssText("bold "),
-                AssTagList([AssTagBold(True, 500)]),
+                AssTagListOpening(),
+                AssTagBold(True, 500),
+                AssTagListEnding(),
                 AssText("can "),
-                AssTagList([AssTagBold(True, 700)]),
+                AssTagListOpening(),
+                AssTagBold(True, 700),
+                AssTagListEnding(),
                 AssText("you "),
-                AssTagList([AssTagBold(True, 900)]),
+                AssTagListOpening(),
+                AssTagBold(True, 900),
+                AssTagListEnding(),
                 AssText("get?"),
             ],
         ),
@@ -102,87 +179,85 @@ from ass_tag_parser import *
             r"-Hey\N{\rAlternate}-Huh?\N{\r}-Who are you?",
             [
                 AssText(r"-Hey\N"),
-                AssTagList([AssTagResetStyle("Alternate")]),
+                AssTagListOpening(),
+                AssTagResetStyle("Alternate"),
+                AssTagListEnding(),
                 AssText(r"-Huh?\N"),
-                AssTagList([AssTagResetStyle(None)]),
+                AssTagListOpening(),
+                AssTagResetStyle(None),
+                AssTagListEnding(),
                 AssText("-Who are you?"),
             ],
         ),
         (
             r"{\1c&HFF0000&\t(\1c&H0000FF&)}Hello!",
             [
-                AssTagList(
-                    [
-                        AssTagColor(0, 0, 255, 1),
-                        AssTagAnimation(tags=[AssTagColor(255, 0, 0, 1)]),
-                    ]
-                ),
+                AssTagListOpening(),
+                AssTagColor(0, 0, 255, 1),
+                AssTagAnimation(tags=[AssTagColor(255, 0, 0, 1)]),
+                AssTagListEnding(),
                 AssText("Hello!"),
             ],
         ),
         (
             r"{\an5\t(0,5000,\frz3600)}Wheee",
             [
-                AssTagList(
-                    [
-                        AssTagAlignment(5),
-                        AssTagAnimation(
-                            tags=[AssTagZRotation(3600)], time1=0, time2=5000
-                        ),
-                    ]
+                AssTagListOpening(),
+                AssTagAlignment(5),
+                AssTagAnimation(
+                    tags=[AssTagZRotation(3600)], time1=0, time2=5000
                 ),
+                AssTagListEnding(),
                 AssText("Wheee"),
             ],
         ),
         (
             r"{\an5\t(0,5000,0.5,\frz3600)}Wheee",
             [
-                AssTagList(
-                    [
-                        AssTagAlignment(5),
-                        AssTagAnimation(
-                            acceleration=0.5,
-                            time1=0,
-                            time2=5000,
-                            tags=[AssTagZRotation(3600)],
-                        ),
-                    ]
+                AssTagListOpening(),
+                AssTagAlignment(5),
+                AssTagAnimation(
+                    acceleration=0.5,
+                    time1=0,
+                    time2=5000,
+                    tags=[AssTagZRotation(3600)],
                 ),
+                AssTagListEnding(),
                 AssText("Wheee"),
             ],
         ),
         (
             r"{\an5\fscx0\fscy0\t(0,500,\fscx100\fscy100)}Boo!",
             [
-                AssTagList(
-                    [
-                        AssTagAlignment(5),
-                        AssTagFontXScale(0),
-                        AssTagFontYScale(0),
-                        AssTagAnimation(
-                            tags=[
-                                AssTagFontXScale(100),
-                                AssTagFontYScale(100),
-                            ],
-                            time1=0,
-                            time2=500,
-                            acceleration=None,
-                        ),
-                    ]
+                AssTagListOpening(),
+                AssTagAlignment(5),
+                AssTagFontXScale(0),
+                AssTagFontYScale(0),
+                AssTagAnimation(
+                    tags=[AssTagFontXScale(100), AssTagFontYScale(100)],
+                    time1=0,
+                    time2=500,
+                    acceleration=None,
                 ),
+                AssTagListEnding(),
                 AssText("Boo!"),
             ],
         ),
         (
             r"{comment\b1}",
-            [AssTagList([AssTagComment("comment"), AssTagBold(True, None)])],
+            [
+                AssTagListOpening(),
+                AssTagComment("comment"),
+                AssTagBold(True, None),
+                AssTagListEnding(),
+            ],
         ),
     ],
 )
 def test_parsing_valid_ass_line(
-    source_line: str, expected_chunks: T.List[AssBlock]
+    source_line: str, expected_items: T.List[AssItem]
 ) -> None:
-    assert AssLine(expected_chunks) == parse_ass(source_line)
+    assert expected_items == parse_ass(source_line)
 
 
 @pytest.mark.parametrize(
@@ -416,7 +491,7 @@ def test_parsing_valid_ass_line(
 def test_parsing_valid_single_tag(
     source_line: str, expected_tag: AssTag
 ) -> None:
-    expected_tree = AssLine([AssTagList(tags=[expected_tag])])
+    expected_tree = [AssTagListOpening(), expected_tag, AssTagListEnding()]
     assert expected_tree == parse_ass(source_line)
 
 

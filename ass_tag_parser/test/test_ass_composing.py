@@ -8,40 +8,39 @@ from ass_tag_parser import *
     [
         ([], ""),
         ([AssText("test")], r"test"),
-        ([AssTagList([])], "{}"),
-        ([AssTagList([AssTagComment("asdasd")])], r"{asdasd}"),
         (
-            [
-                AssTagList([AssTagDrawingMode(2)]),
-                AssText("m 3 4"),
-                AssTagList([AssTagDrawingMode(0)]),
-            ],
+            [AssTagListOpening(), AssTagListEnding()],
+            "",  # autoinsert overrides {}
+        ),
+        ([AssTagComment("asdasd")], r"{asdasd}"),
+        (
+            [AssTagDrawingMode(2), AssText("m 3 4"), AssTagDrawingMode(0)],
             r"{\p2}m 3 4{\p0}",
         ),
         (
             [
-                AssTagList(
-                    [
-                        AssTagAlignment(5, legacy=False),
-                        AssTagAlignment(5, legacy=True),
-                    ]
-                )
+                AssTagAlignment(5, legacy=False),
+                AssTagAlignment(5, legacy=True),
             ],
             r"{\an5\a6}",
         ),
         (
             [
-                AssTagList([AssTagAlignment(5, legacy=False)]),
-                AssTagList([AssTagAlignment(5, legacy=False)]),
+                AssTagListOpening(),
+                AssTagAlignment(5, legacy=False),
+                AssTagListEnding(),
+                AssTagListOpening(),
+                AssTagAlignment(5, legacy=False),
+                AssTagListEnding(),
             ],
-            r"{\an5}{\an5}",
+            r"{\an5\an5}",  # autoinsert overrides {}
         ),
         (
             [
                 AssText("abc def"),
-                AssTagList([AssTagAlignment(5, legacy=False)]),
+                AssTagAlignment(5, legacy=False),
                 AssText("ghi jkl"),
-                AssTagList([AssTagAlignment(5, legacy=False)]),
+                AssTagAlignment(5, legacy=False),
                 AssText("123 456"),
             ],
             r"abc def{\an5}ghi jkl{\an5}123 456",
@@ -49,24 +48,24 @@ from ass_tag_parser import *
         (
             [
                 AssText("I am "),
-                AssTagList([AssTagBold(enabled=True)]),
+                AssTagBold(enabled=True),
                 AssText("not"),
-                AssTagList([AssTagBold(enabled=False)]),
+                AssTagBold(enabled=False),
                 AssText(" amused."),
             ],
             r"I am {\b1}not{\b0} amused.",
         ),
         (
             [
-                AssTagList([AssTagBold(weight=100)]),
+                AssTagBold(weight=100),
                 AssText("How "),
-                AssTagList([AssTagBold(weight=300)]),
+                AssTagBold(weight=300),
                 AssText("bold "),
-                AssTagList([AssTagBold(weight=500)]),
+                AssTagBold(weight=500),
                 AssText("can "),
-                AssTagList([AssTagBold(weight=700)]),
+                AssTagBold(weight=700),
                 AssText("you "),
-                AssTagList([AssTagBold(weight=900)]),
+                AssTagBold(weight=900),
                 AssText("get?"),
             ],
             r"{\b100}How {\b300}bold {\b500}can {\b700}you {\b900}get?",
@@ -74,37 +73,29 @@ from ass_tag_parser import *
         (
             [
                 AssText(r"-Hey\N"),
-                AssTagList([AssTagResetStyle(style="Alternate")]),
+                AssTagResetStyle(style="Alternate"),
                 AssText(r"-Huh?\N"),
-                AssTagList([AssTagResetStyle(style=None)]),
+                AssTagResetStyle(style=None),
                 AssText("-Who are you?"),
             ],
             r"-Hey\N{\rAlternate}-Huh?\N{\r}-Who are you?",
         ),
         (
             [
-                AssTagList(
-                    [
-                        AssTagColor(0, 0, 255, 1),
-                        AssTagAnimation(tags=[AssTagColor(255, 0, 0, 1)]),
-                    ]
-                ),
+                AssTagColor(0, 0, 255, 1),
+                AssTagAnimation(tags=[AssTagColor(255, 0, 0, 1)]),
                 AssText("Hello!"),
             ],
             r"{\1c&HFF0000&\t(\1c&H0000FF&)}Hello!",
         ),
         (
             [
-                AssTagList(
-                    [
-                        AssTagAlignment(5, legacy=False),
-                        AssTagAnimation(
-                            [AssTagZRotation(angle=3600)],
-                            time1=0,
-                            time2=5000,
-                            acceleration=None,
-                        ),
-                    ]
+                AssTagAlignment(5, legacy=False),
+                AssTagAnimation(
+                    [AssTagZRotation(angle=3600)],
+                    time1=0,
+                    time2=5000,
+                    acceleration=None,
                 ),
                 AssText("Wheee"),
             ],
@@ -112,16 +103,12 @@ from ass_tag_parser import *
         ),
         (
             [
-                AssTagList(
-                    [
-                        AssTagAlignment(5, legacy=False),
-                        AssTagAnimation(
-                            [AssTagZRotation(angle=3600)],
-                            time1=0,
-                            time2=5000,
-                            acceleration=0.5,
-                        ),
-                    ]
+                AssTagAlignment(5, legacy=False),
+                AssTagAnimation(
+                    [AssTagZRotation(angle=3600)],
+                    time1=0,
+                    time2=5000,
+                    acceleration=0.5,
                 ),
                 AssText("Wheee"),
             ],
@@ -129,113 +116,59 @@ from ass_tag_parser import *
         ),
         (
             [
-                AssTagList(
-                    [
-                        AssTagAlignment(5, legacy=False),
-                        AssTagFontXScale(0),
-                        AssTagFontYScale(0),
-                        AssTagAnimation(
-                            [AssTagFontXScale(100), AssTagFontYScale(100)],
-                            time1=0,
-                            time2=500,
-                            acceleration=None,
-                        ),
-                    ]
+                AssTagAlignment(5, legacy=False),
+                AssTagFontXScale(0),
+                AssTagFontYScale(0),
+                AssTagAnimation(
+                    [AssTagFontXScale(100), AssTagFontYScale(100)],
+                    time1=0,
+                    time2=500,
+                    acceleration=None,
                 ),
                 AssText("Boo!"),
             ],
             r"{\an5\fscx0\fscy0\t(0,500,\fscx100\fscy100)}Boo!",
         ),
         (
-            [AssTagList([AssTagComment("comment"), AssTagBold(enabled=True)])],
+            [AssTagComment("comment"), AssTagBold(enabled=True)],
             r"{comment\b1}",
         ),
         (
-            [
-                AssTagList(
-                    [AssTagBold(enabled=True), AssTagComment(text="comment")]
-                )
-            ],
+            [AssTagBold(enabled=True), AssTagComment(text="comment")],
             r"{\b1comment}",
         ),
         (
-            [AssTagList([AssTagAlpha(0xFF, 2), AssTagComment("comment")])],
+            [AssTagAlpha(0xFF, 2), AssTagComment("comment")],
             r"{\2a&HFF&comment}",
         ),
+        ([AssTagBlurEdges(times=2), AssTagComment(".2")], r"{\be2.2}"),
+        ([AssTagFontSize(size=5), AssTagComment(text=".4")], r"{\fs5.4}"),
+        ([AssTagKaraoke(duration=505, karaoke_type=1)], r"{\k50.5}"),
+        ([AssTagKaraoke(duration=505, karaoke_type=2)], r"{\K50.5}"),
+        ([AssTagKaraoke(duration=505, karaoke_type=3)], r"{\kf50.5}"),
+        ([AssTagKaraoke(duration=505, karaoke_type=4)], r"{\ko50.5}"),
         (
-            [AssTagList([AssTagBlurEdges(times=2), AssTagComment(".2")])],
-            r"{\be2.2}",
-        ),
-        (
-            [AssTagList([AssTagFontSize(size=5), AssTagComment(text=".4")])],
-            r"{\fs5.4}",
-        ),
-        (
-            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=1)])],
+            [AssTagKaraoke(duration=500, karaoke_type=1), AssTagComment(".5")],
             r"{\k50.5}",
         ),
         (
-            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=2)])],
+            [AssTagKaraoke(duration=500, karaoke_type=2), AssTagComment(".5")],
             r"{\K50.5}",
         ),
         (
-            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=3)])],
+            [AssTagKaraoke(duration=500, karaoke_type=3), AssTagComment(".5")],
             r"{\kf50.5}",
         ),
         (
-            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=4)])],
-            r"{\ko50.5}",
-        ),
-        (
-            [
-                AssTagList(
-                    [
-                        AssTagKaraoke(duration=500, karaoke_type=1),
-                        AssTagComment(".5"),
-                    ]
-                )
-            ],
-            r"{\k50.5}",
-        ),
-        (
-            [
-                AssTagList(
-                    [
-                        AssTagKaraoke(duration=500, karaoke_type=2),
-                        AssTagComment(".5"),
-                    ]
-                )
-            ],
-            r"{\K50.5}",
-        ),
-        (
-            [
-                AssTagList(
-                    [
-                        AssTagKaraoke(duration=500, karaoke_type=3),
-                        AssTagComment(".5"),
-                    ]
-                )
-            ],
-            r"{\kf50.5}",
-        ),
-        (
-            [
-                AssTagList(
-                    [
-                        AssTagKaraoke(duration=500, karaoke_type=4),
-                        AssTagComment(".5"),
-                    ]
-                )
-            ],
+            [AssTagKaraoke(duration=500, karaoke_type=4), AssTagComment(".5")],
             r"{\ko50.5}",
         ),
     ],
 )
 def test_composing_valid_ass_line(
-    source_blocks: T.List[AssBlock], expected_line: str
+    source_blocks: T.List[AssItem], expected_line: str
 ) -> None:
-    assert expected_line == compose_ass(AssLine(source_blocks))
+    assert expected_line == compose_ass(source_blocks)
 
 
 @pytest.mark.parametrize(
@@ -467,5 +400,4 @@ def test_composing_valid_ass_line(
 def test_composing_valid_single_tag(
     source_tag: AssTag, expected_line: str
 ) -> None:
-    source_line = AssLine([AssTagList([source_tag])])
-    assert expected_line == compose_ass(source_line)
+    assert expected_line == compose_ass([source_tag])

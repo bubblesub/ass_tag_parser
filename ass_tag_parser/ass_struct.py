@@ -5,11 +5,11 @@ from ass_tag_parser.common import Meta
 
 
 class AssItem:
-    pass
+    meta: T.Optional[Meta] = None
 
 
 class AssTag(AssItem):
-    meta: T.Optional[Meta] = None
+    pass
 
 
 @dataclass
@@ -244,20 +244,16 @@ class AssTagClipVector(AssTag):
     inverse: bool
 
 
-class AssBlock(AssItem):
-    meta: T.Optional[Meta] = None
+@dataclass
+class AssTagListOpening(AssItem):
+    pass
 
 
 @dataclass
-class AssText(AssBlock):
+class AssTagListEnding(AssItem):
+    pass
+
+
+@dataclass
+class AssText(AssItem):
     text: str
-
-
-@dataclass
-class AssTagList(AssBlock):
-    tags: T.List[AssTag]
-
-
-@dataclass
-class AssLine:
-    chunks: T.List[AssBlock]

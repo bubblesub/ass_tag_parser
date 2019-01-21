@@ -1,62 +1,52 @@
-import contextlib
+from dataclasses import dataclass
 
 from ass_tag_parser.ass_struct import *
 from ass_tag_parser.common import smart_float
 from ass_tag_parser.io import MyIO
 
 
-def walk_ass_line_ctx(
-    ass_line: AssLine, visit: T.Callable[[AssItem], T.Iterator[None]]
-) -> None:
-    def walk_items(items: T.Sequence[AssItem]) -> None:
-        for item in items:
-            with visit(item):
-                if isinstance(item, (AssTagList, AssTagAnimation)):
-                    walk_items(item.tags)
-
-    walk_items(ass_line.chunks)
+@dataclass
+class _ComposeContext:
+    io: MyIO
+    autoinsert: bool
+    opened: bool = False
 
 
-def walk_ass_line(
-    ass_line: AssLine, visit: T.Callable[[AssItem], None]
-) -> None:
-    def walk_items(items: T.Sequence[AssItem]) -> None:
-        for item in items:
-            visit(item)
-            if isinstance(item, (AssTagList, AssTagAnimation)):
-                walk_items(item.tags)
+def visitor(ctx: _ComposeContext, item: AssItem) -> None:
+    if isinstance(item, AssTag) and ctx.autoinsert and not ctx.opened:
+        ctx.io.write("{")
+        ctx.opened = True
+    elif isinstance(item, AssText) and ctx.autoinsert and ctx.opened:
+        ctx.io.write("}")
+        ctx.opened = False
 
-    walk_items(ass_line.chunks)
+    if isinstance(item, AssTagListOpening):
+        if not ctx.autoinsert:
+            ctx.io.write("{")
+    elif isinstance(item, AssTagListEnding):
+        if not ctx.autoinsert:
+            ctx.io.write("}")
 
-
-@contextlib.contextmanager
-def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
-    if isinstance(item, AssTagList):
-        text_io.write("{")
-        yield
-        text_io.write("}")
-        return
-
-    if isinstance(item, AssTagAnimation):
-        text_io.write("\\t(")
+    elif isinstance(item, AssTagAnimation):
+        ctx.io.write("\\t(")
         if item.time1 is not None and item.time2 is not None:
-            text_io.write(
+            ctx.io.write(
                 f"{smart_float(item.time1)},{smart_float(item.time2)},"
             )
         if item.acceleration is not None:
-            text_io.write(f"{smart_float(item.acceleration)},")
-        yield
-        text_io.write(")")
-        return
+            ctx.io.write(f"{smart_float(item.acceleration)},")
+        for subitem in item.tags:
+            visitor(ctx, subitem)
+        ctx.io.write(")")
 
-    if isinstance(item, AssText):
-        text_io.write(item.text)
+    elif isinstance(item, AssText):
+        ctx.io.write(item.text)
     elif isinstance(item, AssTagComment):
-        text_io.write(f"{item.text}")
+        ctx.io.write(f"{item.text}")
     elif isinstance(item, AssTagBaselineOffset):
-        text_io.write(f"\\pbo{smart_float(item.y)}")
+        ctx.io.write(f"\\pbo{smart_float(item.y)}")
     elif isinstance(item, AssTagDrawingMode):
-        text_io.write(f"\\p{item.scale}")
+        ctx.io.write(f"\\p{item.scale}")
     elif isinstance(item, AssTagAlignment):
         if item.legacy:
             value = item.alignment
@@ -64,112 +54,107 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
                 value += 1
             elif value in {7, 8, 9}:
                 value += 2
-            text_io.write(f"\\a{value}")
+            ctx.io.write(f"\\a{value}")
         else:
-            text_io.write(f"\\an{item.alignment}")
+            ctx.io.write(f"\\an{item.alignment}")
     elif isinstance(item, AssTagFade):
-        text_io.write("\\fad(")
-        text_io.write(f"{smart_float(item.time1)},{smart_float(item.time2)}")
-        text_io.write(")")
+        ctx.io.write("\\fad(")
+        ctx.io.write(f"{smart_float(item.time1)},{smart_float(item.time2)}")
+        ctx.io.write(")")
     elif isinstance(item, AssTagFadeComplex):
-        text_io.write("\\fade(")
-        text_io.write(f"{item.alpha1},{item.alpha2},{item.alpha3},")
-        text_io.write(f"{smart_float(item.time1)},{smart_float(item.time2)},")
-        text_io.write(f"{smart_float(item.time3)},{smart_float(item.time4)}")
-        text_io.write(")")
+        ctx.io.write("\\fade(")
+        ctx.io.write(f"{item.alpha1},{item.alpha2},{item.alpha3},")
+        ctx.io.write(f"{smart_float(item.time1)},{smart_float(item.time2)},")
+        ctx.io.write(f"{smart_float(item.time3)},{smart_float(item.time4)}")
+        ctx.io.write(")")
     elif isinstance(item, AssTagMove):
-        text_io.write("\\move(")
-        text_io.write(f"{smart_float(item.x1)},{smart_float(item.y1)},")
-        text_io.write(f"{smart_float(item.x2)},{smart_float(item.y2)}")
+        ctx.io.write("\\move(")
+        ctx.io.write(f"{smart_float(item.x1)},{smart_float(item.y1)},")
+        ctx.io.write(f"{smart_float(item.x2)},{smart_float(item.y2)}")
         if item.time1 is not None and item.time2 is not None:
-            text_io.write(
+            ctx.io.write(
                 f",{smart_float(item.time1)},{smart_float(item.time2)}"
             )
-        text_io.write(")")
+        ctx.io.write(")")
     elif isinstance(item, AssTagColor):
-        text_io.write("\\c" if item.short else f"\\{item.target}c")
+        ctx.io.write("\\c" if item.short else f"\\{item.target}c")
         if (
             item.red is not None
             and item.green is not None
             and item.blue is not None
         ):
-            text_io.write("&H")
-            text_io.write(f"{item.blue:02X}")
-            text_io.write(f"{item.green:02X}")
-            text_io.write(f"{item.red:02X}")
-            text_io.write("&")
+            ctx.io.write("&H")
+            ctx.io.write(f"{item.blue:02X}")
+            ctx.io.write(f"{item.green:02X}")
+            ctx.io.write(f"{item.red:02X}")
+            ctx.io.write("&")
     elif isinstance(item, AssTagAlpha):
-        text_io.write("\\alpha" if item.target == 0 else f"\\{item.target}a")
+        ctx.io.write("\\alpha" if item.target == 0 else f"\\{item.target}a")
         if item.value is not None:
-            text_io.write("&H")
-            text_io.write(f"{item.value:02X}")
-            text_io.write("&")
+            ctx.io.write("&H")
+            ctx.io.write(f"{item.value:02X}")
+            ctx.io.write("&")
     elif isinstance(item, AssTagResetStyle):
-        text_io.write(f"\\r{item.style or ''}")
+        ctx.io.write(f"\\r{item.style or ''}")
     elif isinstance(item, AssTagBorder):
-        text_io.write(f"\\bord{smart_float(item.size)}")
+        ctx.io.write(f"\\bord{smart_float(item.size)}")
     elif isinstance(item, AssTagXBorder):
-        text_io.write(f"\\xbord{smart_float(item.size)}")
+        ctx.io.write(f"\\xbord{smart_float(item.size)}")
     elif isinstance(item, AssTagYBorder):
-        text_io.write(f"\\ybord{smart_float(item.size)}")
+        ctx.io.write(f"\\ybord{smart_float(item.size)}")
     elif isinstance(item, AssTagShadow):
-        text_io.write(f"\\shad{smart_float(item.size)}")
+        ctx.io.write(f"\\shad{smart_float(item.size)}")
     elif isinstance(item, AssTagXShadow):
-        text_io.write(f"\\xshad{smart_float(item.size)}")
+        ctx.io.write(f"\\xshad{smart_float(item.size)}")
     elif isinstance(item, AssTagYShadow):
-        text_io.write(f"\\yshad{smart_float(item.size)}")
+        ctx.io.write(f"\\yshad{smart_float(item.size)}")
     elif isinstance(item, AssTagXRotation):
-        text_io.write(f"\\frx{smart_float(item.angle)}")
+        ctx.io.write(f"\\frx{smart_float(item.angle)}")
     elif isinstance(item, AssTagYRotation):
-        text_io.write(f"\\fry{smart_float(item.angle)}")
+        ctx.io.write(f"\\fry{smart_float(item.angle)}")
     elif isinstance(item, AssTagZRotation):
-        text_io.write(
+        ctx.io.write(
             f"\\fr{smart_float(item.angle)}"
             if item.short
             else f"\\frz{smart_float(item.angle)}"
         )
     elif isinstance(item, AssTagRotationOrigin):
-        text_io.write(f"\\org({smart_float(item.x)},{smart_float(item.y)})")
+        ctx.io.write(f"\\org({smart_float(item.x)},{smart_float(item.y)})")
     elif isinstance(item, AssTagPosition):
-        text_io.write(f"\\pos({smart_float(item.x)},{smart_float(item.y)})")
+        ctx.io.write(f"\\pos({smart_float(item.x)},{smart_float(item.y)})")
     elif isinstance(item, AssTagXShear):
-        text_io.write(f"\\fax{smart_float(item.value)}")
+        ctx.io.write(f"\\fax{smart_float(item.value)}")
     elif isinstance(item, AssTagYShear):
-        text_io.write(f"\\fay{smart_float(item.value)}")
+        ctx.io.write(f"\\fay{smart_float(item.value)}")
     elif isinstance(item, AssTagFontName):
-        text_io.write(f"\\fn{item.name}")
+        ctx.io.write(f"\\fn{item.name}")
     elif isinstance(item, AssTagFontSize):
-        text_io.write(f"\\fs{item.size}")
+        ctx.io.write(f"\\fs{item.size}")
     elif isinstance(item, AssTagFontEncoding):
-        text_io.write(f"\\fe{item.encoding}")
+        ctx.io.write(f"\\fe{item.encoding}")
     elif isinstance(item, AssTagLetterSpacing):
-        text_io.write(f"\\fsp{smart_float(item.spacing)}")
+        ctx.io.write(f"\\fsp{smart_float(item.spacing)}")
     elif isinstance(item, AssTagFontXScale):
-        text_io.write(f"\\fscx{smart_float(item.scale)}")
+        ctx.io.write(f"\\fscx{smart_float(item.scale)}")
     elif isinstance(item, AssTagFontYScale):
-        text_io.write(f"\\fscy{smart_float(item.scale)}")
+        ctx.io.write(f"\\fscy{smart_float(item.scale)}")
     elif isinstance(item, AssTagBlurEdges):
-        text_io.write(f"\\be{item.times}")
+        ctx.io.write(f"\\be{item.times}")
     elif isinstance(item, AssTagBlurEdgesGauss):
-        text_io.write(f"\\blur{smart_float(item.weight)}")
+        ctx.io.write(f"\\blur{smart_float(item.weight)}")
     elif isinstance(item, AssTagKaraoke):
-        tag = {
-            1: "\\k",
-            2: "\\K",
-            3: "\\kf",
-            4: "\\ko",
-        }[item.karaoke_type]
-        text_io.write(f"{tag}{smart_float(item.duration / 10)}")
+        tag = {1: "\\k", 2: "\\K", 3: "\\kf", 4: "\\ko"}[item.karaoke_type]
+        ctx.io.write(f"{tag}{smart_float(item.duration / 10)}")
     elif isinstance(item, AssTagItalic):
-        text_io.write("\\i" + ("1" if item.enabled else "0"))
+        ctx.io.write("\\i" + ("1" if item.enabled else "0"))
     elif isinstance(item, AssTagUnderline):
-        text_io.write("\\u" + ("1" if item.enabled else "0"))
+        ctx.io.write("\\u" + ("1" if item.enabled else "0"))
     elif isinstance(item, AssTagStrikeout):
-        text_io.write("\\s" + ("1" if item.enabled else "0"))
+        ctx.io.write("\\s" + ("1" if item.enabled else "0"))
     elif isinstance(item, AssTagWrapStyle):
-        text_io.write(f"\\q{item.style}")
+        ctx.io.write(f"\\q{item.style}")
     elif isinstance(item, AssTagBold):
-        text_io.write(
+        ctx.io.write(
             "\\b"
             + (
                 str(item.weight)
@@ -178,22 +163,25 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
             )
         )
     elif isinstance(item, AssTagClipRectangle):
-        text_io.write("\\iclip" if item.inverse else "\\clip")
-        text_io.write(f"({smart_float(item.x1)},{smart_float(item.y1)},")
-        text_io.write(f"{smart_float(item.x2)},{smart_float(item.y2)})")
+        ctx.io.write("\\iclip" if item.inverse else "\\clip")
+        ctx.io.write(f"({smart_float(item.x1)},{smart_float(item.y1)},")
+        ctx.io.write(f"{smart_float(item.x2)},{smart_float(item.y2)})")
     elif isinstance(item, AssTagClipVector):
-        text_io.write("\\iclip" if item.inverse else "\\clip")
-        text_io.write("(")
+        ctx.io.write("\\iclip" if item.inverse else "\\clip")
+        ctx.io.write("(")
         if item.scale is not None:
-            text_io.write(f"{item.scale},")
-        text_io.write(f"{item.path})")
+            ctx.io.write(f"{item.scale},")
+        ctx.io.write(f"{item.path})")
     else:
-        raise NotImplementedError("not implemented")
-
-    yield
+        raise NotImplementedError(f"not implemented ({type(item)})")
 
 
-def compose_ass(ass_line: AssLine) -> str:
-    text_io = MyIO()
-    walk_ass_line_ctx(ass_line, lambda item: visitor(text_io, item))
-    return text_io.text
+def compose_ass(ass_line: T.List[AssItem], autoinsert: bool = True) -> str:
+    ctx = _ComposeContext(io=MyIO(), autoinsert=autoinsert)
+
+    for item in ass_line:
+        visitor(ctx, item)
+
+    if ctx.opened:
+        ctx.io.write("}")
+    return ctx.io.text

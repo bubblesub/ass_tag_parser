@@ -545,10 +545,11 @@ def _parse_ass_tags(text_io: MyIO) -> T.Iterable[AssTag]:
             yield block
 
 
-def _parse_ass(text_io: MyIO) -> T.Iterable[AssBlock]:
+def _parse_ass(text_io: MyIO) -> T.Iterable[AssItem]:
     while not text_io.eof:
         i = text_io.pos
         if text_io.peek(1) == "{":
+
             text_io.skip(1)
             while True:
                 if text_io.eof:
@@ -560,13 +561,19 @@ def _parse_ass(text_io: MyIO) -> T.Iterable[AssBlock]:
                     break
                 text_io.skip(1)
             j = text_io.pos
-            tag_list = AssTagList(
-                _merge_comments(
-                    list(_parse_ass_tags(text_io.divide(i + 1, j - 1)))
-                )
+
+            tag_list_opening = AssTagListOpening()
+            tag_list_opening.meta = Meta(i, i + 1, "{")
+            yield tag_list_opening
+
+            yield from _merge_comments(
+                list(_parse_ass_tags(text_io.divide(i + 1, j - 1)))
             )
-            tag_list.meta = Meta(i, j, text_io.text[i:j])
-            yield tag_list
+
+            tag_list_ending = AssTagListEnding()
+            tag_list_ending.meta = Meta(j - 1, j, "}")
+            yield tag_list_ending
+
         else:
             while not text_io.eof:
                 if text_io.peek(1) == "{":
@@ -580,6 +587,6 @@ def _parse_ass(text_io: MyIO) -> T.Iterable[AssBlock]:
             yield text
 
 
-def parse_ass(text: str) -> AssLine:
+def parse_ass(text: str) -> T.List[AssItem]:
     text_io = MyIO(text)
-    return AssLine(list(_parse_ass(text_io)))
+    return list(_parse_ass(text_io))
