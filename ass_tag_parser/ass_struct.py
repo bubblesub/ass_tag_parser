@@ -158,23 +158,9 @@ class AssTagResetStyle(AssTag):
 
 
 @dataclass
-class AssTagKaraoke1(AssTag):
+class AssTagKaraoke(AssTag):
     duration: float
-
-
-@dataclass
-class AssTagKaraoke2(AssTag):
-    duration: float
-
-
-@dataclass
-class AssTagKaraoke3(AssTag):
-    duration: float
-
-
-@dataclass
-class AssTagKaraoke4(AssTag):
-    duration: float
+    karaoke_type: int
 
 
 @dataclass

@@ -269,13 +269,14 @@ def _alpha_arg(tag: str, text_io: MyIO) -> T.Tuple[T.Optional[int], int]:
     return (value, target)
 
 
-def _karaoke_arg(tag: str, text_io: MyIO) -> T.Any:
+def _karaoke_arg(tag: str, text_io: MyIO) -> T.Tuple[float, int]:
+    karaoke_type = {"\\k": 1, "\\K": 2, "\\kf": 3, "\\ko": 4}[tag]
     value, = _positive_float_arg(tag, text_io)
     if value is None:
         raise BadAssTagArgument(
             text_io.global_pos, f"{tag} requires an argument"
         )
-    return (value * 10,)
+    return (value * 10, karaoke_type)
 
 
 def _wrap_style_arg(tag: str, text_io: MyIO) -> T.Any:
@@ -414,10 +415,10 @@ _PARSING_MAP = [
     (r"\u", AssTagUnderline, _bool_arg),
     (r"\s", AssTagStrikeout, _bool_arg),
     (r"\b", AssTagBold, _bold_arg),
-    (r"\kf", AssTagKaraoke3, _karaoke_arg),
-    (r"\ko", AssTagKaraoke4, _karaoke_arg),
-    (r"\k", AssTagKaraoke1, _karaoke_arg),
-    (r"\K", AssTagKaraoke2, _karaoke_arg),
+    (r"\kf", AssTagKaraoke, _karaoke_arg),
+    (r"\ko", AssTagKaraoke, _karaoke_arg),
+    (r"\k", AssTagKaraoke, _karaoke_arg),
+    (r"\K", AssTagKaraoke, _karaoke_arg),
     (r"\q", AssTagWrapStyle, _wrap_style_arg),
     (r"\r", AssTagResetStyle, _single_arg),
     (r"\alpha", AssTagAlpha, _alpha_arg),

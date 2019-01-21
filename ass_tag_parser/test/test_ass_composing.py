@@ -170,24 +170,64 @@ from ass_tag_parser import *
             [AssTagList([AssTagFontSize(size=5), AssTagComment(text=".4")])],
             r"{\fs5.4}",
         ),
-        ([AssTagList([AssTagKaraoke1(duration=505)])], r"{\k50.5}"),
-        ([AssTagList([AssTagKaraoke2(duration=505)])], r"{\K50.5}"),
-        ([AssTagList([AssTagKaraoke3(duration=505)])], r"{\kf50.5}"),
-        ([AssTagList([AssTagKaraoke4(duration=505)])], r"{\ko50.5}"),
         (
-            [AssTagList([AssTagKaraoke1(duration=500), AssTagComment(".5")])],
+            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=1)])],
             r"{\k50.5}",
         ),
         (
-            [AssTagList([AssTagKaraoke2(duration=500), AssTagComment(".5")])],
+            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=2)])],
             r"{\K50.5}",
         ),
         (
-            [AssTagList([AssTagKaraoke3(duration=500), AssTagComment(".5")])],
+            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=3)])],
             r"{\kf50.5}",
         ),
         (
-            [AssTagList([AssTagKaraoke4(duration=500), AssTagComment(".5")])],
+            [AssTagList([AssTagKaraoke(duration=505, karaoke_type=4)])],
+            r"{\ko50.5}",
+        ),
+        (
+            [
+                AssTagList(
+                    [
+                        AssTagKaraoke(duration=500, karaoke_type=1),
+                        AssTagComment(".5"),
+                    ]
+                )
+            ],
+            r"{\k50.5}",
+        ),
+        (
+            [
+                AssTagList(
+                    [
+                        AssTagKaraoke(duration=500, karaoke_type=2),
+                        AssTagComment(".5"),
+                    ]
+                )
+            ],
+            r"{\K50.5}",
+        ),
+        (
+            [
+                AssTagList(
+                    [
+                        AssTagKaraoke(duration=500, karaoke_type=3),
+                        AssTagComment(".5"),
+                    ]
+                )
+            ],
+            r"{\kf50.5}",
+        ),
+        (
+            [
+                AssTagList(
+                    [
+                        AssTagKaraoke(duration=500, karaoke_type=4),
+                        AssTagComment(".5"),
+                    ]
+                )
+            ],
             r"{\ko50.5}",
         ),
     ],
@@ -270,10 +310,10 @@ def test_composing_valid_ass_line(
         (AssTagAlpha(0x12, 2), r"{\2a&H12&}"),
         (AssTagAlpha(0x12, 3), r"{\3a&H12&}"),
         (AssTagAlpha(0x12, 4), r"{\4a&H12&}"),
-        (AssTagKaraoke1(duration=500), r"{\k50}"),
-        (AssTagKaraoke2(duration=500), r"{\K50}"),
-        (AssTagKaraoke3(duration=500), r"{\kf50}"),
-        (AssTagKaraoke4(duration=500), r"{\ko50}"),
+        (AssTagKaraoke(duration=500, karaoke_type=1), r"{\k50}"),
+        (AssTagKaraoke(duration=500, karaoke_type=2), r"{\K50}"),
+        (AssTagKaraoke(duration=500, karaoke_type=3), r"{\kf50}"),
+        (AssTagKaraoke(duration=500, karaoke_type=4), r"{\ko50}"),
         (AssTagAlignment(5, legacy=False), r"{\an5}"),
         (AssTagAlignment(1, legacy=True), r"{\a1}"),
         (AssTagAlignment(2, legacy=True), r"{\a2}"),

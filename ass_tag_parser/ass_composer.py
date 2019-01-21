@@ -152,14 +152,14 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
         text_io.write(f"\\be{item.times}")
     elif isinstance(item, AssTagBlurEdgesGauss):
         text_io.write(f"\\blur{smart_float(item.weight)}")
-    elif isinstance(item, AssTagKaraoke1):
-        text_io.write(f"\\k{smart_float(item.duration / 10)}")
-    elif isinstance(item, AssTagKaraoke2):
-        text_io.write(f"\\K{smart_float(item.duration / 10)}")
-    elif isinstance(item, AssTagKaraoke3):
-        text_io.write(f"\\kf{smart_float(item.duration / 10)}")
-    elif isinstance(item, AssTagKaraoke4):
-        text_io.write(f"\\ko{smart_float(item.duration / 10)}")
+    elif isinstance(item, AssTagKaraoke):
+        tag = {
+            1: "\\k",
+            2: "\\K",
+            3: "\\kf",
+            4: "\\ko",
+        }[item.karaoke_type]
+        text_io.write(f"{tag}{smart_float(item.duration / 10)}")
     elif isinstance(item, AssTagItalic):
         text_io.write("\\i" + ("1" if item.enabled else "0"))
     elif isinstance(item, AssTagUnderline):
