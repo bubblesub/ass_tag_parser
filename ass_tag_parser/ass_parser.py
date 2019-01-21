@@ -127,18 +127,18 @@ def _pos_args(tag: str, text_io: MyIO) -> T.Tuple[float, float]:
         )
 
 
-def _fade_simple_args(tag: str, text_io: MyIO) -> T.Tuple[int, int]:
+def _fade_simple_args(tag: str, text_io: MyIO) -> T.Tuple[float, float]:
     args = list(_complex_args(tag, text_io, {2}))
 
     try:
-        args[0:2] = [int(item[0]) for item in args[0:2]]
+        args[0:2] = [float(item[0]) for item in args[0:2]]
         if any(arg < 0 for arg in args[0:2]):
             raise BadAssTagArgument(
                 text_io.global_pos, f"{tag} takes only positive times"
             )
     except ValueError:
         raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} requires integer times"
+            text_io.global_pos, f"{tag} requires decimal times"
         )
 
     return tuple(args)
@@ -146,7 +146,7 @@ def _fade_simple_args(tag: str, text_io: MyIO) -> T.Tuple[int, int]:
 
 def _fade_complex_args(
     tag: str, text_io: MyIO
-) -> T.Tuple[int, int, int, int, int, int, int]:
+) -> T.Tuple[int, int, int, float, float, float, float]:
     args = list(_complex_args(tag, text_io, {7}))
 
     try:
@@ -161,14 +161,14 @@ def _fade_complex_args(
         )
 
     try:
-        args[3:7] = [int(item[0]) for item in args[3:7]]
+        args[3:7] = [float(item[0]) for item in args[3:7]]
         if any(arg < 0 for arg in args[3:7]):
             raise BadAssTagArgument(
                 text_io.global_pos, f"{tag} takes only positive times"
             )
     except ValueError:
         raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} requires integer times"
+            text_io.global_pos, f"{tag} requires decimal times"
         )
 
     return tuple(args)
@@ -289,7 +289,7 @@ def _wrap_style_arg(tag: str, text_io: MyIO) -> T.Any:
 
 def _move_args(
     tag: str, text_io: MyIO
-) -> T.Tuple[float, float, float, float, T.Optional[int], T.Optional[int]]:
+) -> T.Tuple[float, float, float, float, T.Optional[float], T.Optional[float]]:
     args = list(_complex_args(tag, text_io, {4, 6}))
 
     try:
@@ -301,14 +301,14 @@ def _move_args(
 
     if len(args) == 6:
         try:
-            args[4:6] = [int(item[0]) for item in args[4:6]]
+            args[4:6] = [float(item[0]) for item in args[4:6]]
             if any(arg < 0 for arg in args[4:6]):
                 raise BadAssTagArgument(
                     text_io.global_pos, f"{tag} takes only positive times"
                 )
         except ValueError:
             raise BadAssTagArgument(
-                text_io.global_pos, f"{tag} requires integer times"
+                text_io.global_pos, f"{tag} requires decimal times"
             )
 
     return args
@@ -317,11 +317,11 @@ def _move_args(
 def _animation_args(
     tag: str, text_io: MyIO
 ) -> T.Tuple[
-    T.List[AssTag], T.Optional[int], T.Optional[int], T.Optional[float]
+    T.List[AssTag], T.Optional[float], T.Optional[float], T.Optional[float]
 ]:
     acceleration: T.Union[None, str, float]
-    time1: T.Union[None, str, int]
-    time2: T.Union[None, str, int]
+    time1: T.Union[None, str, float]
+    time2: T.Union[None, str, float]
     tags: T.Union[None, str, T.List[AssTag]]
 
     args = _complex_args(tag, text_io, {1, 2, 3, 4})
@@ -359,11 +359,11 @@ def _animation_args(
         )
 
     try:
-        time1 = None if time1 is None else int(time1)
-        time2 = None if time2 is None else int(time2)
+        time1 = None if time1 is None else float(time1)
+        time2 = None if time2 is None else float(time2)
     except ValueError:
         raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} requires integer times"
+            text_io.global_pos, f"{tag} requires decimal times"
         )
     if (time1 is not None and time1 < 0) or (time2 is not None and time2 < 0):
         raise BadAssTagArgument(

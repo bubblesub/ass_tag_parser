@@ -114,8 +114,8 @@ class AssTagMove(AssTag):
     y1: float
     x2: float
     y2: float
-    time1: T.Optional[int] = None
-    time2: T.Optional[int] = None
+    time1: T.Optional[float] = None
+    time2: T.Optional[float] = None
 
 
 @dataclass
@@ -199,8 +199,8 @@ class AssTagWrapStyle(AssTag):
 
 @dataclass
 class AssTagFade(AssTag):
-    time1: int
-    time2: int
+    time1: float
+    time2: float
 
 
 @dataclass
@@ -208,10 +208,10 @@ class AssTagFadeComplex(AssTag):
     alpha1: int
     alpha2: int
     alpha3: int
-    time1: int
-    time2: int
-    time3: int
-    time4: int
+    time1: float
+    time2: float
+    time3: float
+    time4: float
 
 
 @dataclass
@@ -227,8 +227,8 @@ class AssTagYShear(AssTag):
 @dataclass
 class AssTagAnimation(AssTag):
     tags: T.List[AssTag]
-    time1: T.Optional[int] = None
-    time2: T.Optional[int] = None
+    time1: T.Optional[float] = None
+    time2: T.Optional[float] = None
     acceleration: T.Optional[float] = None
 
 

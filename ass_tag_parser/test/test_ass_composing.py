@@ -302,18 +302,44 @@ def test_composing_valid_ass_line(
             r"{\move(1,2,3,4)}",
         ),
         (
-            AssTagMove(x1=1.0, y1=2.0, x2=3.0, y2=4.0, time1=None, time2=None),
-            r"{\move(1,2,3,4)}",
+            AssTagMove(x1=1.0, y1=2.0, x2=3.0, y2=4.0, time1=5.0, time2=6.0),
+            r"{\move(1,2,3,4,5,6)}",
         ),
         (
-            AssTagMove(x1=1.1, y1=2.2, x2=3.3, y2=4.4, time1=None, time2=None),
-            r"{\move(1.1,2.2,3.3,4.4)}",
+            AssTagMove(x1=1.1, y1=2.2, x2=3.3, y2=4.4, time1=5.5, time2=6.6),
+            r"{\move(1.1,2.2,3.3,4.4,5.5,6.6)}",
         ),
         (
             AssTagMove(x1=1, y1=2, x2=3, y2=4, time1=100, time2=300),
             r"{\move(1,2,3,4,100,300)}",
         ),
         (AssTagFade(time1=100, time2=200), r"{\fad(100,200)}"),
+        (AssTagFade(time1=1.0, time2=2.0), r"{\fad(1,2)}"),
+        (AssTagFade(time1=1.1, time2=2.2), r"{\fad(1.1,2.2)}"),
+        (
+            AssTagFadeComplex(
+                alpha1=1,
+                alpha2=2,
+                alpha3=3,
+                time1=4.0,
+                time2=5.0,
+                time3=6.0,
+                time4=7.0,
+            ),
+            r"{\fade(1,2,3,4,5,6,7)}",
+        ),
+        (
+            AssTagFadeComplex(
+                alpha1=1,
+                alpha2=2,
+                alpha3=3,
+                time1=4.4,
+                time2=5.5,
+                time3=6.6,
+                time4=7.7,
+            ),
+            r"{\fade(1,2,3,4.4,5.5,6.6,7.7)}",
+        ),
         (
             AssTagFadeComplex(
                 alpha1=1,
@@ -327,17 +353,17 @@ def test_composing_valid_ass_line(
             r"{\fade(1,2,3,4,5,6,7)}",
         ),
         (
-            AssTagAnimation([], time1=1, time2=2, acceleration=3.0),
+            AssTagAnimation([], time1=1.0, time2=2.0, acceleration=3.0),
             r"{\t(1,2,3,)}",
         ),
         (
             AssTagAnimation(
                 [AssTagBlurEdges(5), AssTagFontSize(40)],
-                time1=50,
-                time2=100,
-                acceleration=1.2,
+                time1=1.1,
+                time2=2.2,
+                acceleration=3.3,
             ),
-            r"{\t(50,100,1.2,\be5\fs40)}",
+            r"{\t(1.1,2.2,3.3,\be5\fs40)}",
         ),
         (AssTagAnimation([], acceleration=1.0), r"{\t(1,)}"),
         (

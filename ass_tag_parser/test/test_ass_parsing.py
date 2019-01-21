@@ -314,6 +314,10 @@ def test_parsing_valid_ass_line(
             AssTagMove(x1=1.1, y1=2.2, x2=3.3, y2=4.4, time1=None, time2=None),
         ),
         (
+            r"{\move(1.1,2.2,3.3,4.4,5.5,6.6)}",
+            AssTagMove(x1=1.1, y1=2.2, x2=3.3, y2=4.4, time1=5.5, time2=6.6),
+        ),
+        (
             r"{\move(-1,-2,-3,-4)}",
             AssTagMove(x1=-1, y1=-2, x2=-3, y2=-4, time1=None, time2=None),
         ),
@@ -321,6 +325,7 @@ def test_parsing_valid_ass_line(
             r"{\move(1,2,3,4,100,300)}",
             AssTagMove(x1=1, y1=2, x2=3, y2=4, time1=100, time2=300),
         ),
+        (r"{\fad(1.1,2.2)}", AssTagFade(time1=1.1, time2=2.2)),
         (r"{\fad(100,200)}", AssTagFade(time1=100, time2=200)),
         (
             r"{\fade(1,2,3,4,5,6,7)}",
@@ -332,6 +337,18 @@ def test_parsing_valid_ass_line(
                 time2=5,
                 time3=6,
                 time4=7,
+            ),
+        ),
+        (
+            r"{\fade(1,2,3,4.4,5.5,6.6,7.7)}",
+            AssTagFadeComplex(
+                alpha1=1,
+                alpha2=2,
+                alpha3=3,
+                time1=4.4,
+                time2=5.5,
+                time3=6.6,
+                time4=7.7,
             ),
         ),
         (
@@ -530,23 +547,15 @@ def test_parsing_valid_single_tag(
         ),
         (
             r"{\move(0,0,0,0,garbage,0)}",
-            r"syntax error at pos 25: \move requires integer times",
+            r"syntax error at pos 25: \move requires decimal times",
         ),
         (
             r"{\move(0,0,0,0,0,garbage)}",
-            r"syntax error at pos 25: \move requires integer times",
+            r"syntax error at pos 25: \move requires decimal times",
         ),
         (
             r"{\move(0,0,0,0,0)}",
             r"syntax error at pos 17: \move takes 4 or 6 arguments (got 5)",
-        ),
-        (
-            r"{\move(0,0,0,0,5.5,0)}",
-            r"syntax error at pos 21: \move requires integer times",
-        ),
-        (
-            r"{\move(0,0,0,0,0,5.5)}",
-            r"syntax error at pos 21: \move requires integer times",
         ),
         (
             r"{\move(0,0,0,0,-5,0)}",
@@ -555,14 +564,6 @@ def test_parsing_valid_single_tag(
         (
             r"{\move(0,0,0,0,0,-5)}",
             r"syntax error at pos 20: \move takes only positive times",
-        ),
-        (
-            r"{\fad(1.1,2)}",
-            r"syntax error at pos 12: \fad requires integer times",
-        ),
-        (
-            r"{\fad(1,2.1)}",
-            r"syntax error at pos 12: \fad requires integer times",
         ),
         (
             r"{\fad(-1,2)}",
@@ -585,20 +586,20 @@ def test_parsing_valid_single_tag(
             r"syntax error at pos 23: \fade requires integer alpha values",
         ),
         (
-            r"{\fade(1,2,3,4.1,5,6,7)}",
-            r"syntax error at pos 23: \fade requires integer times",
+            r"{\fade(1,2,3,garbage,5,6,7)}",
+            r"syntax error at pos 27: \fade requires decimal times",
         ),
         (
-            r"{\fade(1,2,3,4,5.1,6,7)}",
-            r"syntax error at pos 23: \fade requires integer times",
+            r"{\fade(1,2,3,4,garbage,6,7)}",
+            r"syntax error at pos 27: \fade requires decimal times",
         ),
         (
-            r"{\fade(1,2,3,4,5,6.1,7)}",
-            r"syntax error at pos 23: \fade requires integer times",
+            r"{\fade(1,2,3,4,5,garbage,7)}",
+            r"syntax error at pos 27: \fade requires decimal times",
         ),
         (
-            r"{\fade(1,2,3,4,5,6,7.1)}",
-            r"syntax error at pos 23: \fade requires integer times",
+            r"{\fade(1,2,3,4,5,6,garbage)}",
+            r"syntax error at pos 27: \fade requires decimal times",
         ),
         (
             r"{\fade(-1,2,3,4,5,6,7)}",
@@ -634,19 +635,19 @@ def test_parsing_valid_single_tag(
         ),
         (
             r"{\t(garbage,0,asd)}",
-            "syntax error at pos 18: \\t requires integer times",
+            "syntax error at pos 18: \\t requires decimal times",
         ),
         (
             r"{\t(0,garbage,asd)}",
-            "syntax error at pos 18: \\t requires integer times",
+            "syntax error at pos 18: \\t requires decimal times",
         ),
         (
             r"{\t(garbage,0,0,asd)}",
-            "syntax error at pos 20: \\t requires integer times",
+            "syntax error at pos 20: \\t requires decimal times",
         ),
         (
             r"{\t(0,garbage,0,asd)}",
-            "syntax error at pos 20: \\t requires integer times",
+            "syntax error at pos 20: \\t requires decimal times",
         ),
         (
             r"{\t(0,0,garbage,asd)}",

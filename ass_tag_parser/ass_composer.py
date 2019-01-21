@@ -39,12 +39,12 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
 
     if isinstance(item, AssTagAnimation):
         text_io.write("\\t(")
+        if item.time1 is not None and item.time2 is not None:
+            text_io.write(
+                f"{smart_float(item.time1)},{smart_float(item.time2)},"
+            )
         if item.acceleration is not None:
-            if item.time1 is not None and item.time2 is not None:
-                text_io.write(f"{item.time1},{item.time2},")
             text_io.write(f"{smart_float(item.acceleration)},")
-        elif item.time1 is not None and item.time2 is not None:
-            text_io.write(f"{item.time1},{item.time2},")
         yield
         text_io.write(")")
         return
@@ -68,18 +68,23 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
         else:
             text_io.write(f"\\an{item.alignment}")
     elif isinstance(item, AssTagFade):
-        text_io.write(f"\\fad({item.time1},{item.time2})")
+        text_io.write("\\fad(")
+        text_io.write(f"{smart_float(item.time1)},{smart_float(item.time2)}")
+        text_io.write(")")
     elif isinstance(item, AssTagFadeComplex):
         text_io.write("\\fade(")
         text_io.write(f"{item.alpha1},{item.alpha2},{item.alpha3},")
-        text_io.write(f"{item.time1},{item.time2},{item.time3},{item.time4}")
+        text_io.write(f"{smart_float(item.time1)},{smart_float(item.time2)},")
+        text_io.write(f"{smart_float(item.time3)},{smart_float(item.time4)}")
         text_io.write(")")
     elif isinstance(item, AssTagMove):
         text_io.write("\\move(")
         text_io.write(f"{smart_float(item.x1)},{smart_float(item.y1)},")
         text_io.write(f"{smart_float(item.x2)},{smart_float(item.y2)}")
         if item.time1 is not None and item.time2 is not None:
-            text_io.write(f",{item.time1},{item.time2}")
+            text_io.write(
+                f",{smart_float(item.time1)},{smart_float(item.time2)}"
+            )
         text_io.write(")")
     elif isinstance(item, AssTagColor):
         text_io.write("\\c" if item.short else f"\\{item.target}c")
