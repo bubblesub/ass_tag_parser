@@ -20,7 +20,7 @@ class AssTagComment(AssTag):
 @dataclass
 class AssTagBold(AssTag):
     enabled: T.Optional[bool] = None
-    weight: T.Optional[float] = None
+    weight: T.Optional[int] = None
 
 
 @dataclass
@@ -70,7 +70,7 @@ class AssTagYShadow(AssTag):
 
 @dataclass
 class AssTagBlurEdges(AssTag):
-    times: T.Optional[float] = None
+    times: T.Optional[int] = None
 
 
 @dataclass

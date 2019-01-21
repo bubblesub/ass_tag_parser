@@ -1,5 +1,6 @@
 import typing as T
 
+from ass_tag_parser.common import smart_float
 from ass_tag_parser.draw_struct import *
 from ass_tag_parser.errors import BaseError
 
@@ -19,7 +20,12 @@ class Composer:
             except (IndexError, KeyError, ValueError, TypeError) as ex:
                 raise BaseError(ex)
 
-            ret.append(" ".join(map(str, result)))
+            result = [
+                smart_float(item) if isinstance(item, (int, float)) else item
+                for item in result
+            ]
+
+            ret.append(" ".join(result))
 
         return " ".join(ret)
 

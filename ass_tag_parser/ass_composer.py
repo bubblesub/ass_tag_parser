@@ -1,6 +1,7 @@
 import contextlib
 
 from ass_tag_parser.ass_struct import *
+from ass_tag_parser.common import smart_float
 from ass_tag_parser.io import MyIO
 
 
@@ -40,11 +41,8 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
         text_io.write("\\t(")
         if item.acceleration is not None:
             if item.time1 is not None and item.time2 is not None:
-                text_io.write(
-                    f"{item.time1},{item.time2},{item.acceleration},"
-                )
-            else:
-                text_io.write(f"{item.acceleration},")
+                text_io.write(f"{item.time1},{item.time2},")
+            text_io.write(f"{smart_float(item.acceleration)},")
         elif item.time1 is not None and item.time2 is not None:
             text_io.write(f"{item.time1},{item.time2},")
         yield
@@ -56,7 +54,7 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
     elif isinstance(item, AssTagComment):
         text_io.write(f"{item.text}")
     elif isinstance(item, AssTagBaselineOffset):
-        text_io.write(f"\\pbo{item.y}")
+        text_io.write(f"\\pbo{smart_float(item.y)}")
     elif isinstance(item, AssTagDrawingMode):
         text_io.write(f"\\p{item.scale}")
     elif isinstance(item, AssTagAlignment):
@@ -78,7 +76,8 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
         text_io.write(")")
     elif isinstance(item, AssTagMove):
         text_io.write("\\move(")
-        text_io.write(f"{item.x1},{item.y1},{item.x2},{item.y2}")
+        text_io.write(f"{smart_float(item.x1)},{smart_float(item.y1)},")
+        text_io.write(f"{smart_float(item.x2)},{smart_float(item.y2)}")
         if item.time1 is not None and item.time2 is not None:
             text_io.write(f",{item.time1},{item.time2}")
         text_io.write(")")
@@ -103,33 +102,35 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
     elif isinstance(item, AssTagResetStyle):
         text_io.write(f"\\r{item.style or ''}")
     elif isinstance(item, AssTagBorder):
-        text_io.write(f"\\bord{item.size}")
+        text_io.write(f"\\bord{smart_float(item.size)}")
     elif isinstance(item, AssTagXBorder):
-        text_io.write(f"\\xbord{item.size}")
+        text_io.write(f"\\xbord{smart_float(item.size)}")
     elif isinstance(item, AssTagYBorder):
-        text_io.write(f"\\ybord{item.size}")
+        text_io.write(f"\\ybord{smart_float(item.size)}")
     elif isinstance(item, AssTagShadow):
-        text_io.write(f"\\shad{item.size}")
+        text_io.write(f"\\shad{smart_float(item.size)}")
     elif isinstance(item, AssTagXShadow):
-        text_io.write(f"\\xshad{item.size}")
+        text_io.write(f"\\xshad{smart_float(item.size)}")
     elif isinstance(item, AssTagYShadow):
-        text_io.write(f"\\yshad{item.size}")
+        text_io.write(f"\\yshad{smart_float(item.size)}")
     elif isinstance(item, AssTagXRotation):
-        text_io.write(f"\\frx{item.angle}")
+        text_io.write(f"\\frx{smart_float(item.angle)}")
     elif isinstance(item, AssTagYRotation):
-        text_io.write(f"\\fry{item.angle}")
+        text_io.write(f"\\fry{smart_float(item.angle)}")
     elif isinstance(item, AssTagZRotation):
         text_io.write(
-            f"\\fr{item.angle}" if item.short else f"\\frz{item.angle}"
+            f"\\fr{smart_float(item.angle)}"
+            if item.short
+            else f"\\frz{smart_float(item.angle)}"
         )
     elif isinstance(item, AssTagRotationOrigin):
-        text_io.write(f"\\org({item.x},{item.y})")
+        text_io.write(f"\\org({smart_float(item.x)},{smart_float(item.y)})")
     elif isinstance(item, AssTagPosition):
-        text_io.write(f"\\pos({item.x},{item.y})")
+        text_io.write(f"\\pos({smart_float(item.x)},{smart_float(item.y)})")
     elif isinstance(item, AssTagXShear):
-        text_io.write(f"\\fax{item.value}")
+        text_io.write(f"\\fax{smart_float(item.value)}")
     elif isinstance(item, AssTagYShear):
-        text_io.write(f"\\fay{item.value}")
+        text_io.write(f"\\fay{smart_float(item.value)}")
     elif isinstance(item, AssTagFontName):
         text_io.write(f"\\fn{item.name}")
     elif isinstance(item, AssTagFontSize):
@@ -137,23 +138,23 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
     elif isinstance(item, AssTagFontEncoding):
         text_io.write(f"\\fe{item.encoding}")
     elif isinstance(item, AssTagLetterSpacing):
-        text_io.write(f"\\fsp{item.spacing}")
+        text_io.write(f"\\fsp{smart_float(item.spacing)}")
     elif isinstance(item, AssTagFontXScale):
-        text_io.write(f"\\fscx{item.scale}")
+        text_io.write(f"\\fscx{smart_float(item.scale)}")
     elif isinstance(item, AssTagFontYScale):
-        text_io.write(f"\\fscy{item.scale}")
+        text_io.write(f"\\fscy{smart_float(item.scale)}")
     elif isinstance(item, AssTagBlurEdges):
         text_io.write(f"\\be{item.times}")
     elif isinstance(item, AssTagBlurEdgesGauss):
-        text_io.write(f"\\blur{item.weight}")
+        text_io.write(f"\\blur{smart_float(item.weight)}")
     elif isinstance(item, AssTagKaraoke1):
-        text_io.write(f"\\k{item.duration // 10}")
+        text_io.write(f"\\k{smart_float(item.duration / 10)}")
     elif isinstance(item, AssTagKaraoke2):
-        text_io.write(f"\\K{item.duration // 10}")
+        text_io.write(f"\\K{smart_float(item.duration / 10)}")
     elif isinstance(item, AssTagKaraoke3):
-        text_io.write(f"\\kf{item.duration // 10}")
+        text_io.write(f"\\kf{smart_float(item.duration / 10)}")
     elif isinstance(item, AssTagKaraoke4):
-        text_io.write(f"\\ko{item.duration // 10}")
+        text_io.write(f"\\ko{smart_float(item.duration / 10)}")
     elif isinstance(item, AssTagItalic):
         text_io.write("\\i" + ("1" if item.enabled else "0"))
     elif isinstance(item, AssTagUnderline):
@@ -173,7 +174,8 @@ def visitor(text_io: MyIO, item: AssItem) -> T.Iterator[None]:
         )
     elif isinstance(item, AssTagClipRectangle):
         text_io.write("\\iclip" if item.inverse else "\\clip")
-        text_io.write(f"({item.x1},{item.y1},{item.x2},{item.y2})")
+        text_io.write(f"({smart_float(item.x1)},{smart_float(item.y1)},")
+        text_io.write(f"{smart_float(item.x2)},{smart_float(item.y2)})")
     elif isinstance(item, AssTagClipVector):
         text_io.write("\\iclip" if item.inverse else "\\clip")
         text_io.write("(")
