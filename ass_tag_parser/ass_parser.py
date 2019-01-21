@@ -117,34 +117,61 @@ def _positive_float_arg(tag: str, text_io: MyIO) -> T.Tuple[T.Optional[float]]:
     return (value,)
 
 
-def _complex_int_args(
-    valid_counts: T.Set[int]
-) -> T.Callable[[str, MyIO], T.Tuple[int, ...]]:
-    def fun(tag: str, text_io: MyIO) -> T.Tuple[int, ...]:
-        args = _complex_args(tag, text_io, valid_counts)
-        try:
-            return tuple([int(item[0]) for item in args])
-        except ValueError:
+def _pos_args(tag: str, text_io: MyIO) -> T.Tuple[float, float]:
+    args = _complex_args(tag, text_io, {2})
+    try:
+        return tuple([float(item[0]) for item in args])
+    except ValueError:
+        raise BadAssTagArgument(
+            text_io.global_pos, f"{tag} takes only decimal arguments"
+        )
+
+
+def _fade_simple_args(tag: str, text_io: MyIO) -> T.Tuple[int, int]:
+    args = list(_complex_args(tag, text_io, {2}))
+
+    try:
+        args[0:2] = [int(item[0]) for item in args[0:2]]
+        if any(arg < 0 for arg in args[0:2]):
             raise BadAssTagArgument(
-                text_io.global_pos, f"{tag} takes only integer arguments"
+                text_io.global_pos, f"{tag} takes only positive times"
             )
+    except ValueError:
+        raise BadAssTagArgument(
+            text_io.global_pos, f"{tag} requires integer times"
+        )
 
-    return fun
+    return tuple(args)
 
 
-def _complex_float_args(
-    valid_counts: T.Set[int]
-) -> T.Callable[[str, MyIO], T.Tuple[float, ...]]:
-    def fun(tag: str, text_io: MyIO) -> T.Tuple[float, ...]:
-        args = _complex_args(tag, text_io, valid_counts)
-        try:
-            return tuple([float(item[0]) for item in args])
-        except ValueError:
+def _fade_complex_args(
+    tag: str, text_io: MyIO
+) -> T.Tuple[int, int, int, int, int, int, int]:
+    args = list(_complex_args(tag, text_io, {7}))
+
+    try:
+        args[0:3] = [int(item[0]) for item in args[0:3]]
+        if any(arg < 0 for arg in args[0:3]):
             raise BadAssTagArgument(
-                text_io.global_pos, f"{tag} takes only decimal arguments"
+                text_io.global_pos, f"{tag} takes only positive alpha values"
             )
+    except ValueError:
+        raise BadAssTagArgument(
+            text_io.global_pos, f"{tag} requires integer alpha values"
+        )
 
-    return fun
+    try:
+        args[3:7] = [int(item[0]) for item in args[3:7]]
+        if any(arg < 0 for arg in args[3:7]):
+            raise BadAssTagArgument(
+                text_io.global_pos, f"{tag} takes only positive times"
+            )
+    except ValueError:
+        raise BadAssTagArgument(
+            text_io.global_pos, f"{tag} requires integer times"
+        )
+
+    return tuple(args)
 
 
 def _bold_arg(
@@ -269,12 +296,16 @@ def _move_args(
         args[0:4] = [float(item[0]) for item in args[0:4]]
     except ValueError:
         raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} requires decimal coodinates"
+            text_io.global_pos, f"{tag} requires decimal coordinates"
         )
 
     if len(args) == 6:
         try:
             args[4:6] = [int(item[0]) for item in args[4:6]]
+            if any(arg < 0 for arg in args[4:6]):
+                raise BadAssTagArgument(
+                    text_io.global_pos, f"{tag} takes only positive times"
+                )
         except ValueError:
             raise BadAssTagArgument(
                 text_io.global_pos, f"{tag} requires integer times"
@@ -320,25 +351,23 @@ def _animation_args(
         acceleration = None if acceleration is None else float(acceleration)
     except ValueError:
         raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} acceleration must be decimal"
+            text_io.global_pos, f"{tag} requires decimal acceleration value"
         )
     if acceleration is not None and acceleration < 0:
         raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} acceleration must be positive decimal"
+            text_io.global_pos, f"{tag} takes only positive acceleration value"
         )
 
     try:
         time1 = None if time1 is None else int(time1)
-    except ValueError:
-        raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} start time must be integer"
-        )
-
-    try:
         time2 = None if time2 is None else int(time2)
     except ValueError:
         raise BadAssTagArgument(
-            text_io.global_pos, f"{tag} end time must be integer"
+            text_io.global_pos, f"{tag} requires integer times"
+        )
+    if (time1 is not None and time1 < 0) or (time2 is not None and time2 < 0):
+        raise BadAssTagArgument(
+            text_io.global_pos, f"{tag} takes only positive times"
         )
 
     text_io = MyIO(tags, tags_start, text_io.global_text)
@@ -357,11 +386,11 @@ _PARSING_MAP = [
     (r"\fsp", AssTagLetterSpacing, _float_arg),
     (r"\fax", AssTagXShear, _float_arg),
     (r"\fay", AssTagYShear, _float_arg),
-    (r"\pos", AssTagPosition, _complex_float_args({2})),
-    (r"\org", AssTagRotationOrigin, _complex_float_args({2})),
+    (r"\pos", AssTagPosition, _pos_args),
+    (r"\org", AssTagRotationOrigin, _pos_args),
     (r"\move", AssTagMove, _move_args),
-    (r"\fade", AssTagFadeComplex, _complex_int_args({7})),
-    (r"\fad", AssTagFade, _complex_int_args({2})),
+    (r"\fade", AssTagFadeComplex, _fade_complex_args),
+    (r"\fad", AssTagFade, _fade_simple_args),
     (r"\frx", AssTagXRotation, _float_arg),
     (r"\fry", AssTagYRotation, _float_arg),
     (

@@ -497,12 +497,184 @@ def test_parsing_valid_single_tag(
             r"syntax error at pos 13: \move takes 4 or 6 arguments (got 3)",
         ),
         (
+            r"{\move(garbage,0,0,0)}",
+            r"syntax error at pos 21: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(0,garbage,0,0)}",
+            r"syntax error at pos 21: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(0,0,garbage,0)}",
+            r"syntax error at pos 21: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(0,0,0,garbage)}",
+            r"syntax error at pos 21: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(garbage,0,0,0,0,0)}",
+            r"syntax error at pos 25: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(0,garbage,0,0,0,0)}",
+            r"syntax error at pos 25: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(0,0,garbage,0,0,0)}",
+            r"syntax error at pos 25: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(0,0,0,garbage,0,0)}",
+            r"syntax error at pos 25: \move requires decimal coordinates",
+        ),
+        (
+            r"{\move(0,0,0,0,garbage,0)}",
+            r"syntax error at pos 25: \move requires integer times",
+        ),
+        (
+            r"{\move(0,0,0,0,0,garbage)}",
+            r"syntax error at pos 25: \move requires integer times",
+        ),
+        (
             r"{\move(0,0,0,0,0)}",
             r"syntax error at pos 17: \move takes 4 or 6 arguments (got 5)",
         ),
         (
+            r"{\move(0,0,0,0,5.5,0)}",
+            r"syntax error at pos 21: \move requires integer times",
+        ),
+        (
             r"{\move(0,0,0,0,0,5.5)}",
             r"syntax error at pos 21: \move requires integer times",
+        ),
+        (
+            r"{\move(0,0,0,0,-5,0)}",
+            r"syntax error at pos 20: \move takes only positive times",
+        ),
+        (
+            r"{\move(0,0,0,0,0,-5)}",
+            r"syntax error at pos 20: \move takes only positive times",
+        ),
+        (
+            r"{\fad(1.1,2)}",
+            r"syntax error at pos 12: \fad requires integer times",
+        ),
+        (
+            r"{\fad(1,2.1)}",
+            r"syntax error at pos 12: \fad requires integer times",
+        ),
+        (
+            r"{\fad(-1,2)}",
+            r"syntax error at pos 11: \fad takes only positive times",
+        ),
+        (
+            r"{\fad(1,-2)}",
+            r"syntax error at pos 11: \fad takes only positive times",
+        ),
+        (
+            r"{\fade(1.1,2,3,4,5,6,7)}",
+            r"syntax error at pos 23: \fade requires integer alpha values",
+        ),
+        (
+            r"{\fade(1,2.1,3,4,5,6,7)}",
+            r"syntax error at pos 23: \fade requires integer alpha values",
+        ),
+        (
+            r"{\fade(1,2,3.1,4,5,6,7)}",
+            r"syntax error at pos 23: \fade requires integer alpha values",
+        ),
+        (
+            r"{\fade(1,2,3,4.1,5,6,7)}",
+            r"syntax error at pos 23: \fade requires integer times",
+        ),
+        (
+            r"{\fade(1,2,3,4,5.1,6,7)}",
+            r"syntax error at pos 23: \fade requires integer times",
+        ),
+        (
+            r"{\fade(1,2,3,4,5,6.1,7)}",
+            r"syntax error at pos 23: \fade requires integer times",
+        ),
+        (
+            r"{\fade(1,2,3,4,5,6,7.1)}",
+            r"syntax error at pos 23: \fade requires integer times",
+        ),
+        (
+            r"{\fade(-1,2,3,4,5,6,7)}",
+            r"syntax error at pos 22: \fade takes only positive alpha values",
+        ),
+        (
+            r"{\fade(1,-2,3,4,5,6,7)}",
+            r"syntax error at pos 22: \fade takes only positive alpha values",
+        ),
+        (
+            r"{\fade(1,2,-3,4,5,6,7)}",
+            r"syntax error at pos 22: \fade takes only positive alpha values",
+        ),
+        (
+            r"{\fade(1,2,3,-4,5,6,7)}",
+            r"syntax error at pos 22: \fade takes only positive times",
+        ),
+        (
+            r"{\fade(1,2,3,4,-5,6,7)}",
+            r"syntax error at pos 22: \fade takes only positive times",
+        ),
+        (
+            r"{\fade(1,2,3,4,5,-6,7)}",
+            r"syntax error at pos 22: \fade takes only positive times",
+        ),
+        (
+            r"{\fade(1,2,3,4,5,6,-7)}",
+            r"syntax error at pos 22: \fade takes only positive times",
+        ),
+        (
+            r"{\t(garbage,asd)}",
+            "syntax error at pos 16: \\t requires decimal acceleration value",
+        ),
+        (
+            r"{\t(garbage,0,asd)}",
+            "syntax error at pos 18: \\t requires integer times",
+        ),
+        (
+            r"{\t(0,garbage,asd)}",
+            "syntax error at pos 18: \\t requires integer times",
+        ),
+        (
+            r"{\t(garbage,0,0,asd)}",
+            "syntax error at pos 20: \\t requires integer times",
+        ),
+        (
+            r"{\t(0,garbage,0,asd)}",
+            "syntax error at pos 20: \\t requires integer times",
+        ),
+        (
+            r"{\t(0,0,garbage,asd)}",
+            "syntax error at pos 20: \\t requires decimal acceleration value",
+        ),
+        (
+            r"{\t(-1,asd)}",
+            "syntax error at pos 11: \\t takes only positive acceleration value",
+        ),
+        (
+            r"{\t(-1,0,asd)}",
+            "syntax error at pos 13: \\t takes only positive times",
+        ),
+        (
+            r"{\t(0,-1,asd)}",
+            "syntax error at pos 13: \\t takes only positive times",
+        ),
+        (
+            r"{\t(-1,0,0,asd)}",
+            "syntax error at pos 15: \\t takes only positive times",
+        ),
+        (
+            r"{\t(0,-1,0,asd)}",
+            "syntax error at pos 15: \\t takes only positive times",
+        ),
+        (
+            r"{\t(0,0,-1,asd)}",
+            "syntax error at pos 15: \\t takes only positive acceleration value",
         ),
         (r"{\cgarbage)}", r"syntax error at pos 4: expected ampersand"),
         (r"{\c&123456&}", "syntax error at pos 5: expected uppercase H"),
