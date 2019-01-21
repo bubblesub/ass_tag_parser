@@ -159,22 +159,22 @@ class AssTagResetStyle(AssTag):
 
 @dataclass
 class AssTagKaraoke1(AssTag):
-    duration: int
+    duration: float
 
 
 @dataclass
 class AssTagKaraoke2(AssTag):
-    duration: int
+    duration: float
 
 
 @dataclass
 class AssTagKaraoke3(AssTag):
-    duration: int
+    duration: float
 
 
 @dataclass
 class AssTagKaraoke4(AssTag):
-    duration: int
+    duration: float
 
 
 @dataclass

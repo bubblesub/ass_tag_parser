@@ -171,6 +171,22 @@ from ass_tag_parser import *
             r"{\fs5.4}",
         ),
         (
+            [AssTagList([AssTagKaraoke1(duration=505)])],
+            r"{\k50.5}",
+        ),
+        (
+            [AssTagList([AssTagKaraoke2(duration=505)])],
+            r"{\K50.5}",
+        ),
+        (
+            [AssTagList([AssTagKaraoke3(duration=505)])],
+            r"{\kf50.5}",
+        ),
+        (
+            [AssTagList([AssTagKaraoke4(duration=505)])],
+            r"{\ko50.5}",
+        ),
+        (
             [AssTagList([AssTagKaraoke1(duration=500), AssTagComment(".5")])],
             r"{\k50.5}",
         ),

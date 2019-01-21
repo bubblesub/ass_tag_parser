@@ -228,7 +228,7 @@ def _alpha_arg(tag: str, text_io: MyIO) -> T.Tuple[T.Optional[int], int]:
 
 
 def _karaoke_arg(tag: str, text_io: MyIO) -> T.Any:
-    value, = _positive_int_arg(tag, text_io)
+    value, = _positive_float_arg(tag, text_io)
     if value is None:
         raise BadAssTagArgument(
             text_io.global_pos, f"{tag} requires an argument"
