@@ -6,7 +6,7 @@ result = parse_ass(
     r"\blur1.4)}Attack No. 1{NOTE:アタックNo.1}"
 )
 print(result)
-print(result.chunks[0].tags[2].meta)
+print(result[2].meta)
 
 result = parse_draw_commands(r"m 50 0 b 100 0 100 100 50 100 b 0 100 0 0 50 0")
 print(result)

@@ -18,48 +18,45 @@ result = parse_ass(
     r'\blur1.4)}Attack No. 1{NOTE:アタックNo.1}'
 )
 print(result)
-print(result.chunks[0].tags[2].meta)
+print(result[2].meta)
 ```
 
 **Result**:
 
 ```python3
-AssLine(
-    chunks=[
-        AssTagList(
-            tags=[
-                AssTagAlignment(alignment=5, legacy=False),
-                AssTagPosition(x=175, y=460),
-                AssTagFontName(name="Utopia with Oldstyle figures"),
-                AssTagFontSize(size=90),
-                AssTagBorder(size=0.0),
-                AssTagBlurEdgesGauss(weight=3.0),
-                AssTagColor(red=19, green=19, blue=19, target=1, short=False),
-                AssTagAnimation(
-                    tags=[
-                        AssTagColor(red=64, green=19, blue=19, target=1, short=False)
-                    ],
-                    time1=0,
-                    time2=1000,
-                    acceleration=2.0,
-                ),
-                AssTagAnimation(
-                    tags=[
-                        AssTagColor(red=178, green=21, blue=16, target=1, short=False),
-                        AssTagBlurEdgesGauss(weight=1.4),
-                    ],
-                    time1=1000,
-                    time2=2000,
-                    acceleration=None,
-                ),
-            ]
-        ),
-        AssText(text="Attack No. 1"),
-        AssTagList(tags=[AssTagComment(text="NOTE:アタックNo.1")]),
-    ]
-)
+[
+    AssTagListOpening(),
+    AssTagAlignment(alignment=5, legacy=False),
+    AssTagPosition(x=175.0, y=460.0),
+    AssTagFontName(name="Utopia with Oldstyle figures"),
+    AssTagFontSize(size=90),
+    AssTagBorder(size=0.0),
+    AssTagBlurEdgesGauss(weight=3.0),
+    AssTagColor(red=19, green=19, blue=19, target=1, short=False),
+    AssTagAnimation(
+        tags=[AssTagColor(red=64, green=19, blue=19, target=1, short=False)],
+        time1=0.0,
+        time2=1000.0,
+        acceleration=2.0,
+    ),
+    AssTagAnimation(
+        tags=[
+            AssTagColor(red=178, green=21, blue=16, target=1, short=False),
+            AssTagBlurEdgesGauss(weight=1.4),
+        ],
+        time1=1000.0,
+        time2=2000.0,
+        acceleration=None,
+    ),
+    AssTagListEnding(),
+    AssText(text="Attack No. 1"),
+    AssTagListOpening(),
+    AssTagComment(text="NOTE:アタックNo.1"),
+    AssTagListEnding(),
+]
 
-Meta(start=18, end=49, text='\\fnUtopia with Oldstyle figures')
+
+Meta(start=5, end=18, text='\\pos(175,460)')
 ```
 
 ---
@@ -105,5 +102,8 @@ Meta(start=7, end=29, text='b 100 0 100 100 50 100')
 
 ### Serializing the tree back
 
-ASS tree: `compose_ass`.  
+ASS tree: `compose_ass`. Note that you don't need to supply `AssTagListOpening`
+nor `AssTagListEnding` tags in the input item list – this function inserts them
+automatically.
+
 Draw commands: `compose_draw_commands`.
