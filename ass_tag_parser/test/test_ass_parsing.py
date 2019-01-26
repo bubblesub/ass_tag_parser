@@ -83,10 +83,10 @@ from ass_tag_parser import *
             ],
         ),
         (
-            r"{asd\Nasd\nasd\hasd}",
+            r"{asd\Nasd\nasd\hasd\\asd}",
             [
                 AssTagListOpening(),
-                AssTagComment(r"asd\Nasd\nasd\hasd"),
+                AssTagComment(r"asd\Nasd\nasd\hasd\\asd"),
                 AssTagListEnding(),
             ],
         ),

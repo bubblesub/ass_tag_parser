@@ -527,7 +527,7 @@ def _merge_comments(tags: T.List[AssTag]) -> T.List[AssTag]:
 def _parse_ass_tags(text_io: MyIO) -> T.Iterable[AssTag]:
     while not text_io.eof:
         if text_io.peek(1) == "\\":
-            if text_io.peek(2) in {r"\N", r"\n", r"\h"}:
+            if text_io.peek(2) in {r"\N", r"\n", r"\h", r"\\"}:
                 block = AssTagComment(text_io.read(2))
                 block.meta = Meta(
                     text_io.global_pos, text_io.global_pos + 2, block.text
