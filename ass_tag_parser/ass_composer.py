@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from ass_tag_parser.ass_struct import *
-from ass_tag_parser.common import smart_float
+from ass_tag_parser.common import smart_bool, smart_float, smart_int, smart_str
 from ass_tag_parser.io import MyIO
 
 
@@ -46,7 +46,7 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
     elif isinstance(item, AssTagBaselineOffset):
         ctx.io.write(f"\\pbo{smart_float(item.y)}")
     elif isinstance(item, AssTagDrawingMode):
-        ctx.io.write(f"\\p{item.scale}")
+        ctx.io.write(f"\\p{smart_int(item.scale)}")
     elif isinstance(item, AssTagAlignment):
         if item.legacy:
             value = item.alignment
@@ -54,9 +54,9 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
                 value += 1
             elif value in {7, 8, 9}:
                 value += 2
-            ctx.io.write(f"\\a{value}")
+            ctx.io.write(f"\\a{smart_int(value)}")
         else:
-            ctx.io.write(f"\\an{item.alignment}")
+            ctx.io.write(f"\\an{smart_int(item.alignment)}")
     elif isinstance(item, AssTagFade):
         ctx.io.write("\\fad(")
         ctx.io.write(f"{smart_float(item.time1)},{smart_float(item.time2)}")
@@ -95,7 +95,7 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
             ctx.io.write(f"{item.value:02X}")
             ctx.io.write("&")
     elif isinstance(item, AssTagResetStyle):
-        ctx.io.write(f"\\r{item.style or ''}")
+        ctx.io.write(f"\\r{smart_str(item.style)}")
     elif isinstance(item, AssTagBorder):
         ctx.io.write(f"\\bord{smart_float(item.size)}")
     elif isinstance(item, AssTagXBorder):
@@ -127,11 +127,11 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
     elif isinstance(item, AssTagYShear):
         ctx.io.write(f"\\fay{smart_float(item.value)}")
     elif isinstance(item, AssTagFontName):
-        ctx.io.write(f"\\fn{item.name}")
+        ctx.io.write(f"\\fn{smart_str(item.name)}")
     elif isinstance(item, AssTagFontSize):
-        ctx.io.write(f"\\fs{item.size}")
+        ctx.io.write(f"\\fs{smart_int(item.size)}")
     elif isinstance(item, AssTagFontEncoding):
-        ctx.io.write(f"\\fe{item.encoding}")
+        ctx.io.write(f"\\fe{smart_int(item.encoding)}")
     elif isinstance(item, AssTagLetterSpacing):
         ctx.io.write(f"\\fsp{smart_float(item.spacing)}")
     elif isinstance(item, AssTagFontXScale):
@@ -139,27 +139,27 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
     elif isinstance(item, AssTagFontYScale):
         ctx.io.write(f"\\fscy{smart_float(item.scale)}")
     elif isinstance(item, AssTagBlurEdges):
-        ctx.io.write(f"\\be{item.times}")
+        ctx.io.write(f"\\be{smart_float(item.times)}")
     elif isinstance(item, AssTagBlurEdgesGauss):
         ctx.io.write(f"\\blur{smart_float(item.weight)}")
     elif isinstance(item, AssTagKaraoke):
         tag = {1: "\\k", 2: "\\K", 3: "\\kf", 4: "\\ko"}[item.karaoke_type]
         ctx.io.write(f"{tag}{smart_float(item.duration / 10)}")
     elif isinstance(item, AssTagItalic):
-        ctx.io.write("\\i" + ("1" if item.enabled else "0"))
+        ctx.io.write(f"\\i{smart_bool(item.enabled)}")
     elif isinstance(item, AssTagUnderline):
-        ctx.io.write("\\u" + ("1" if item.enabled else "0"))
+        ctx.io.write(f"\\u{smart_bool(item.enabled)}")
     elif isinstance(item, AssTagStrikeout):
-        ctx.io.write("\\s" + ("1" if item.enabled else "0"))
+        ctx.io.write(f"\\s{smart_bool(item.enabled)}")
     elif isinstance(item, AssTagWrapStyle):
-        ctx.io.write(f"\\q{item.style}")
+        ctx.io.write(f"\\q{smart_str(item.style)}")
     elif isinstance(item, AssTagBold):
         ctx.io.write(
             "\\b"
             + (
                 str(item.weight)
                 if item.weight is not None
-                else ("1" if item.enabled else "0")
+                else smart_bool(item.enabled)
             )
         )
     elif isinstance(item, AssTagClipRectangle):
