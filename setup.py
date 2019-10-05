@@ -6,7 +6,7 @@ setup(
     author="rr-",
     author_email="rr-@sakuya.pl",
     name="ass_tag_parser",
-    version="2.1.post0",
+    version="2.2",
     description="Parser of ASS tags",
     long_description=(Path(__file__).parent / "README.md").read_text(),
     long_description_content_type="text/markdown",
