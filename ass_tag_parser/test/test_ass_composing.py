@@ -14,7 +14,12 @@ from ass_tag_parser import *
         ),
         ([AssTagComment("asdasd")], r"{asdasd}"),
         (
-            [AssTagDrawingMode(2), AssText("m 3 4"), AssTagDrawingMode(0)],
+            [
+                AssTagDraw(
+                    scale=2,
+                    path=[AssDrawCmdMove(AssDrawPoint(3, 4), close=True)],
+                )
+            ],
             r"{\p2}m 3 4{\p0}",
         ),
         (
@@ -298,7 +303,7 @@ def test_composing_valid_ass_line(
         (AssTagWrapStyle(style=3), r"{\q3}"),
         (AssTagResetStyle(style=None), r"{\r}"),
         (AssTagResetStyle(style="Some style"), r"{\rSome style}"),
-        (AssTagDrawingMode(scale=1), r"{\p1}"),
+        (AssTagDraw(scale=1, path=[]), r"{\p1}{\p0}"),
         (AssTagBaselineOffset(y=1.0), r"{\pbo1}"),
         (AssTagBaselineOffset(y=1.1), r"{\pbo1.1}"),
         (AssTagBaselineOffset(y=-50), r"{\pbo-50}"),

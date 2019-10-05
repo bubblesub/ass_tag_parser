@@ -46,8 +46,11 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
         ctx.io.write(f"{item.text}")
     elif isinstance(item, AssTagBaselineOffset):
         ctx.io.write(f"\\pbo{smart_float(item.y)}")
-    elif isinstance(item, AssTagDrawingMode):
+    elif isinstance(item, AssTagDraw):
         ctx.io.write(f"\\p{smart_int(item.scale)}")
+        ctx.io.write("}")
+        ctx.io.write(compose_draw_commands(item.path))
+        ctx.io.write("{\\p0")
     elif isinstance(item, AssTagAlignment):
         if item.legacy:
             value = item.alignment

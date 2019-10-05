@@ -1,5 +1,5 @@
 import typing as T
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ass_tag_parser.common import Meta
 from ass_tag_parser.draw_struct import AssDrawCmd
@@ -225,8 +225,9 @@ class AssTagBaselineOffset(AssTag):
 
 
 @dataclass
-class AssTagDrawingMode(AssTag):
+class AssTagDraw(AssTag):
     scale: int
+    path: T.List[AssDrawCmd] = field(default_factory=list)
 
 
 @dataclass

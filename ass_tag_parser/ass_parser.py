@@ -1,4 +1,5 @@
 import typing as T
+from dataclasses import dataclass
 
 from ass_tag_parser.ass_struct import *
 from ass_tag_parser.draw_parser import parse_draw_commands
@@ -6,12 +7,10 @@ from ass_tag_parser.errors import *
 from ass_tag_parser.io import MyIO
 
 
-from dataclasses import dataclass
-
-
 @dataclass
 class _ParseContext:
     io: MyIO
+    drawing_tag: T.Optional[AssTagDraw] = None
 
 
 def _single_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[str]]:
@@ -384,11 +383,10 @@ def _animation_args(
             ctx.io.global_pos, f"{tag} takes only positive times"
         )
 
-    tags = list(
-        _parse_ass_tags(
-            _ParseContext(io=MyIO(tags, tags_start, ctx.io.global_text))
-        )
-    )
+    old_io = ctx.io
+    ctx.io = MyIO(tags, tags_start, ctx.io.global_text)
+    tags = list(_parse_ass_tags(ctx))
+    ctx.io = old_io
 
     return tags, time1, time2, acceleration
 
@@ -450,7 +448,7 @@ _PARSING_MAP = [
     (r"\an", AssTagAlignment, _alignment_arg),
     (r"\a", AssTagAlignment, _alignment_arg),
     (r"\pbo", AssTagBaselineOffset, _float_arg),
-    (r"\p", AssTagDrawingMode, _positive_int_arg),
+    (r"\p", AssTagDraw, _positive_int_arg),
     (r"\t", AssTagAnimation, _animation_args),
 ]
 
@@ -513,6 +511,14 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
             ret.meta = Meta(
                 i, ctx.io.global_pos, ctx.io.global_text[i : ctx.io.global_pos]
             )
+
+            if (
+                isinstance(ret, AssTagDraw)
+                and ret.scale is not None
+                and ret.scale > 0
+            ):
+                ctx.drawing_tag = ret
+
             return ret
 
     raise UnknownTag(ctx.io.global_pos)
@@ -584,13 +590,10 @@ def _parse_ass(ctx: _ParseContext) -> T.Iterable[AssItem]:
             tag_list_opening.meta = Meta(i, i + 1, "{")
             yield tag_list_opening
 
-            yield from _merge_comments(
-                list(
-                    _parse_ass_tags(
-                        _ParseContext(io=ctx.io.divide(i + 1, j - 1))
-                    )
-                )
-            )
+            old_io = ctx.io
+            ctx.io = ctx.io.divide(i + 1, j - 1)
+            yield from _merge_comments(list(_parse_ass_tags(ctx)))
+            ctx.io = old_io
 
             tag_list_ending = AssTagListEnding()
             tag_list_ending.meta = Meta(j - 1, j, "}")
@@ -604,9 +607,14 @@ def _parse_ass(ctx: _ParseContext) -> T.Iterable[AssItem]:
                     raise UnexpectedCurlyBrace(ctx.io.global_pos)
                 ctx.io.skip(1)
             j = ctx.io.pos
-            text = AssText(ctx.io.text[i:j])
-            text.meta = Meta(i, j, ctx.io.text[i:j])
-            yield text
+            text = ctx.io.text[i:j]
+            if ctx.drawing_tag is not None:
+                ctx.drawing_tag.path = parse_draw_commands(text)
+                ctx.drawing_tag = None
+            else:
+                text = AssText(text)
+                text.meta = Meta(i, j, ctx.io.text[i:j])
+                yield text
 
 
 def parse_ass(text: str) -> T.List[AssItem]:
