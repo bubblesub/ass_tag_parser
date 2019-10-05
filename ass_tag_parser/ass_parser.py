@@ -1,6 +1,7 @@
 import typing as T
 
 from ass_tag_parser.ass_struct import *
+from ass_tag_parser.draw_parser import parse_draw_commands
 from ass_tag_parser.errors import *
 from ass_tag_parser.io import MyIO
 
@@ -452,7 +453,9 @@ def _parse_ass_tag(text_io: MyIO) -> AssTag:
         if len(args) == 1:
             scale = None
             path = args[0][0]
-            return AssTagClipVector(scale=scale, path=path, inverse=inverse)
+            return AssTagClipVector(
+                scale=scale, path=parse_draw_commands(path), inverse=inverse
+            )
 
         elif len(args) == 2:
             scale = args[0][0]
@@ -468,7 +471,9 @@ def _parse_ass_tag(text_io: MyIO) -> AssTag:
                     text_io.global_pos,
                     f"{prefix} scale must be positive integer",
                 )
-            return AssTagClipVector(scale=scale, path=path, inverse=inverse)
+            return AssTagClipVector(
+                scale=scale, path=parse_draw_commands(path), inverse=inverse
+            )
 
         elif len(args) == 4:
             try:

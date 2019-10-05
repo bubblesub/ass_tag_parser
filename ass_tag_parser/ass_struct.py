@@ -2,6 +2,7 @@ import typing as T
 from dataclasses import dataclass
 
 from ass_tag_parser.common import Meta
+from ass_tag_parser.draw_struct import AssDrawCmd
 
 
 class AssItem:
@@ -240,7 +241,7 @@ class AssTagClipRectangle(AssTag):
 @dataclass
 class AssTagClipVector(AssTag):
     scale: T.Optional[int]
-    path: str
+    path: T.List[AssDrawCmd]
     inverse: bool
 
 

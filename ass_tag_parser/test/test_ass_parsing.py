@@ -475,19 +475,35 @@ def test_parsing_valid_ass_line(
         ),
         (
             r"{\clip(1,m 50 0)}",
-            AssTagClipVector(scale=1, path="m 50 0", inverse=False),
+            AssTagClipVector(
+                scale=1,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=False,
+            ),
         ),
         (
             r"{\iclip(1,m 50 0)}",
-            AssTagClipVector(scale=1, path="m 50 0", inverse=True),
+            AssTagClipVector(
+                scale=1,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=True,
+            ),
         ),
         (
             r"{\clip(m 50 0)}",
-            AssTagClipVector(scale=None, path="m 50 0", inverse=False),
+            AssTagClipVector(
+                scale=None,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=False,
+            ),
         ),
         (
             r"{\iclip(m 50 0)}",
-            AssTagClipVector(scale=None, path="m 50 0", inverse=True),
+            AssTagClipVector(
+                scale=None,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=True,
+            ),
         ),
     ],
 )
