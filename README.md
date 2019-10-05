@@ -59,44 +59,7 @@ print(result[2].meta)
 Meta(start=5, end=18, text='\\pos(175,460)')
 ```
 
----
-
-### Parsing draw tags
-
-By default the content between `{\p1}` `{\p0}` is treated as plain text.  
-However, you can pass it through `parse_draw_commands` function:
-
-```python
-from ass_tag_parser import parse_draw_commands
-
-result = parse_draw_commands('m 50 0 b 100 0 100 100 50 100 b 0 100 0 0 50 0')
-print(result)
-print(result[1].meta)
-```
-
-**Result**:
-
-```python3
-[
-    AssDrawCmdMove(pos=AssDrawPoint(x=50, y=0), close=True),
-    AssDrawCmdBezier(
-        points=(
-            AssDrawPoint(x=100, y=0),
-            AssDrawPoint(x=100, y=100),
-            AssDrawPoint(x=50, y=100),
-        )
-    ),
-    AssDrawCmdBezier(
-        points=(
-            AssDrawPoint(x=0, y=100),
-            AssDrawPoint(x=0, y=0),
-            AssDrawPoint(x=50, y=0),
-        )
-    ),
-]
-
-Meta(start=7, end=29, text='b 100 0 100 100 50 100')
-```
+Starting from version 2.2, drawing commands are parsed automatically.
 
 ---
 
