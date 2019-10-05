@@ -14,7 +14,12 @@ from ass_tag_parser import *
         ),
         ([AssTagComment("asdasd")], r"{asdasd}"),
         (
-            [AssTagDrawingMode(2), AssText("m 3 4"), AssTagDrawingMode(0)],
+            [
+                AssTagDraw(
+                    scale=2,
+                    path=[AssDrawCmdMove(AssDrawPoint(3, 4), close=True)],
+                )
+            ],
             r"{\p2}m 3 4{\p0}",
         ),
         (
@@ -298,7 +303,7 @@ def test_composing_valid_ass_line(
         (AssTagWrapStyle(style=3), r"{\q3}"),
         (AssTagResetStyle(style=None), r"{\r}"),
         (AssTagResetStyle(style="Some style"), r"{\rSome style}"),
-        (AssTagDrawingMode(scale=1), r"{\p1}"),
+        (AssTagDraw(scale=1, path=[]), r"{\p1}{\p0}"),
         (AssTagBaselineOffset(y=1.0), r"{\pbo1}"),
         (AssTagBaselineOffset(y=1.1), r"{\pbo1.1}"),
         (AssTagBaselineOffset(y=-50), r"{\pbo-50}"),
@@ -415,19 +420,35 @@ def test_composing_valid_ass_line(
             r"{\iclip(1,2,3,4)}",
         ),
         (
-            AssTagClipVector(scale=1, path="m 50 0", inverse=False),
+            AssTagClipVector(
+                scale=1,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=False,
+            ),
             r"{\clip(1,m 50 0)}",
         ),
         (
-            AssTagClipVector(scale=1, path="m 50 0", inverse=True),
+            AssTagClipVector(
+                scale=1,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=True,
+            ),
             r"{\iclip(1,m 50 0)}",
         ),
         (
-            AssTagClipVector(scale=None, path="m 50 0", inverse=False),
+            AssTagClipVector(
+                scale=None,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=False,
+            ),
             r"{\clip(m 50 0)}",
         ),
         (
-            AssTagClipVector(scale=None, path="m 50 0", inverse=True),
+            AssTagClipVector(
+                scale=None,
+                path=[AssDrawCmdMove(AssDrawPoint(50, 0), close=True)],
+                inverse=True,
+            ),
             r"{\iclip(m 50 0)}",
         ),
     ],

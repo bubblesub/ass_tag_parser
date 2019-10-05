@@ -1,89 +1,95 @@
-import parsimonious
+import typing as T
+from dataclasses import dataclass
 
-from ass_tag_parser.common import DATA_DIR, flatten
 from ass_tag_parser.draw_struct import *
 from ass_tag_parser.errors import ParseError
-
-GRAMMAR_TEXT = (DATA_DIR / "draw_bnf.txt").read_text()
-GRAMMAR = parsimonious.Grammar(GRAMMAR_TEXT)
+from ass_tag_parser.io import MyIO
 
 
-class NodeVisitor(parsimonious.NodeVisitor):
-    def generic_visit(self, _node, visited_nodes):
-        return visited_nodes
+@dataclass
+class _ParseContext:
+    io: MyIO
 
-    def visit_draw_commands(self, _node, visited_nodes):
-        return flatten(visited_nodes)
 
-    def visit_draw_command(self, _node, visited_nodes):
-        return visited_nodes
+def _read_number(io: MyIO) -> T.Union[int, float]:
+    ret = ""
+    while io.peek(1).isspace():
+        io.skip(1)
 
-    def visit_pos(self, node, _visited_nodes):
-        if "." in node.text:
-            return float(node.text)
-        return int(node.text)
+    while True:
+        c = io.peek(1)
+        if not c or c not in ".-0123456789":
+            if not ret:
+                raise ParseError(io.global_pos, "expected number")
+            break
+        if c == "-" and ret:
+            raise ParseError(io.global_pos, "unexpected dash")
+        if c == "." and "." in ret:
+            raise ParseError(io.global_pos, "unexpected dot")
+        ret += c
+        io.skip(1)
 
-    def visit_draw_command_move(self, node, visited_nodes):
-        ret = AssDrawCmdMove(
-            AssDrawPoint(x=visited_nodes[2], y=visited_nodes[4]), close=True
+    return float(ret) if "." in ret else int(ret)
+
+
+def _read_point(io: MyIO) -> AssDrawPoint:
+    return AssDrawPoint(_read_number(io), _read_number(io))
+
+
+def _read_points(
+    io: MyIO, min: int, max: T.Optional[int] = None
+) -> T.Iterable[AssDrawPoint]:
+    num = 0
+    while num < min:
+        yield _read_point(io)
+        num += 1
+
+    if max is not None:
+        while num < max:
+            yield _read_point(io)
+            num += 1
+    else:
+        while not io.eof:
+            while io.peek(1).isspace():
+                io.skip(1)
+            if io.peek(1) in ".-0123456789":
+                yield _read_point(io)
+            else:
+                break
+
+
+def _parse_draw_commands(ctx: _ParseContext) -> T.Iterable[AssDrawCmd]:
+    while not ctx.io.eof:
+        start_pos = ctx.io.global_pos
+        cmd = ctx.io.read(1)
+
+        ret: AssDrawCmd
+        if cmd == "m":
+            ret = AssDrawCmdMove(_read_point(ctx.io), close=True)
+        elif cmd == "n":
+            ret = AssDrawCmdMove(_read_point(ctx.io), close=False)
+        elif cmd == "l":
+            ret = AssDrawCmdLine(list(_read_points(ctx.io, min=1)))
+        elif cmd == "b":
+            ret = AssDrawCmdBezier(tuple(_read_points(ctx.io, min=3, max=3)))
+        elif cmd == "s":
+            ret = AssDrawCmdSpline(list(_read_points(ctx.io, min=3, max=None)))
+        elif cmd == "p":
+            ret = AssDrawCmdExtendSpline(list(_read_points(ctx.io, min=1)))
+        elif cmd == "c":
+            ret = AssDrawCmdCloseSpline()
+        elif cmd.isspace():
+            continue
+        else:
+            raise ParseError(start_pos, "unknown draw command " + cmd)
+        ret.meta = Meta(
+            start_pos,
+            ctx.io.global_pos,
+            ctx.io.global_text[start_pos : ctx.io.global_pos],
         )
-        ret.meta = Meta(node.start, node.end, node.text)
-        return ret
-
-    def visit_draw_command_move_no_close(self, node, visited_nodes):
-        ret = AssDrawCmdMove(
-            AssDrawPoint(x=visited_nodes[2], y=visited_nodes[4]), close=False
-        )
-        ret.meta = Meta(node.start, node.end, node.text)
-        return ret
-
-    def visit_draw_command_line(self, node, visited_nodes):
-        ret = AssDrawCmdLine(
-            [AssDrawPoint(x=item[1], y=item[3]) for item in visited_nodes[1]]
-        )
-        ret.meta = Meta(node.start, node.end, node.text)
-        return ret
-
-    def visit_draw_command_bezier(self, node, visited_nodes):
-        ret = AssDrawCmdBezier(
-            (
-                AssDrawPoint(visited_nodes[2], visited_nodes[4]),
-                AssDrawPoint(visited_nodes[6], visited_nodes[8]),
-                AssDrawPoint(visited_nodes[10], visited_nodes[12]),
-            )
-        )
-        ret.meta = Meta(node.start, node.end, node.text)
-        return ret
-
-    def visit_draw_command_cubic_spline(self, node, visited_nodes):
-        ret = AssDrawCmdSpline(
-            [
-                AssDrawPoint(visited_nodes[2], visited_nodes[4]),
-                AssDrawPoint(visited_nodes[6], visited_nodes[8]),
-            ]
-            + [AssDrawPoint(item[1], item[3]) for item in visited_nodes[9]]
-        )
-        ret.meta = Meta(node.start, node.end, node.text)
-        return ret
-
-    def visit_draw_command_extend_spline(self, node, visited_nodes):
-        ret = AssDrawCmdExtendSpline(
-            [AssDrawPoint(item[1], item[3]) for item in visited_nodes[1]]
-        )
-        ret.meta = Meta(node.start, node.end, node.text)
-        return ret
-
-    def visit_draw_command_close_spline(self, node, _visited_nodes):
-        ret = AssDrawCmdCloseSpline()
-        ret.meta = Meta(node.start, node.end, node.text)
-        return ret
+        yield ret
 
 
 def parse_draw_commands(text: str) -> T.List[AssDrawCmd]:
-    try:
-        node = GRAMMAR.parse(text)
-        node_visitor = NodeVisitor()
-        node_visitor.unwrapped_exceptions = (ParseError,)
-        return node_visitor.visit(node)
-    except parsimonious.exceptions.ParseError as ex:
-        raise ParseError(ex.pos)
+    ctx = _ParseContext(io=MyIO(text))
+    return list(_parse_draw_commands(ctx))

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from ass_tag_parser.ass_struct import *
 from ass_tag_parser.common import smart_bool, smart_float, smart_int, smart_str
+from ass_tag_parser.draw_composer import compose_draw_commands
 from ass_tag_parser.io import MyIO
 
 
@@ -45,8 +46,11 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
         ctx.io.write(f"{item.text}")
     elif isinstance(item, AssTagBaselineOffset):
         ctx.io.write(f"\\pbo{smart_float(item.y)}")
-    elif isinstance(item, AssTagDrawingMode):
+    elif isinstance(item, AssTagDraw):
         ctx.io.write(f"\\p{smart_int(item.scale)}")
+        ctx.io.write("}")
+        ctx.io.write(compose_draw_commands(item.path))
+        ctx.io.write("{\\p0")
     elif isinstance(item, AssTagAlignment):
         if item.legacy:
             value = item.alignment
@@ -171,7 +175,8 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
         ctx.io.write("(")
         if item.scale is not None:
             ctx.io.write(f"{item.scale},")
-        ctx.io.write(f"{item.path})")
+        ctx.io.write(compose_draw_commands(item.path))
+        ctx.io.write(")")
     else:
         raise NotImplementedError(f"not implemented ({type(item)})")
 
