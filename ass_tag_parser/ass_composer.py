@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 from ass_tag_parser.ass_struct import *
 from ass_tag_parser.common import smart_bool, smart_float, smart_int, smart_str
-from ass_tag_parser.io import MyIO
 from ass_tag_parser.draw_composer import compose_draw_commands
+from ass_tag_parser.io import MyIO
 
 
 @dataclass

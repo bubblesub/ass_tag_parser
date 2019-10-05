@@ -252,9 +252,7 @@ def _color_arg(
     return (rgb[2], rgb[1], rgb[0], target, short)
 
 
-def _alpha_arg(
-    ctx: _ParseContext, tag: str
-) -> T.Tuple[T.Optional[int], int]:
+def _alpha_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[int], int]:
     start = ctx.io.global_pos
     arg, = _single_arg(ctx, tag)
     io = MyIO(arg or "", start, ctx.io.global_text)
