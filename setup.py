@@ -10,7 +10,7 @@ setup(
     description="Parser of ASS tags",
     long_description=(Path(__file__).parent / "README.md").read_text(),
     long_description_content_type="text/markdown",
-    url="https://github.com/rr-/ass_tag_parser",
+    url="https://github.com/bubblesub/ass_tag_parser",
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
