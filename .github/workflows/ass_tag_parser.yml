@@ -1,0 +1,19 @@
+name: ass_tag_parser
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install setuptools
+      run: sudo pip3 install setuptools
+    - name: Install pytest
+      run: sudo pip3 install pytest
+    - name: Install ass_tag_parser
+      run: pip3 install .
+    - name: Run tests
+      run: pytest ass_tag_parser/test
