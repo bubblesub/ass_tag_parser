@@ -17,3 +17,5 @@ jobs:
       run: pip3 install .
     - name: Run tests
       run: pytest ass_tag_parser/test
+    - name: Run the example
+      run: python3 example.py
