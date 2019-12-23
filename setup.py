@@ -20,5 +20,5 @@ setup(
     packages=find_packages(),
     package_dir={"ass_tag_parser": "ass_tag_parser"},
     package_data={"ass_tag_parser": ["../LICENSE.md"]},
-    install_requires=["dataclasses"],
+    install_requires=["dataclasses;python_version<'3.7'"],
 )
