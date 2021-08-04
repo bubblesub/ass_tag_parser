@@ -120,6 +120,6 @@ from ass_tag_parser import *
     ],
 )
 def test_parsing_valid_commands(
-    source: T.List[AssDrawCmd], expected: str
+    source: list[AssDrawCmd], expected: str
 ) -> None:
     assert expected == compose_draw_commands(source)

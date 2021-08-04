@@ -1,6 +1,7 @@
-import typing as T
 from dataclasses import dataclass
+from typing import Iterable, Optional, Union, cast
 
+from ass_tag_parser.common import Meta
 from ass_tag_parser.draw_struct import *
 from ass_tag_parser.errors import ParseError
 from ass_tag_parser.io import MyIO
@@ -11,7 +12,7 @@ class _ParseContext:
     io: MyIO
 
 
-def _read_number(io: MyIO) -> T.Union[int, float]:
+def _read_number(io: MyIO) -> Union[int, float]:
     ret = ""
     while io.peek(1).isspace():
         io.skip(1)
@@ -37,8 +38,8 @@ def _read_point(io: MyIO) -> AssDrawPoint:
 
 
 def _read_points(
-    io: MyIO, min: int, max: T.Optional[int] = None
-) -> T.Iterable[AssDrawPoint]:
+    io: MyIO, min: int, max: Optional[int] = None
+) -> Iterable[AssDrawPoint]:
     num = 0
     while num < min:
         yield _read_point(io)
@@ -58,7 +59,7 @@ def _read_points(
                 break
 
 
-def _parse_draw_commands(ctx: _ParseContext) -> T.Iterable[AssDrawCmd]:
+def _parse_draw_commands(ctx: _ParseContext) -> Iterable[AssDrawCmd]:
     while not ctx.io.eof:
         start_pos = ctx.io.global_pos
         cmd = ctx.io.read(1)
@@ -71,7 +72,12 @@ def _parse_draw_commands(ctx: _ParseContext) -> T.Iterable[AssDrawCmd]:
         elif cmd == "l":
             ret = AssDrawCmdLine(list(_read_points(ctx.io, min=1)))
         elif cmd == "b":
-            ret = AssDrawCmdBezier(tuple(_read_points(ctx.io, min=3, max=3)))
+            ret = AssDrawCmdBezier(
+                cast(
+                    tuple[AssDrawPoint, AssDrawPoint, AssDrawPoint],
+                    tuple(_read_points(ctx.io, min=3, max=3)),
+                )
+            )
         elif cmd == "s":
             ret = AssDrawCmdSpline(list(_read_points(ctx.io, min=3, max=None)))
         elif cmd == "p":
@@ -90,6 +96,6 @@ def _parse_draw_commands(ctx: _ParseContext) -> T.Iterable[AssDrawCmd]:
         yield ret
 
 
-def parse_draw_commands(text: str) -> T.List[AssDrawCmd]:
+def parse_draw_commands(text: str) -> list[AssDrawCmd]:
     ctx = _ParseContext(io=MyIO(text))
     return list(_parse_draw_commands(ctx))

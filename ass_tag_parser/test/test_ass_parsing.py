@@ -257,7 +257,7 @@ from ass_tag_parser import *
     ],
 )
 def test_parsing_valid_ass_line(
-    source_line: str, expected_items: T.List[AssItem]
+    source_line: str, expected_items: list[AssItem]
 ) -> None:
     assert expected_items == parse_ass(source_line)
 

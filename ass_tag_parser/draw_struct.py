@@ -1,5 +1,5 @@
-import typing as T
 from dataclasses import dataclass
+from typing import Optional
 
 from ass_tag_parser.common import Meta
 
@@ -11,7 +11,7 @@ class AssDrawPoint:
 
 
 class AssDrawCmd:
-    meta: T.Optional[Meta] = None
+    meta: Optional[Meta] = None
 
 
 @dataclass
@@ -22,22 +22,22 @@ class AssDrawCmdMove(AssDrawCmd):
 
 @dataclass
 class AssDrawCmdLine(AssDrawCmd):
-    points: T.List[AssDrawPoint]
+    points: list[AssDrawPoint]
 
 
 @dataclass
 class AssDrawCmdBezier(AssDrawCmd):
-    points: T.Tuple[AssDrawPoint, AssDrawPoint, AssDrawPoint]
+    points: tuple[AssDrawPoint, AssDrawPoint, AssDrawPoint]
 
 
 @dataclass
 class AssDrawCmdSpline(AssDrawCmd):
-    points: T.List[AssDrawPoint]
+    points: list[AssDrawPoint]
 
 
 @dataclass
 class AssDrawCmdExtendSpline(AssDrawCmd):
-    points: T.List[AssDrawPoint]
+    points: list[AssDrawPoint]
 
 
 @dataclass

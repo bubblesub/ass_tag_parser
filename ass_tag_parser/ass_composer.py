@@ -156,7 +156,7 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
     elif isinstance(item, AssTagStrikeout):
         ctx.io.write(f"\\s{smart_bool(item.enabled)}")
     elif isinstance(item, AssTagWrapStyle):
-        ctx.io.write(f"\\q{smart_str(item.style)}")
+        ctx.io.write(f"\\q{smart_int(item.style)}")
     elif isinstance(item, AssTagBold):
         ctx.io.write(
             "\\b"
@@ -181,7 +181,7 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
         raise NotImplementedError(f"not implemented ({type(item)})")
 
 
-def compose_ass(ass_line: T.List[AssItem], autoinsert: bool = True) -> str:
+def compose_ass(ass_line: list[AssItem], autoinsert: bool = True) -> str:
     ctx = _ComposeContext(io=MyIO(), autoinsert=autoinsert)
 
     for item in ass_line:

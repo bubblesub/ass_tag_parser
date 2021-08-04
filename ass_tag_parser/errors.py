@@ -1,4 +1,4 @@
-import typing as T
+from typing import Optional
 
 
 class BaseError(Exception):
@@ -6,7 +6,7 @@ class BaseError(Exception):
 
 
 class ParseError(BaseError):
-    def __init__(self, pos: int, msg: T.Optional[str] = None) -> None:
+    def __init__(self, pos: int, msg: Optional[str] = None) -> None:
         text = f"syntax error at pos {pos}"
         if msg:
             text += f": {msg}"
@@ -29,5 +29,5 @@ class UnterminatedCurlyBrace(ParseError):
 
 
 class BadAssTagArgument(ParseError):
-    def __init__(self, pos: int, msg: T.Optional[str] = None) -> None:
+    def __init__(self, pos: int, msg: Optional[str] = None) -> None:
         super().__init__(pos, "bad ass argument" if msg is None else msg)

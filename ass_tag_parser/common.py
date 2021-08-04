@@ -1,5 +1,5 @@
-import typing as T
 from dataclasses import dataclass
+from typing import Union
 
 
 @dataclass
@@ -9,25 +9,25 @@ class Meta:
     text: str
 
 
-def smart_float(value: T.Union[int, float, None]) -> str:
+def smart_float(value: Union[int, float, None]) -> str:
     if value is None:
         return ""
     return "{}".format(float(value)).rstrip("0").rstrip(".")
 
 
-def smart_int(value: T.Union[int, None]) -> str:
+def smart_int(value: Union[int, None]) -> str:
     if value is None:
         return ""
     return str(value)
 
 
-def smart_str(value: T.Union[str, None]) -> str:
+def smart_str(value: Union[str, None]) -> str:
     if value is None:
         return ""
     return value
 
 
-def smart_bool(value: T.Union[bool, int, None]) -> str:
+def smart_bool(value: Union[bool, int, None]) -> str:
     if value is None:
         return ""
     if value is True:

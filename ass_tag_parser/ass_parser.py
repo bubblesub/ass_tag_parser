@@ -1,7 +1,8 @@
-import typing as T
 from dataclasses import dataclass
+from typing import Any, Iterable, Optional, Union
 
 from ass_tag_parser.ass_struct import *
+from ass_tag_parser.common import Meta
 from ass_tag_parser.draw_parser import parse_draw_commands
 from ass_tag_parser.errors import *
 from ass_tag_parser.io import MyIO
@@ -10,10 +11,10 @@ from ass_tag_parser.io import MyIO
 @dataclass
 class _ParseContext:
     io: MyIO
-    drawing_tag: T.Optional[AssTagDraw] = None
+    drawing_tag: Optional[AssTagDraw] = None
 
 
-def _single_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[str]]:
+def _single_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[str]]:
     arg = ""
     if ctx.io.peek(1) == "(":
         raise BadAssTagArgument(
@@ -27,13 +28,13 @@ def _single_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[str]]:
 
 
 def _complex_args(
-    ctx: _ParseContext, tag: str, valid_counts: T.Set[int]
-) -> T.Tuple[T.Tuple[str, int], ...]:
+    ctx: _ParseContext, tag: str, valid_counts: set[int]
+) -> tuple[tuple[str, int], ...]:
     if ctx.io.read(1) != "(":
         raise BadAssTagArgument(ctx.io.global_pos, "expected brace")
 
     brackets = 1
-    args: T.List[T.Tuple[str, int]] = []
+    args: list[tuple[str, int]] = []
     arg = ""
     arg_start = ctx.io.global_pos
     while brackets > 0:
@@ -72,8 +73,8 @@ def _complex_args(
     return tuple(args)
 
 
-def _bool_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[bool]]:
-    arg, = _single_arg(ctx, tag)
+def _bool_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[bool]]:
+    (arg,) = _single_arg(ctx, tag)
     if not arg:
         return (None,)
     if arg == "0":
@@ -83,8 +84,8 @@ def _bool_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[bool]]:
     raise BadAssTagArgument(ctx.io.global_pos, f"{tag} requires a boolean")
 
 
-def _int_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[int]]:
-    arg, = _single_arg(ctx, tag)
+def _int_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[int]]:
+    (arg,) = _single_arg(ctx, tag)
     if not arg:
         return (None,)
     try:
@@ -95,10 +96,8 @@ def _int_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[int]]:
         )
 
 
-def _positive_int_arg(
-    ctx: _ParseContext, tag: str
-) -> T.Tuple[T.Optional[int]]:
-    value, = _int_arg(ctx, tag)
+def _positive_int_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[int]]:
+    (value,) = _int_arg(ctx, tag)
     if value is not None and value < 0:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} takes only positive integers"
@@ -106,8 +105,8 @@ def _positive_int_arg(
     return (value,)
 
 
-def _float_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[float]]:
-    arg, = _single_arg(ctx, tag)
+def _float_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[float]]:
+    (arg,) = _single_arg(ctx, tag)
     if not arg:
         return (None,)
     try:
@@ -118,8 +117,8 @@ def _float_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[float]]:
 
 def _positive_float_arg(
     ctx: _ParseContext, tag: str
-) -> T.Tuple[T.Optional[float]]:
-    value, = _float_arg(ctx, tag)
+) -> tuple[Optional[float]]:
+    (value,) = _float_arg(ctx, tag)
     if value is not None and value < 0:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} takes only positive decimals"
@@ -127,22 +126,31 @@ def _positive_float_arg(
     return (value,)
 
 
-def _pos_args(ctx: _ParseContext, tag: str) -> T.Tuple[float, float]:
+def _pos_args(ctx: _ParseContext, tag: str) -> tuple[float, float]:
     args = _complex_args(ctx, tag, {2})
+
     try:
-        return tuple([float(item[0]) for item in args])
+        coords = (
+            float(args[0][0]),
+            float(args[1][0]),
+        )
     except ValueError:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} takes only decimal arguments"
         )
 
+    return coords
 
-def _fade_simple_args(ctx: _ParseContext, tag: str) -> T.Tuple[float, float]:
+
+def _fade_simple_args(ctx: _ParseContext, tag: str) -> tuple[float, float]:
     args = list(_complex_args(ctx, tag, {2}))
 
     try:
-        args[0:2] = [float(item[0]) for item in args[0:2]]
-        if any(arg < 0 for arg in args[0:2]):
+        times = (
+            float(args[0][0]),
+            float(args[1][0]),
+        )
+        if any(time < 0 for time in times):
             raise BadAssTagArgument(
                 ctx.io.global_pos, f"{tag} takes only positive times"
             )
@@ -151,17 +159,21 @@ def _fade_simple_args(ctx: _ParseContext, tag: str) -> T.Tuple[float, float]:
             ctx.io.global_pos, f"{tag} requires decimal times"
         )
 
-    return tuple(args)
+    return times
 
 
 def _fade_complex_args(
     ctx: _ParseContext, tag: str
-) -> T.Tuple[int, int, int, float, float, float, float]:
+) -> tuple[int, int, int, float, float, float, float]:
     args = list(_complex_args(ctx, tag, {7}))
 
     try:
-        args[0:3] = [int(item[0]) for item in args[0:3]]
-        if any(arg < 0 for arg in args[0:3]):
+        alpha_values = (
+            int(args[0][0]),
+            int(args[1][0]),
+            int(args[2][0]),
+        )
+        if any(value < 0 for value in alpha_values):
             raise BadAssTagArgument(
                 ctx.io.global_pos, f"{tag} takes only positive alpha values"
             )
@@ -171,8 +183,13 @@ def _fade_complex_args(
         )
 
     try:
-        args[3:7] = [float(item[0]) for item in args[3:7]]
-        if any(arg < 0 for arg in args[3:7]):
+        times = (
+            float(args[3][0]),
+            float(args[4][0]),
+            float(args[5][0]),
+            float(args[6][0]),
+        )
+        if any(time < 0 for time in times):
             raise BadAssTagArgument(
                 ctx.io.global_pos, f"{tag} takes only positive times"
             )
@@ -181,23 +198,21 @@ def _fade_complex_args(
             ctx.io.global_pos, f"{tag} requires decimal times"
         )
 
-    return tuple(args)
+    return alpha_values + times
 
 
 def _bold_arg(
     ctx: _ParseContext, tag: str
-) -> T.Tuple[T.Optional[bool], T.Optional[float]]:
-    weight, = _positive_int_arg(ctx, tag)
+) -> tuple[Optional[bool], Optional[float]]:
+    (weight,) = _positive_int_arg(ctx, tag)
     return (
         None if weight is None else weight != 0,
         None if weight is None or weight in {0, 1} else weight,
     )
 
 
-def _alignment_arg(
-    ctx: _ParseContext, tag: str
-) -> T.Tuple[T.Optional[int], bool]:
-    value, = _positive_int_arg(ctx, tag)
+def _alignment_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[int], bool]:
+    (value,) = _positive_int_arg(ctx, tag)
     legacy = tag == r"\a"
     if value is None:
         return (None, legacy)
@@ -219,9 +234,9 @@ def _alignment_arg(
 
 def _color_arg(
     ctx: _ParseContext, tag: str
-) -> T.Tuple[T.Optional[int], T.Optional[int], T.Optional[int], int, bool]:
+) -> tuple[Optional[int], Optional[int], Optional[int], int, bool]:
     start = ctx.io.global_pos
-    arg, = _single_arg(ctx, tag)
+    (arg,) = _single_arg(ctx, tag)
     io = MyIO(arg or "", start, ctx.io.global_text)
 
     short = tag == r"\c"
@@ -252,9 +267,9 @@ def _color_arg(
     return (rgb[2], rgb[1], rgb[0], target, short)
 
 
-def _alpha_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[int], int]:
+def _alpha_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[int], int]:
     start = ctx.io.global_pos
-    arg, = _single_arg(ctx, tag)
+    (arg,) = _single_arg(ctx, tag)
     io = MyIO(arg or "", start, ctx.io.global_text)
 
     target = {r"\1a": 1, r"\2a": 2, r"\3a": 3, r"\4a": 4, r"\alpha": 0}[tag]
@@ -279,9 +294,9 @@ def _alpha_arg(ctx: _ParseContext, tag: str) -> T.Tuple[T.Optional[int], int]:
     return (value, target)
 
 
-def _karaoke_arg(ctx: _ParseContext, tag: str) -> T.Tuple[float, int]:
+def _karaoke_arg(ctx: _ParseContext, tag: str) -> tuple[float, int]:
     karaoke_type = {"\\k": 1, "\\K": 2, "\\kf": 3, "\\ko": 4}[tag]
-    value, = _positive_float_arg(ctx, tag)
+    (value,) = _positive_float_arg(ctx, tag)
     if value is None:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires an argument"
@@ -289,8 +304,8 @@ def _karaoke_arg(ctx: _ParseContext, tag: str) -> T.Tuple[float, int]:
     return (value * 10, karaoke_type)
 
 
-def _wrap_style_arg(ctx: _ParseContext, tag: str) -> T.Any:
-    value, = _positive_int_arg(ctx, tag)
+def _wrap_style_arg(ctx: _ParseContext, tag: str) -> Any:
+    (value,) = _positive_int_arg(ctx, tag)
     if value not in range(4):
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} expects 0, 1, 2 or 3"
@@ -300,20 +315,26 @@ def _wrap_style_arg(ctx: _ParseContext, tag: str) -> T.Any:
 
 def _move_args(
     ctx: _ParseContext, tag: str
-) -> T.Tuple[float, float, float, float, T.Optional[float], T.Optional[float]]:
+) -> tuple[float, float, float, float, Optional[float], Optional[float]]:
     args = list(_complex_args(ctx, tag, {4, 6}))
 
     try:
-        args[0:4] = [float(item[0]) for item in args[0:4]]
+        coords = (
+            float(args[0][0]),
+            float(args[1][0]),
+            float(args[2][0]),
+            float(args[3][0]),
+        )
     except ValueError:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires decimal coordinates"
         )
 
+    speed: tuple[Optional[float], Optional[float]] = (None, None)
     if len(args) == 6:
         try:
-            args[4:6] = [float(item[0]) for item in args[4:6]]
-            if any(arg < 0 for arg in args[4:6]):
+            speed = (float(args[4][0]), float(args[5][0]))
+            if any(time < 0 for time in speed):
                 raise BadAssTagArgument(
                     ctx.io.global_pos, f"{tag} takes only positive times"
                 )
@@ -322,18 +343,16 @@ def _move_args(
                 ctx.io.global_pos, f"{tag} requires decimal times"
             )
 
-    return args
+    return coords + speed
 
 
 def _animation_args(
     ctx: _ParseContext, tag: str
-) -> T.Tuple[
-    T.List[AssTag], T.Optional[float], T.Optional[float], T.Optional[float]
-]:
-    acceleration: T.Union[None, str, float]
-    time1: T.Union[None, str, float]
-    time2: T.Union[None, str, float]
-    tags: T.Union[None, str, T.List[AssTag]]
+) -> tuple[list[AssTag], Optional[float], Optional[float], Optional[float]]:
+    acceleration: Union[None, str, float]
+    time1: Union[None, str, float]
+    time2: Union[None, str, float]
+    tags: Union[None, str, list[AssTag]]
 
     args = _complex_args(ctx, tag, {1, 2, 3, 4})
 
@@ -461,6 +480,7 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
         inverse = prefix == r"\iclip"
         args = _complex_args(ctx, prefix, {1, 2, 4})
 
+        scale: Optional[int]
         if len(args) == 1:
             scale = None
             path = args[0][0]
@@ -469,10 +489,10 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
             )
 
         elif len(args) == 2:
-            scale = args[0][0]
+            scale_str = args[0][0]
             path = args[1][0]
             try:
-                scale = int(scale)
+                scale = int(scale_str)
             except ValueError:
                 raise BadAssTagArgument(
                     ctx.io.global_pos, f"{prefix} scale must be integer"
@@ -522,7 +542,7 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
     raise UnknownTag(ctx.io.global_pos)
 
 
-def _merge_comments(tags: T.List[AssTag]) -> T.List[AssTag]:
+def _merge_comments(tags: list[AssTag]) -> list[AssTag]:
     if not tags:
         return []
 
@@ -546,7 +566,7 @@ def _merge_comments(tags: T.List[AssTag]) -> T.List[AssTag]:
     return ret
 
 
-def _parse_ass_tags(ctx: _ParseContext) -> T.Iterable[AssTag]:
+def _parse_ass_tags(ctx: _ParseContext) -> Iterable[AssTag]:
     while not ctx.io.eof:
         if ctx.io.peek(1) == "\\":
             if ctx.io.peek(2) in {r"\N", r"\n", r"\h", r"\\"}:
@@ -567,7 +587,7 @@ def _parse_ass_tags(ctx: _ParseContext) -> T.Iterable[AssTag]:
             yield block
 
 
-def _parse_ass(ctx: _ParseContext) -> T.Iterable[AssItem]:
+def _parse_ass(ctx: _ParseContext) -> Iterable[AssItem]:
     while not ctx.io.eof:
         i = ctx.io.pos
         if ctx.io.peek(1) == "{":
@@ -610,11 +630,11 @@ def _parse_ass(ctx: _ParseContext) -> T.Iterable[AssItem]:
                 ctx.drawing_tag.path = parse_draw_commands(text)
                 ctx.drawing_tag = None
             else:
-                text = AssText(text)
-                text.meta = Meta(i, j, ctx.io.text[i:j])
-                yield text
+                ass_text = AssText(text)
+                ass_text.meta = Meta(i, j, ctx.io.text[i:j])
+                yield ass_text
 
 
-def parse_ass(text: str) -> T.List[AssItem]:
+def parse_ass(text: str) -> list[AssItem]:
     ctx = _ParseContext(io=MyIO(text))
     return list(_parse_ass(ctx))

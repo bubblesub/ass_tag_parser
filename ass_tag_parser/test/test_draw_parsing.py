@@ -123,7 +123,7 @@ from ass_tag_parser import *
         ),
     ],
 )
-def test_parsing_valid_text(source, expected):
+def test_parsing_valid_text(source: str, expected: list[AssDrawCmd]) -> None:
     assert expected == parse_draw_commands(source)
 
 

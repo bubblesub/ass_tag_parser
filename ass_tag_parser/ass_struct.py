@@ -1,12 +1,12 @@
-import typing as T
 from dataclasses import dataclass, field
+from typing import Optional
 
 from ass_tag_parser.common import Meta
 from ass_tag_parser.draw_struct import AssDrawCmd
 
 
 class AssItem:
-    meta: T.Optional[Meta] = None
+    meta: Optional[Meta] = None
 
 
 class AssTag(AssItem):
@@ -20,93 +20,93 @@ class AssTagComment(AssTag):
 
 @dataclass
 class AssTagBold(AssTag):
-    enabled: T.Optional[bool] = None
-    weight: T.Optional[int] = None
+    enabled: Optional[bool] = None
+    weight: Optional[int] = None
 
 
 @dataclass
 class AssTagItalic(AssTag):
-    enabled: T.Optional[bool] = None
+    enabled: Optional[bool] = None
 
 
 @dataclass
 class AssTagUnderline(AssTag):
-    enabled: T.Optional[bool] = None
+    enabled: Optional[bool] = None
 
 
 @dataclass
 class AssTagStrikeout(AssTag):
-    enabled: T.Optional[bool] = None
+    enabled: Optional[bool] = None
 
 
 @dataclass
 class AssTagBorder(AssTag):
-    size: T.Optional[float] = None
+    size: Optional[float] = None
 
 
 @dataclass
 class AssTagXBorder(AssTag):
-    size: T.Optional[float] = None
+    size: Optional[float] = None
 
 
 @dataclass
 class AssTagYBorder(AssTag):
-    size: T.Optional[float] = None
+    size: Optional[float] = None
 
 
 @dataclass
 class AssTagShadow(AssTag):
-    size: T.Optional[float] = None
+    size: Optional[float] = None
 
 
 @dataclass
 class AssTagXShadow(AssTag):
-    size: T.Optional[float] = None
+    size: Optional[float] = None
 
 
 @dataclass
 class AssTagYShadow(AssTag):
-    size: T.Optional[float] = None
+    size: Optional[float] = None
 
 
 @dataclass
 class AssTagBlurEdges(AssTag):
-    times: T.Optional[int] = None
+    times: Optional[int] = None
 
 
 @dataclass
 class AssTagBlurEdgesGauss(AssTag):
-    weight: T.Optional[float] = None
+    weight: Optional[float] = None
 
 
 @dataclass
 class AssTagFontName(AssTag):
-    name: T.Optional[str] = None
+    name: Optional[str] = None
 
 
 @dataclass
 class AssTagFontEncoding(AssTag):
-    encoding: T.Optional[int] = None
+    encoding: Optional[int] = None
 
 
 @dataclass
 class AssTagFontSize(AssTag):
-    size: T.Optional[int] = None
+    size: Optional[int] = None
 
 
 @dataclass
 class AssTagFontXScale(AssTag):
-    scale: T.Optional[float] = None
+    scale: Optional[float] = None
 
 
 @dataclass
 class AssTagFontYScale(AssTag):
-    scale: T.Optional[float] = None
+    scale: Optional[float] = None
 
 
 @dataclass
 class AssTagLetterSpacing(AssTag):
-    spacing: T.Optional[float] = None
+    spacing: Optional[float] = None
 
 
 @dataclass
@@ -115,47 +115,47 @@ class AssTagMove(AssTag):
     y1: float
     x2: float
     y2: float
-    time1: T.Optional[float] = None
-    time2: T.Optional[float] = None
+    time1: Optional[float] = None
+    time2: Optional[float] = None
 
 
 @dataclass
 class AssTagPosition(AssTag):
-    x: T.Optional[float] = None
-    y: T.Optional[float] = None
+    x: Optional[float] = None
+    y: Optional[float] = None
 
 
 @dataclass
 class AssTagRotationOrigin(AssTag):
-    x: T.Optional[float] = None
-    y: T.Optional[float] = None
+    x: Optional[float] = None
+    y: Optional[float] = None
 
 
 @dataclass
 class AssTagXRotation(AssTag):
-    angle: T.Optional[float] = None
+    angle: Optional[float] = None
 
 
 @dataclass
 class AssTagYRotation(AssTag):
-    angle: T.Optional[float] = None
+    angle: Optional[float] = None
 
 
 @dataclass
 class AssTagZRotation(AssTag):
-    angle: T.Optional[float] = None
+    angle: Optional[float] = None
     short: bool = False
 
 
 @dataclass
 class AssTagAlignment(AssTag):
-    alignment: T.Optional[int] = None
+    alignment: Optional[int] = None
     legacy: bool = False
 
 
 @dataclass
 class AssTagResetStyle(AssTag):
-    style: T.Optional[str] = None
+    style: Optional[str] = None
 
 
 @dataclass
@@ -166,16 +166,16 @@ class AssTagKaraoke(AssTag):
 
 @dataclass
 class AssTagColor(AssTag):
-    red: T.Optional[int]
-    green: T.Optional[int]
-    blue: T.Optional[int]
+    red: Optional[int]
+    green: Optional[int]
+    blue: Optional[int]
     target: int
     short: bool = False
 
 
 @dataclass
 class AssTagAlpha(AssTag):
-    value: T.Optional[int]
+    value: Optional[int]
     target: int
 
 
@@ -203,20 +203,20 @@ class AssTagFadeComplex(AssTag):
 
 @dataclass
 class AssTagXShear(AssTag):
-    value: T.Optional[float] = None
+    value: Optional[float] = None
 
 
 @dataclass
 class AssTagYShear(AssTag):
-    value: T.Optional[float] = None
+    value: Optional[float] = None
 
 
 @dataclass
 class AssTagAnimation(AssTag):
-    tags: T.List[AssTag]
-    time1: T.Optional[float] = None
-    time2: T.Optional[float] = None
-    acceleration: T.Optional[float] = None
+    tags: list[AssTag]
+    time1: Optional[float] = None
+    time2: Optional[float] = None
+    acceleration: Optional[float] = None
 
 
 @dataclass
@@ -227,7 +227,7 @@ class AssTagBaselineOffset(AssTag):
 @dataclass
 class AssTagDraw(AssTag):
     scale: int
-    path: T.List[AssDrawCmd] = field(default_factory=list)
+    path: list[AssDrawCmd] = field(default_factory=list)
 
 
 @dataclass
@@ -241,8 +241,8 @@ class AssTagClipRectangle(AssTag):
 
 @dataclass
 class AssTagClipVector(AssTag):
-    scale: T.Optional[int]
-    path: T.List[AssDrawCmd]
+    scale: Optional[int]
+    path: list[AssDrawCmd]
     inverse: bool
 
 

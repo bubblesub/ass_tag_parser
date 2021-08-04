@@ -1,5 +1,5 @@
 import io
-import typing as T
+from typing import Optional
 
 
 class MyIO:
@@ -7,7 +7,7 @@ class MyIO:
         self,
         text: str = "",
         parent_pos: int = 0,
-        global_text: T.Optional[str] = None,
+        global_text: Optional[str] = None,
     ) -> None:
         self._io = io.StringIO(text)
         self._text = text

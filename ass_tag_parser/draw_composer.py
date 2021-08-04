@@ -1,4 +1,4 @@
-import typing as T
+from typing import Any
 
 from ass_tag_parser.common import smart_float
 from ass_tag_parser.draw_struct import *
@@ -6,7 +6,7 @@ from ass_tag_parser.errors import BaseError
 
 
 class Composer:
-    def visit(self, draw_commands: T.List[AssDrawCmd]) -> str:
+    def visit(self, draw_commands: list[AssDrawCmd]) -> str:
         ret = []
         for cmd in draw_commands:
             assert isinstance(cmd, AssDrawCmd)
@@ -29,15 +29,13 @@ class Composer:
 
         return " ".join(ret)
 
-    def visit_AssDrawCmdMove(self, cmd: AssDrawCmdMove) -> T.Tuple[T.Any, ...]:
+    def visit_AssDrawCmdMove(self, cmd: AssDrawCmdMove) -> tuple[Any, ...]:
         return ("m" if cmd.close else "n", cmd.pos.x, cmd.pos.y)
 
-    def visit_AssDrawCmdLine(self, cmd: AssDrawCmdLine) -> T.Tuple[T.Any, ...]:
+    def visit_AssDrawCmdLine(self, cmd: AssDrawCmdLine) -> tuple[Any, ...]:
         return ("l", *sum([(point.x, point.y) for point in cmd.points], ()))
 
-    def visit_AssDrawCmdBezier(
-        self, cmd: AssDrawCmdBezier
-    ) -> T.Tuple[T.Any, ...]:
+    def visit_AssDrawCmdBezier(self, cmd: AssDrawCmdBezier) -> tuple[Any, ...]:
         assert len(cmd.points) == 3
         return (
             "b",
@@ -49,22 +47,20 @@ class Composer:
             cmd.points[2].y,
         )
 
-    def visit_AssDrawCmdSpline(
-        self, cmd: AssDrawCmdSpline
-    ) -> T.Tuple[T.Any, ...]:
+    def visit_AssDrawCmdSpline(self, cmd: AssDrawCmdSpline) -> tuple[Any, ...]:
         assert len(cmd.points) >= 3
         return ("s", *sum([(point.x, point.y) for point in cmd.points], ()))
 
     def visit_AssDrawCmdExtendSpline(
         self, cmd: AssDrawCmdExtendSpline
-    ) -> T.Tuple[T.Any, ...]:
+    ) -> tuple[Any, ...]:
         return ("p", *sum([(point.x, point.y) for point in cmd.points], ()))
 
     def visit_AssDrawCmdCloseSpline(
         self, cmd: AssDrawCmdCloseSpline
-    ) -> T.Tuple[T.Any, ...]:
+    ) -> tuple[Any, ...]:
         return ("c",)
 
 
-def compose_draw_commands(commands: T.List[AssDrawCmd]) -> str:
+def compose_draw_commands(commands: list[AssDrawCmd]) -> str:
     return Composer().visit(commands)

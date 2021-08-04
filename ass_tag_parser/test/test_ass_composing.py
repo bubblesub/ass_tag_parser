@@ -171,7 +171,7 @@ from ass_tag_parser import *
     ],
 )
 def test_composing_valid_ass_line(
-    source_blocks: T.List[AssItem], expected_line: str
+    source_blocks: list[AssItem], expected_line: str
 ) -> None:
     assert expected_line == compose_ass(source_blocks)
 
