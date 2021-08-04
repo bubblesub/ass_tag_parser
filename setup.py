@@ -1,26 +1,4 @@
-from pathlib import Path
+"""Setup routine."""
+import setuptools
 
-from setuptools import find_packages, setup
-
-setup(
-    author="rr-",
-    author_email="rr-@sakuya.pl",
-    name="ass_tag_parser",
-    version="2.3.1",
-    description="Parser of ASS tags",
-    long_description=(Path(__file__).parent / "README.md").read_text(
-        encoding="utf-8"
-    ),
-    long_description_content_type="text/markdown",
-    url="https://github.com/bubblesub/ass_tag_parser",
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.2",
-    ],
-    packages=find_packages(),
-    package_dir={"ass_tag_parser": "ass_tag_parser"},
-    package_data={"ass_tag_parser": ["../LICENSE.md"]},
-    install_requires=["dataclasses;python_version<'3.7'"],
-)
+setuptools.setup()
