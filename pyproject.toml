@@ -5,3 +5,7 @@ py36 = true
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
+
+[tool.mypy]
+strict = true
+disallow_untyped_decorators = false
