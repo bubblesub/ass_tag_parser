@@ -33,7 +33,7 @@ def all_names() -> list[str]:
 @pytest.mark.parametrize(
     "cls", chain(get_subclasses(AssItem), get_subclasses(AssDrawCmd))
 )
-def test_all(all_names: list[str], cls: Type[object]) -> None:
+def test_module_exports(all_names: list[str], cls: Type[object]) -> None:
     """Test that ass_tag_parser.__init__.__all__ includes all defined ASS tags
     and draw commands.
     """
