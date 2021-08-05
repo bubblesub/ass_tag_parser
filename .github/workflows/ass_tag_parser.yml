@@ -23,5 +23,3 @@ jobs:
       run: pre-commit run -a
     - name: Run tests
       run: pytest
-    - name: Run the example
-      run: python3 example.py
