@@ -17,7 +17,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python3 -m pip install pytest pre-commit
+        python3 -m pip install pre-commit
+        python3 -m pip install .[test]
     - name: Run linter
       run: pre-commit run -a
     - name: Run tests

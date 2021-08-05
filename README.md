@@ -11,13 +11,14 @@ Not to confuse with parsing `.ass` files that can be manipulated with
 
 **Example**:
 
-```python
+```python3
 from ass_tag_parser import parse_ass
 
+
 result = parse_ass(
-    r'{\an5\pos(175,460)\fnUtopia with Oldstyle figures\fs90\bord0\blur3'
-    r'\1c&H131313&\t(0,1000,2,\1c&H131340&)\t(1000,2000,\1c&H1015B2&'
-    r'\blur1.4)}Attack No. 1{NOTE:アタックNo.1}'
+    r"{\an5\pos(175,460)\fnUtopia with Oldstyle figures\fs90\bord0\blur3"
+    r"\1c&H131313&\t(0,1000,2,\1c&H131340&)\t(1000,2000,\1c&H1015B2&"
+    r"\blur1.4)}Attack No. 1{NOTE:アタックNo.1}"
 )
 print(result)
 print(result[2].meta)
@@ -25,7 +26,7 @@ print(result[2].meta)
 
 **Result**:
 
-```python3
+```python3 console
 [
     AssTagListOpening(),
     AssTagAlignment(alignment=5, legacy=False),
@@ -56,9 +57,7 @@ print(result[2].meta)
     AssTagComment(text="NOTE:アタックNo.1"),
     AssTagListEnding(),
 ]
-
-
-Meta(start=5, end=18, text='\\pos(175,460)')
+Meta(start=5, end=18, text="\\pos(175,460)")
 ```
 
 Starting from version 2.2, drawing commands are parsed automatically.

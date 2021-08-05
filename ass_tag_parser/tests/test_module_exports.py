@@ -16,8 +16,8 @@ def get_subclasses(cls: Type[object]) -> Iterable[Type[object]]:
 
 
 @pytest.fixture
-def all_names() -> list[str]:
-    path_to_init = Path(__file__).parent.parent / "__init__.py"
+def all_names(project_dir: Path) -> list[str]:
+    path_to_init = project_dir / "__init__.py"
     assert path_to_init.exists()
 
     match = re.search(
