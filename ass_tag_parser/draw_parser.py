@@ -2,7 +2,16 @@ from dataclasses import dataclass
 from typing import Iterable, Optional, Union, cast
 
 from ass_tag_parser.common import Meta
-from ass_tag_parser.draw_struct import *
+from ass_tag_parser.draw_struct import (
+    AssDrawCmd,
+    AssDrawCmdBezier,
+    AssDrawCmdCloseSpline,
+    AssDrawCmdExtendSpline,
+    AssDrawCmdLine,
+    AssDrawCmdMove,
+    AssDrawCmdSpline,
+    AssDrawPoint,
+)
 from ass_tag_parser.errors import ParseError
 from ass_tag_parser.io import MyIO
 
@@ -18,16 +27,16 @@ def _read_number(io: MyIO) -> Union[int, float]:
         io.skip(1)
 
     while True:
-        c = io.peek(1)
-        if not c or c not in ".-0123456789":
+        char = io.peek(1)
+        if not char or char not in ".-0123456789":
             if not ret:
                 raise ParseError(io.global_pos, "expected number")
             break
-        if c == "-" and ret:
+        if char == "-" and ret:
             raise ParseError(io.global_pos, "unexpected dash")
-        if c == "." and "." in ret:
+        if char == "." and "." in ret:
             raise ParseError(io.global_pos, "unexpected dot")
-        ret += c
+        ret += char
         io.skip(1)
 
     return float(ret) if "." in ret else int(ret)
@@ -38,15 +47,15 @@ def _read_point(io: MyIO) -> AssDrawPoint:
 
 
 def _read_points(
-    io: MyIO, min: int, max: Optional[int] = None
+    io: MyIO, min_count: int, max_count: Optional[int] = None
 ) -> Iterable[AssDrawPoint]:
     num = 0
-    while num < min:
+    while num < min_count:
         yield _read_point(io)
         num += 1
 
-    if max is not None:
-        while num < max:
+    if max_count is not None:
+        while num < max_count:
             yield _read_point(io)
             num += 1
     else:
@@ -70,18 +79,22 @@ def _parse_draw_commands(ctx: _ParseContext) -> Iterable[AssDrawCmd]:
         elif cmd == "n":
             ret = AssDrawCmdMove(_read_point(ctx.io), close=False)
         elif cmd == "l":
-            ret = AssDrawCmdLine(list(_read_points(ctx.io, min=1)))
+            ret = AssDrawCmdLine(list(_read_points(ctx.io, min_count=1)))
         elif cmd == "b":
             ret = AssDrawCmdBezier(
                 cast(
                     tuple[AssDrawPoint, AssDrawPoint, AssDrawPoint],
-                    tuple(_read_points(ctx.io, min=3, max=3)),
+                    tuple(_read_points(ctx.io, min_count=3, max_count=3)),
                 )
             )
         elif cmd == "s":
-            ret = AssDrawCmdSpline(list(_read_points(ctx.io, min=3, max=None)))
+            ret = AssDrawCmdSpline(
+                list(_read_points(ctx.io, min_count=3, max_count=None))
+            )
         elif cmd == "p":
-            ret = AssDrawCmdExtendSpline(list(_read_points(ctx.io, min=1)))
+            ret = AssDrawCmdExtendSpline(
+                list(_read_points(ctx.io, min_count=1))
+            )
         elif cmd == "c":
             ret = AssDrawCmdCloseSpline()
         elif cmd.isspace():

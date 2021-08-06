@@ -1,10 +1,61 @@
 from dataclasses import dataclass
 from typing import Any, Iterable, Optional, Union
 
-from ass_tag_parser.ass_struct import *
+from ass_tag_parser.ass_struct import (
+    AssItem,
+    AssTag,
+    AssTagAlignment,
+    AssTagAlpha,
+    AssTagAnimation,
+    AssTagBaselineOffset,
+    AssTagBlurEdges,
+    AssTagBlurEdgesGauss,
+    AssTagBold,
+    AssTagBorder,
+    AssTagClipRectangle,
+    AssTagClipVector,
+    AssTagColor,
+    AssTagComment,
+    AssTagDraw,
+    AssTagFade,
+    AssTagFadeComplex,
+    AssTagFontEncoding,
+    AssTagFontName,
+    AssTagFontSize,
+    AssTagFontXScale,
+    AssTagFontYScale,
+    AssTagItalic,
+    AssTagKaraoke,
+    AssTagLetterSpacing,
+    AssTagListEnding,
+    AssTagListOpening,
+    AssTagMove,
+    AssTagPosition,
+    AssTagResetStyle,
+    AssTagRotationOrigin,
+    AssTagShadow,
+    AssTagStrikeout,
+    AssTagUnderline,
+    AssTagWrapStyle,
+    AssTagXBorder,
+    AssTagXRotation,
+    AssTagXShadow,
+    AssTagXShear,
+    AssTagYBorder,
+    AssTagYRotation,
+    AssTagYShadow,
+    AssTagYShear,
+    AssTagZRotation,
+    AssText,
+)
 from ass_tag_parser.common import Meta
 from ass_tag_parser.draw_parser import parse_draw_commands
-from ass_tag_parser.errors import *
+from ass_tag_parser.errors import (
+    BadAssTagArgument,
+    UnexpectedCurlyBrace,
+    UnknownTag,
+    UnterminatedCurlyBrace,
+)
 from ass_tag_parser.io import MyIO
 
 
@@ -30,6 +81,7 @@ def _single_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[str]]:
 def _complex_args(
     ctx: _ParseContext, tag: str, valid_counts: set[int]
 ) -> tuple[tuple[str, int], ...]:
+    # pylint: disable=too-many-branches
     if ctx.io.read(1) != "(":
         raise BadAssTagArgument(ctx.io.global_pos, "expected brace")
 
@@ -90,10 +142,10 @@ def _int_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[int]]:
         return (None,)
     try:
         return (int(arg),)
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires an integer"
-        )
+        ) from exc
 
 
 def _positive_int_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[int]]:
@@ -111,8 +163,10 @@ def _float_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[float]]:
         return (None,)
     try:
         return (float(arg),)
-    except ValueError:
-        raise BadAssTagArgument(ctx.io.global_pos, f"{tag} requires a decimal")
+    except ValueError as exc:
+        raise BadAssTagArgument(
+            ctx.io.global_pos, f"{tag} requires a decimal"
+        ) from exc
 
 
 def _positive_float_arg(
@@ -134,10 +188,10 @@ def _pos_args(ctx: _ParseContext, tag: str) -> tuple[float, float]:
             float(args[0][0]),
             float(args[1][0]),
         )
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} takes only decimal arguments"
-        )
+        ) from exc
 
     return coords
 
@@ -154,10 +208,10 @@ def _fade_simple_args(ctx: _ParseContext, tag: str) -> tuple[float, float]:
             raise BadAssTagArgument(
                 ctx.io.global_pos, f"{tag} takes only positive times"
             )
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires decimal times"
-        )
+        ) from exc
 
     return times
 
@@ -177,10 +231,10 @@ def _fade_complex_args(
             raise BadAssTagArgument(
                 ctx.io.global_pos, f"{tag} takes only positive alpha values"
             )
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires integer alpha values"
-        )
+        ) from exc
 
     try:
         times = (
@@ -193,10 +247,10 @@ def _fade_complex_args(
             raise BadAssTagArgument(
                 ctx.io.global_pos, f"{tag} takes only positive times"
             )
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires decimal times"
-        )
+        ) from exc
 
     return alpha_values + times
 
@@ -253,10 +307,10 @@ def _color_arg(
     for i in range(3):
         try:
             rgb[i] = int(io.read(2), 16)
-        except ValueError:
+        except ValueError as exc:
             raise BadAssTagArgument(
                 io.global_pos, "expected hexadecimal number"
-            )
+            ) from exc
 
     if io.read(1) != "&":
         raise BadAssTagArgument(io.global_pos, "expected ampersand")
@@ -282,8 +336,10 @@ def _alpha_arg(ctx: _ParseContext, tag: str) -> tuple[Optional[int], int]:
 
     try:
         value = int(io.read(2), 16)
-    except ValueError:
-        raise BadAssTagArgument(io.global_pos, "expected hexadecimal number")
+    except ValueError as exc:
+        raise BadAssTagArgument(
+            io.global_pos, "expected hexadecimal number"
+        ) from exc
 
     if io.read(1) != "&":
         raise BadAssTagArgument(io.global_pos, "expected ampersand")
@@ -325,10 +381,10 @@ def _move_args(
             float(args[2][0]),
             float(args[3][0]),
         )
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires decimal coordinates"
-        )
+        ) from exc
 
     speed: tuple[Optional[float], Optional[float]] = (None, None)
     if len(args) == 6:
@@ -338,10 +394,10 @@ def _move_args(
                 raise BadAssTagArgument(
                     ctx.io.global_pos, f"{tag} takes only positive times"
                 )
-        except ValueError:
+        except ValueError as exc:
             raise BadAssTagArgument(
                 ctx.io.global_pos, f"{tag} requires decimal times"
-            )
+            ) from exc
 
     return coords + speed
 
@@ -379,10 +435,10 @@ def _animation_args(
 
     try:
         acceleration = None if acceleration is None else float(acceleration)
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires decimal acceleration value"
-        )
+        ) from exc
     if acceleration is not None and acceleration < 0:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} takes only positive acceleration value"
@@ -391,10 +447,10 @@ def _animation_args(
     try:
         time1 = None if time1 is None else float(time1)
         time2 = None if time2 is None else float(time2)
-    except ValueError:
+    except ValueError as exc:
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} requires decimal times"
-        )
+        ) from exc
     if (time1 is not None and time1 < 0) or (time2 is not None and time2 < 0):
         raise BadAssTagArgument(
             ctx.io.global_pos, f"{tag} takes only positive times"
@@ -488,15 +544,15 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
                 scale=scale, path=parse_draw_commands(path), inverse=inverse
             )
 
-        elif len(args) == 2:
+        if len(args) == 2:
             scale_str = args[0][0]
             path = args[1][0]
             try:
                 scale = int(scale_str)
-            except ValueError:
+            except ValueError as exc:
                 raise BadAssTagArgument(
                     ctx.io.global_pos, f"{prefix} scale must be integer"
-                )
+                ) from exc
             if scale < 0:
                 raise BadAssTagArgument(
                     ctx.io.global_pos,
@@ -506,20 +562,19 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
                 scale=scale, path=parse_draw_commands(path), inverse=inverse
             )
 
-        elif len(args) == 4:
+        if len(args) == 4:
             try:
                 corners = [float(arg[0]) for arg in args]
-            except ValueError:
+            except ValueError as exc:
                 raise BadAssTagArgument(
                     ctx.io.global_pos,
                     f"{prefix} takes only decimal coordinates",
-                )
+                ) from exc
             return AssTagClipRectangle(
                 corners[0], corners[1], corners[2], corners[3], inverse=inverse
             )
 
-        else:
-            assert False
+        assert False
 
     for prefix, cls, arg_func in _PARSING_MAP:
         if ctx.io.peek(len(prefix)) == prefix:
@@ -621,7 +676,7 @@ def _parse_ass(ctx: _ParseContext) -> Iterable[AssItem]:
             while not ctx.io.eof:
                 if ctx.io.peek(1) == "{":
                     break
-                elif ctx.io.peek(1) == "}":
+                if ctx.io.peek(1) == "}":
                     raise UnexpectedCurlyBrace(ctx.io.global_pos)
                 ctx.io.skip(1)
             j = ctx.io.pos

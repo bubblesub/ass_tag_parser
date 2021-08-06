@@ -13,3 +13,8 @@ repos:
   rev: v0.910
   hooks:
   - id: mypy
+- repo: https://github.com/pycqa/pylint
+  rev: v2.9.5
+  hooks:
+  - id: pylint
+    additional_dependencies: [toml]

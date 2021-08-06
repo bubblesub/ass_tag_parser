@@ -15,8 +15,8 @@ def get_subclasses(cls: Type[object]) -> Iterable[Type[object]]:
         yield subclass
 
 
-@pytest.fixture
-def all_names(project_dir: Path) -> list[str]:
+@pytest.fixture(name="all_names")
+def fixture_all_names(project_dir: Path) -> list[str]:
     path_to_init = project_dir / "__init__.py"
     assert path_to_init.exists()
 
@@ -25,7 +25,7 @@ def all_names(project_dir: Path) -> list[str]:
     )
     assert match
 
-    ret = eval(match.group(1))
+    ret = eval(match.group(1))  # pylint: disable=eval-used
     assert isinstance(ret, list)
     return ret
 

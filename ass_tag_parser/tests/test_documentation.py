@@ -11,22 +11,22 @@ def format_black(source: Any) -> str:
     return black.format_str(str(source), mode=black.Mode(line_length=79))
 
 
-@pytest.fixture
-def readme_content(repo_dir: Path) -> str:
+@pytest.fixture(name="readme_content")
+def fixture_readme_content(repo_dir: Path) -> str:
     path_to_readme = repo_dir / "README.md"
     assert path_to_readme.exists()
     return path_to_readme.read_text()
 
 
-@pytest.fixture
-def readme_code_snippet(readme_content: str) -> str:
+@pytest.fixture(name="readme_code_snippet")
+def fixture_readme_code_snippet(readme_content: str) -> str:
     match = re.search(r"```python3([^`]*)```", readme_content, flags=re.DOTALL)
     assert match
     return match.group(1).lstrip()
 
 
-@pytest.fixture
-def readme_code_result(readme_content: str) -> str:
+@pytest.fixture(name="readme_code_result")
+def fixture_readme_code_result(readme_content: str) -> str:
     match = re.search(
         r"```python3 console([^`]*)```", readme_content, flags=re.DOTALL
     )
@@ -40,7 +40,7 @@ def test_readme_code_up_to_date(
     """Test that the code example in the README.md matches the actual output
     from the library.
     """
-    exec(readme_code_snippet)
+    exec(readme_code_snippet)  # pylint: disable=exec-used
     actual_result = format_black(capsys.readouterr().out.strip())
     assert actual_result == readme_code_result
 

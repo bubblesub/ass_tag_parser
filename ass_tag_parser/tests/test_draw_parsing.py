@@ -1,6 +1,17 @@
 import pytest
 
-from ass_tag_parser import *
+from ass_tag_parser import (
+    AssDrawCmd,
+    AssDrawCmdBezier,
+    AssDrawCmdCloseSpline,
+    AssDrawCmdExtendSpline,
+    AssDrawCmdLine,
+    AssDrawCmdMove,
+    AssDrawCmdSpline,
+    AssDrawPoint,
+    ParseError,
+    parse_draw_commands,
+)
 
 
 @pytest.mark.parametrize(

@@ -9,3 +9,19 @@ include_trailing_comma = true
 [tool.mypy]
 strict = true
 disallow_untyped_decorators = false
+
+[tool.pylint.master]
+jobs = 0
+
+[tool.pylint.message_control]
+disable = [
+    "import-error",
+    "no-self-use",
+    "missing-docstring",
+    "too-few-public-methods",
+    "duplicate-code",
+]
+attr-rgx = "^io|[xy]\\d*|[a-z_][a-z0-9_]{2,}$"
+argument-rgx = "^io|[xy]\\d*|[a-z_][a-z0-9_]{2,30}$"
+variable-rgx = "^io|[xy]\\d*|[a-z_][a-z0-9_]{2,30}$"
+method-rgx = "^visit_\\w+|[a-z_][a-z0-9_]{2,}$"

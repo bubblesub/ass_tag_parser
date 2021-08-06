@@ -1,7 +1,15 @@
 from typing import Any
 
 from ass_tag_parser.common import smart_float
-from ass_tag_parser.draw_struct import *
+from ass_tag_parser.draw_struct import (
+    AssDrawCmd,
+    AssDrawCmdBezier,
+    AssDrawCmdCloseSpline,
+    AssDrawCmdExtendSpline,
+    AssDrawCmdLine,
+    AssDrawCmdMove,
+    AssDrawCmdSpline,
+)
 from ass_tag_parser.errors import BaseError
 
 
@@ -17,8 +25,8 @@ class Composer:
 
             try:
                 result = visitor(cmd)
-            except (IndexError, KeyError, ValueError, TypeError) as ex:
-                raise BaseError(ex)
+            except (IndexError, KeyError, ValueError, TypeError) as exc:
+                raise BaseError(exc) from exc
 
             result = [
                 smart_float(item) if isinstance(item, (int, float)) else item
@@ -57,7 +65,7 @@ class Composer:
         return ("p", *sum([(point.x, point.y) for point in cmd.points], ()))
 
     def visit_AssDrawCmdCloseSpline(
-        self, cmd: AssDrawCmdCloseSpline
+        self, _cmd: AssDrawCmdCloseSpline
     ) -> tuple[Any, ...]:
         return ("c",)
 

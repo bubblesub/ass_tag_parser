@@ -1,6 +1,52 @@
 from dataclasses import dataclass
 
-from ass_tag_parser.ass_struct import *
+from ass_tag_parser.ass_struct import (
+    AssItem,
+    AssTag,
+    AssTagAlignment,
+    AssTagAlpha,
+    AssTagAnimation,
+    AssTagBaselineOffset,
+    AssTagBlurEdges,
+    AssTagBlurEdgesGauss,
+    AssTagBold,
+    AssTagBorder,
+    AssTagClipRectangle,
+    AssTagClipVector,
+    AssTagColor,
+    AssTagComment,
+    AssTagDraw,
+    AssTagFade,
+    AssTagFadeComplex,
+    AssTagFontEncoding,
+    AssTagFontName,
+    AssTagFontSize,
+    AssTagFontXScale,
+    AssTagFontYScale,
+    AssTagItalic,
+    AssTagKaraoke,
+    AssTagLetterSpacing,
+    AssTagListEnding,
+    AssTagListOpening,
+    AssTagMove,
+    AssTagPosition,
+    AssTagResetStyle,
+    AssTagRotationOrigin,
+    AssTagShadow,
+    AssTagStrikeout,
+    AssTagUnderline,
+    AssTagWrapStyle,
+    AssTagXBorder,
+    AssTagXRotation,
+    AssTagXShadow,
+    AssTagXShear,
+    AssTagYBorder,
+    AssTagYRotation,
+    AssTagYShadow,
+    AssTagYShear,
+    AssTagZRotation,
+    AssText,
+)
 from ass_tag_parser.common import smart_bool, smart_float, smart_int, smart_str
 from ass_tag_parser.draw_composer import compose_draw_commands
 from ass_tag_parser.io import MyIO
@@ -14,6 +60,8 @@ class _ComposeContext:
 
 
 def visitor(ctx: _ComposeContext, item: AssItem) -> None:
+    # pylint: disable=too-many-statements,too-many-branches
+
     if isinstance(item, AssTag) and ctx.autoinsert and not ctx.opened:
         ctx.io.write("{")
         ctx.opened = True

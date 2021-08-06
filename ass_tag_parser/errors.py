@@ -20,7 +20,7 @@ class UnexpectedCurlyBrace(ParseError):
 
 class UnknownTag(ParseError):
     def __init__(self, pos: int) -> None:
-        super().__init__(pos, f"unrecognized tag")
+        super().__init__(pos, "unrecognized tag")
 
 
 class UnterminatedCurlyBrace(ParseError):
