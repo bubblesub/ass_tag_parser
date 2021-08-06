@@ -1,7 +1,7 @@
 ass_tag_parser
 ==============
 
-[![Actions Status](https://github.com/bubblesub/ass_tag_parser/workflows/ass_tag_parser/badge.svg)](https://github.com/bubblesub/ass_tag_parser/actions)
+[![Actions Status](https://github.com/bubblesub/ass_tag_parser/workflows/build/badge.svg)](https://github.com/bubblesub/build/actions)
 
 Library for parsing ASS tags.
 
