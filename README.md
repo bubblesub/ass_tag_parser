@@ -3,10 +3,11 @@ ass_tag_parser
 
 [![Build](https://github.com/bubblesub/ass_tag_parser/actions/workflows/build.yml/badge.svg)](https://github.com/bubblesub/ass_tag_parser/actions/workflows/build.yml)
 
-Library for parsing ASS tags.
+A Python library for serialization and deserialization of ASS subtitle file
+format tags markup.
 
 Not to confuse with parsing `.ass` files that can be manipulated with
-[`pysubs2`](https://github.com/tkarabela/pysubs2).
+[`ass_parser`](https://github.com/bubblesub/ass_parser).
 
 
 **Example**:
@@ -71,3 +72,8 @@ nor `AssTagListEnding` tags in the input item list – this function inserts the
 automatically.
 
 Draw commands: `compose_draw_commands`.
+
+# Contributing
+
+This project uses [precommit](https://pre-commit.com/). You can install it with
+`python3 -m pip install --user pre-commit` and running `pre-commit install`.
