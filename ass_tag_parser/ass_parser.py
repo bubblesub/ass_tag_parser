@@ -1,4 +1,6 @@
+import re
 from dataclasses import dataclass
+from functools import cache
 from typing import Any, Iterable, Optional, Union
 
 from ass_tag_parser.ass_struct import (
@@ -52,6 +54,7 @@ from ass_tag_parser.common import Meta
 from ass_tag_parser.draw_parser import parse_draw_commands
 from ass_tag_parser.errors import (
     BadAssTagArgument,
+    ParseError,
     UnexpectedCurlyBrace,
     UnknownTag,
     UnterminatedCurlyBrace,
@@ -693,3 +696,22 @@ def _parse_ass(ctx: _ParseContext) -> Iterable[AssItem]:
 def parse_ass(text: str) -> list[AssItem]:
     ctx = _ParseContext(io=MyIO(text))
     return list(_parse_ass(ctx))
+
+
+@cache
+def ass_to_plaintext(text: str) -> str:
+    """Strip ASS tags from an ASS line.
+
+    :param text: input ASS line
+    :return: plain text
+    """
+    try:
+        ass_line = parse_ass(text)
+    except ParseError:
+        ret = str(re.sub("{[^}]*}", "", text))
+    else:
+        ret = ""
+        for item in ass_line:
+            if isinstance(item, AssText):
+                ret += item.text
+    return ret.replace("\\h", " ").replace("\\n", " ").replace("\\N", "\n")

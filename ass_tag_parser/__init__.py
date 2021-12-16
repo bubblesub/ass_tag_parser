@@ -1,5 +1,5 @@
 from .ass_composer import compose_ass
-from .ass_parser import parse_ass
+from .ass_parser import ass_to_plaintext, parse_ass
 from .ass_struct import *
 from .draw_composer import compose_draw_commands
 from .draw_parser import parse_draw_commands
@@ -70,4 +70,5 @@ __all__ = [
     "compose_draw_commands",
     "parse_ass",
     "parse_draw_commands",
+    "ass_to_plaintext",
 ]
