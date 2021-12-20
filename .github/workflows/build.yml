@@ -17,21 +17,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: python3 -m pip install .[test]
+        run: |
+          python3 -m pip install poetry
+          poetry install
+      - name: Run style check
+        run: poetry run pre-commit run -a
       - name: Run tests
-        run: pytest
-
-  style:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-        architecture: x64
-    - name: Install pre-commit
-      run: pip install pre-commit
-    - name: Run pre-commit
-      run: pre-commit run -a
+        run: poetry run pytest
