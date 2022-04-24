@@ -346,7 +346,8 @@ def test_parsing_valid_ass_line(
         (r"{\shad}", AssTagShadow(size=None)),
         (r"{\xshad}", AssTagXShadow(size=None)),
         (r"{\yshad}", AssTagYShadow(size=None)),
-        (r"{\be2}", AssTagBlurEdges(times=2)),
+        (r"{\be2}", AssTagBlurEdges(times=2.0)),
+        (r"{\be2.2}", AssTagBlurEdges(times=2.2)),
         (r"{\be}", AssTagBlurEdges(times=None)),
         (r"{\blur4}", AssTagBlurEdgesGauss(weight=4)),
         (r"{\blur4.4}", AssTagBlurEdgesGauss(weight=4.4)),
@@ -485,7 +486,7 @@ def test_parsing_valid_ass_line(
         (
             r"{\t(50,100,1.2,\be5\fs40)}",
             AssTagAnimation(
-                tags=[AssTagBlurEdges(5), AssTagFontSize(40)],
+                tags=[AssTagBlurEdges(5.0), AssTagFontSize(40)],
                 time1=50,
                 time2=100,
                 acceleration=1.2,
@@ -494,7 +495,7 @@ def test_parsing_valid_ass_line(
         (
             r"{\t(1.2,\be5\fs40)}",
             AssTagAnimation(
-                tags=[AssTagBlurEdges(5), AssTagFontSize(40)],
+                tags=[AssTagBlurEdges(5.0), AssTagFontSize(40)],
                 time1=None,
                 time2=None,
                 acceleration=1.2,
@@ -503,7 +504,7 @@ def test_parsing_valid_ass_line(
         (
             r"{\t(50,100,\be5\fs40)}",
             AssTagAnimation(
-                tags=[AssTagBlurEdges(5), AssTagFontSize(40)],
+                tags=[AssTagBlurEdges(5.0), AssTagFontSize(40)],
                 time1=50,
                 time2=100,
                 acceleration=None,
@@ -512,7 +513,7 @@ def test_parsing_valid_ass_line(
         (
             r"{\t(\be5\fs40)}",
             AssTagAnimation(
-                tags=[AssTagBlurEdges(5), AssTagFontSize(40)],
+                tags=[AssTagBlurEdges(5.0), AssTagFontSize(40)],
                 time1=None,
                 time2=None,
                 acceleration=None,
@@ -607,7 +608,7 @@ def test_parsing_valid_single_tag(
         ),
         (
             r"{\be-2}",
-            r"syntax error at pos 6: \be takes only positive integers",
+            r"syntax error at pos 6: \be takes only positive decimals",
         ),
         (
             r"{\blur-4}",
@@ -863,8 +864,7 @@ def test_parsing_valid_single_tag(
         (r"{\5a&H12&}", "syntax error at pos 1: unrecognized tag"),
         (r"{\1c&HFFFFFF&derp}", "syntax error at pos 13: extra data"),
         (r"{\1a&HFF&derp}", "syntax error at pos 9: extra data"),
-        (r"{\be2a}", r"syntax error at pos 6: \be requires an integer"),
-        (r"{\be2.2}", r"syntax error at pos 7: \be requires an integer"),
+        (r"{\be2a}", r"syntax error at pos 6: \be requires a decimal"),
         (r"{\kgarbage}", r"syntax error at pos 10: \k requires a decimal"),
         (r"{\Kgarbage}", r"syntax error at pos 10: \K requires a decimal"),
         (r"{\kfgarbage}", r"syntax error at pos 11: \kf requires a decimal"),
