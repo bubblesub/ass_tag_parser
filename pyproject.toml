@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ass_tag_parser"
-version = "2.4"
+version = "2.4.1"
 description = "Parse ASS subtitle format tags markup."
 authors = ["Marcin Kurczewski <dash@wind.garden>"]
 license = "MIT"
