@@ -12,7 +12,7 @@ class Meta:
 def smart_float(value: Union[int, float, None]) -> str:
     if value is None:
         return ""
-    return "{}".format(float(value)).rstrip("0").rstrip(".")
+    return f"{float(value)}".rstrip("0").rstrip(".")
 
 
 def smart_int(value: Union[int, None]) -> str:

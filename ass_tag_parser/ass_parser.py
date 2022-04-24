@@ -532,7 +532,7 @@ _PARSING_MAP = [
 def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
     i = ctx.io.global_pos
 
-    for prefix in {r"\clip", r"\iclip"}:
+    for prefix in [r"\clip", r"\iclip"]:
         if ctx.io.peek(len(prefix)) != prefix:
             continue
         ctx.io.skip(len(prefix))
