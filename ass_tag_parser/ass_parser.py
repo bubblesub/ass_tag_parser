@@ -497,7 +497,7 @@ _PARSING_MAP = [
     (r"\fn", AssTagFontName, _single_arg),
     (r"\fscx", AssTagFontXScale, _positive_float_arg),
     (r"\fscy", AssTagFontYScale, _positive_float_arg),
-    (r"\fs", AssTagFontSize, _positive_int_arg),
+    (r"\fs", AssTagFontSize, _positive_float_arg),
     (r"\fe", AssTagFontEncoding, _positive_int_arg),
     (r"\blur", AssTagBlurEdgesGauss, _positive_float_arg),
     (r"\be", AssTagBlurEdges, _positive_int_arg),

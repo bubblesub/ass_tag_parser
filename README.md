@@ -33,7 +33,7 @@ print(result[2].meta)
     AssTagAlignment(alignment=5, legacy=False),
     AssTagPosition(x=175.0, y=460.0),
     AssTagFontName(name="Utopia with Oldstyle figures"),
-    AssTagFontSize(size=90),
+    AssTagFontSize(size=90.0),
     AssTagBorder(size=0.0),
     AssTagBlurEdgesGauss(weight=3.0),
     AssTagColor(red=19, green=19, blue=19, target=1, short=False),

@@ -356,7 +356,8 @@ def test_parsing_valid_ass_line(
         (r"{\fnComic Sans}", AssTagFontName(name="Comic Sans")),
         (r"{\fe5}", AssTagFontEncoding(encoding=5)),
         (r"{\fe}", AssTagFontEncoding(encoding=None)),
-        (r"{\fs15}", AssTagFontSize(size=15)),
+        (r"{\fs15}", AssTagFontSize(size=15.0)),
+        (r"{\fs5.5}", AssTagFontSize(size=5.5)),
         (r"{\fs}", AssTagFontSize(size=None)),
         (r"{\fscx5.5}", AssTagFontXScale(scale=5.5)),
         (r"{\fscy5.5}", AssTagFontYScale(scale=5.5)),
@@ -618,7 +619,7 @@ def test_parsing_valid_single_tag(
         ),
         (
             r"{\fs-5}",
-            r"syntax error at pos 6: \fs takes only positive integers",
+            r"syntax error at pos 6: \fs takes only positive decimals",
         ),
         (
             r"{\fscx-5.5}",
@@ -864,7 +865,6 @@ def test_parsing_valid_single_tag(
         (r"{\1a&HFF&derp}", "syntax error at pos 9: extra data"),
         (r"{\be2a}", r"syntax error at pos 6: \be requires an integer"),
         (r"{\be2.2}", r"syntax error at pos 7: \be requires an integer"),
-        (r"{\fs5.4}", r"syntax error at pos 7: \fs requires an integer"),
         (r"{\kgarbage}", r"syntax error at pos 10: \k requires a decimal"),
         (r"{\Kgarbage}", r"syntax error at pos 10: \K requires a decimal"),
         (r"{\kfgarbage}", r"syntax error at pos 11: \kf requires a decimal"),
