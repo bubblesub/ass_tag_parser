@@ -91,7 +91,7 @@ class AssTagFontEncoding(AssTag):
 
 @dataclass
 class AssTagFontSize(AssTag):
-    size: Optional[int] = None
+    size: Optional[float] = None
 
 
 @dataclass

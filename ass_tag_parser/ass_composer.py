@@ -181,7 +181,7 @@ def visitor(ctx: _ComposeContext, item: AssItem) -> None:
     elif isinstance(item, AssTagFontName):
         ctx.io.write(f"\\fn{smart_str(item.name)}")
     elif isinstance(item, AssTagFontSize):
-        ctx.io.write(f"\\fs{smart_int(item.size)}")
+        ctx.io.write(f"\\fs{smart_float(item.size)}")
     elif isinstance(item, AssTagFontEncoding):
         ctx.io.write(f"\\fe{smart_int(item.encoding)}")
     elif isinstance(item, AssTagLetterSpacing):
