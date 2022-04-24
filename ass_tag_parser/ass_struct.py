@@ -71,7 +71,7 @@ class AssTagYShadow(AssTag):
 
 @dataclass
 class AssTagBlurEdges(AssTag):
-    times: Optional[int] = None
+    times: Optional[float] = None
 
 
 @dataclass

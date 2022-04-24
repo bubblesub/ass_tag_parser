@@ -500,7 +500,7 @@ _PARSING_MAP = [
     (r"\fs", AssTagFontSize, _positive_float_arg),
     (r"\fe", AssTagFontEncoding, _positive_int_arg),
     (r"\blur", AssTagBlurEdgesGauss, _positive_float_arg),
-    (r"\be", AssTagBlurEdges, _positive_int_arg),
+    (r"\be", AssTagBlurEdges, _positive_float_arg),
     (r"\i", AssTagItalic, _bool_arg),
     (r"\u", AssTagUnderline, _bool_arg),
     (r"\s", AssTagStrikeout, _bool_arg),
