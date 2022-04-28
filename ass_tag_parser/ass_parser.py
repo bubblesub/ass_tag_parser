@@ -2,6 +2,7 @@ import re
 from dataclasses import dataclass
 from functools import cache
 from typing import Any, Iterable, Optional, Union
+import ass_tag_parser
 
 from ass_tag_parser.ass_struct import (
     AssItem,
@@ -529,9 +530,27 @@ _PARSING_MAP = [
 ]
 
 
+def getNextTagPos(initialPosition: int, ctx: _ParseContext) -> int:
+    foundNextTag = False
+
+    # Reset the position. It is not always necessary
+    ctx.io._io.seek(initialPosition)
+
+    # If the first caracter is \\, we skip it
+    if ctx.io.peek(1) == "\\":
+        ctx.io.skip(1)
+
+    while not foundNextTag and not ctx.io.eof:
+        if ctx.io.peek(1) == "\\":
+            foundNextTag = True
+        else:
+            ctx.io.skip(1)
+
+    return ctx.io.global_pos
+
 def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
     i = ctx.io.global_pos
-
+    i_pos = ctx.io.pos
     for prefix in [r"\clip", r"\iclip"]:
         if ctx.io.peek(len(prefix)) != prefix:
             continue
@@ -582,22 +601,30 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
     for prefix, cls, arg_func in _PARSING_MAP:
         if ctx.io.peek(len(prefix)) == prefix:
             ctx.io.skip(len(prefix))
-            args = arg_func(ctx, prefix)
-            ret: AssTag = cls(*args)
-            ret.meta = Meta(
-                i, ctx.io.global_pos, ctx.io.global_text[i : ctx.io.global_pos]
-            )
+            try:
+                args = arg_func(ctx, prefix)
+                ret: AssTag = cls(*args)
+                ret.meta = Meta(
+                    i, ctx.io.global_pos, ctx.io.global_text[i : ctx.io.global_pos]
+                )
 
-            if (
-                isinstance(ret, AssTagDraw)
-                and ret.scale is not None
-                and ret.scale > 0
-            ):
-                ctx.drawing_tag = ret
+                if (
+                    isinstance(ret, AssTagDraw)
+                    and ret.scale is not None
+                    and ret.scale > 0
+                ):
+                    ctx.drawing_tag = ret
+            except ass_tag_parser.errors.BadAssTagArgument:
 
+                j = getNextTagPos(i_pos, ctx)
+                ret = AssTagComment(ctx.io.global_text[i:j])
+                ret.meta = Meta(i, j, ret.text)
             return ret
 
-    raise UnknownTag(ctx.io.global_pos)
+    j = getNextTagPos(i_pos, ctx)
+    ret = AssTagComment(ctx.io.global_text[i:j])
+    ret.meta = Meta(i, j, ret.text)
+    return ret
 
 
 def _merge_comments(tags: list[AssTag]) -> list[AssTag]:
@@ -626,23 +653,8 @@ def _merge_comments(tags: list[AssTag]) -> list[AssTag]:
 
 def _parse_ass_tags(ctx: _ParseContext) -> Iterable[AssTag]:
     while not ctx.io.eof:
-        if ctx.io.peek(1) == "\\":
-            if ctx.io.peek(2) in {r"\N", r"\n", r"\h", r"\\"}:
-                block = AssTagComment(ctx.io.read(2))
-                block.meta = Meta(
-                    ctx.io.global_pos, ctx.io.global_pos + 2, block.text
-                )
-                yield block
-            else:
-                yield _parse_ass_tag(ctx)
-        else:
-            i = ctx.io.global_pos
-            while not ctx.io.eof and ctx.io.peek(1) != "\\":
-                ctx.io.skip(1)
-            j = ctx.io.global_pos
-            block = AssTagComment(ctx.io.global_text[i:j])
-            block.meta = Meta(i, j, block.text)
-            yield block
+
+        yield _parse_ass_tag(ctx)
 
 
 def _parse_ass(ctx: _ParseContext) -> Iterable[AssItem]:
