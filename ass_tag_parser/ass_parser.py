@@ -2,7 +2,6 @@ import re
 from dataclasses import dataclass
 from functools import cache
 from typing import Any, Iterable, Optional, Union
-import ass_tag_parser
 
 from ass_tag_parser.ass_struct import (
     AssItem,
@@ -469,64 +468,64 @@ def _animation_args(
 
 
 _PARSING_MAP = [
-    (r"\bord", AssTagBorder, _positive_float_arg),
-    (r"\xbord", AssTagXBorder, _positive_float_arg),
-    (r"\ybord", AssTagYBorder, _positive_float_arg),
-    (r"\shad", AssTagShadow, _positive_float_arg),
-    (r"\xshad", AssTagXShadow, _positive_float_arg),
-    (r"\yshad", AssTagYShadow, _positive_float_arg),
-    (r"\fsp", AssTagLetterSpacing, _float_arg),
-    (r"\fax", AssTagXShear, _float_arg),
-    (r"\fay", AssTagYShear, _float_arg),
-    (r"\pos", AssTagPosition, _pos_args),
-    (r"\org", AssTagRotationOrigin, _pos_args),
-    (r"\move", AssTagMove, _move_args),
-    (r"\fade", AssTagFadeComplex, _fade_complex_args),
-    (r"\fad", AssTagFade, _fade_simple_args),
-    (r"\frx", AssTagXRotation, _float_arg),
-    (r"\fry", AssTagYRotation, _float_arg),
+    (r"bord", AssTagBorder, _positive_float_arg),
+    (r"xbord", AssTagXBorder, _positive_float_arg),
+    (r"ybord", AssTagYBorder, _positive_float_arg),
+    (r"shad", AssTagShadow, _positive_float_arg),
+    (r"xshad", AssTagXShadow, _positive_float_arg),
+    (r"yshad", AssTagYShadow, _positive_float_arg),
+    (r"fsp", AssTagLetterSpacing, _float_arg),
+    (r"fax", AssTagXShear, _float_arg),
+    (r"fay", AssTagYShear, _float_arg),
+    (r"pos", AssTagPosition, _pos_args),
+    (r"org", AssTagRotationOrigin, _pos_args),
+    (r"move", AssTagMove, _move_args),
+    (r"fade", AssTagFadeComplex, _fade_complex_args),
+    (r"fad", AssTagFade, _fade_simple_args),
+    (r"frx", AssTagXRotation, _float_arg),
+    (r"fry", AssTagYRotation, _float_arg),
     (
-        r"\frz",
+        r"frz",
         AssTagZRotation,
         lambda ctx, tag: tuple(list(_float_arg(ctx, tag)) + [False]),
     ),
     (
-        r"\fr",
+        r"fr",
         AssTagZRotation,
         lambda ctx, tag: tuple(list(_float_arg(ctx, tag)) + [True]),
     ),
-    (r"\fn", AssTagFontName, _single_arg),
-    (r"\fscx", AssTagFontXScale, _positive_float_arg),
-    (r"\fscy", AssTagFontYScale, _positive_float_arg),
-    (r"\fs", AssTagFontSize, _positive_float_arg),
-    (r"\fe", AssTagFontEncoding, _positive_int_arg),
-    (r"\blur", AssTagBlurEdgesGauss, _positive_float_arg),
-    (r"\be", AssTagBlurEdges, _positive_float_arg),
-    (r"\i", AssTagItalic, _bool_arg),
-    (r"\u", AssTagUnderline, _bool_arg),
-    (r"\s", AssTagStrikeout, _bool_arg),
-    (r"\b", AssTagBold, _bold_arg),
-    (r"\kf", AssTagKaraoke, _karaoke_arg),
-    (r"\ko", AssTagKaraoke, _karaoke_arg),
-    (r"\k", AssTagKaraoke, _karaoke_arg),
-    (r"\K", AssTagKaraoke, _karaoke_arg),
-    (r"\q", AssTagWrapStyle, _wrap_style_arg),
-    (r"\r", AssTagResetStyle, _single_arg),
-    (r"\alpha", AssTagAlpha, _alpha_arg),
-    (r"\1a", AssTagAlpha, _alpha_arg),
-    (r"\2a", AssTagAlpha, _alpha_arg),
-    (r"\3a", AssTagAlpha, _alpha_arg),
-    (r"\4a", AssTagAlpha, _alpha_arg),
-    (r"\1c", AssTagColor, _color_arg),
-    (r"\2c", AssTagColor, _color_arg),
-    (r"\3c", AssTagColor, _color_arg),
-    (r"\4c", AssTagColor, _color_arg),
-    (r"\c", AssTagColor, _color_arg),
-    (r"\an", AssTagAlignment, _alignment_arg),
-    (r"\a", AssTagAlignment, _alignment_arg),
-    (r"\pbo", AssTagBaselineOffset, _float_arg),
-    (r"\p", AssTagDraw, _positive_int_arg),
-    (r"\t", AssTagAnimation, _animation_args),
+    (r"fn", AssTagFontName, _single_arg),
+    (r"fscx", AssTagFontXScale, _positive_float_arg),
+    (r"fscy", AssTagFontYScale, _positive_float_arg),
+    (r"fs", AssTagFontSize, _positive_float_arg),
+    (r"fe", AssTagFontEncoding, _positive_int_arg),
+    (r"blur", AssTagBlurEdgesGauss, _positive_float_arg),
+    (r"be", AssTagBlurEdges, _positive_float_arg),
+    (r"i", AssTagItalic, _bool_arg),
+    (r"u", AssTagUnderline, _bool_arg),
+    (r"s", AssTagStrikeout, _bool_arg),
+    (r"b", AssTagBold, _bold_arg),
+    (r"kf", AssTagKaraoke, _karaoke_arg),
+    (r"ko", AssTagKaraoke, _karaoke_arg),
+    (r"k", AssTagKaraoke, _karaoke_arg),
+    (r"K", AssTagKaraoke, _karaoke_arg),
+    (r"q", AssTagWrapStyle, _wrap_style_arg),
+    (r"r", AssTagResetStyle, _single_arg),
+    (r"alpha", AssTagAlpha, _alpha_arg),
+    (r"1a", AssTagAlpha, _alpha_arg),
+    (r"2a", AssTagAlpha, _alpha_arg),
+    (r"3a", AssTagAlpha, _alpha_arg),
+    (r"4a", AssTagAlpha, _alpha_arg),
+    (r"1c", AssTagColor, _color_arg),
+    (r"2c", AssTagColor, _color_arg),
+    (r"3c", AssTagColor, _color_arg),
+    (r"4c", AssTagColor, _color_arg),
+    (r"c", AssTagColor, _color_arg),
+    (r"an", AssTagAlignment, _alignment_arg),
+    (r"a", AssTagAlignment, _alignment_arg),
+    (r"pbo", AssTagBaselineOffset, _float_arg),
+    (r"p", AssTagDraw, _positive_int_arg),
+    (r"t", AssTagAnimation, _animation_args),
 ]
 
 
@@ -551,75 +550,84 @@ def getNextTagPos(initialPosition: int, ctx: _ParseContext) -> int:
 def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
     i = ctx.io.global_pos
     i_pos = ctx.io.pos
-    for prefix in [r"\clip", r"\iclip"]:
-        if ctx.io.peek(len(prefix)) != prefix:
-            continue
-        ctx.io.skip(len(prefix))
-        inverse = prefix == r"\iclip"
-        args = _complex_args(ctx, prefix, {1, 2, 4})
 
-        scale: Optional[int]
-        if len(args) == 1:
-            scale = None
-            path = args[0][0]
-            return AssTagClipVector(
-                scale=scale, path=parse_draw_commands(path), inverse=inverse
-            )
+    if ctx.io.peek(1) == "\\":
+        ctx.io.skip(1)
 
-        if len(args) == 2:
-            scale_str = args[0][0]
-            path = args[1][0]
-            try:
-                scale = int(scale_str)
-            except ValueError as exc:
-                raise BadAssTagArgument(
-                    ctx.io.global_pos, f"{prefix} scale must be integer"
-                ) from exc
-            if scale < 0:
-                raise BadAssTagArgument(
-                    ctx.io.global_pos,
-                    f"{prefix} scale must be positive integer",
-                )
-            return AssTagClipVector(
-                scale=scale, path=parse_draw_commands(path), inverse=inverse
-            )
+        while not ctx.io.eof and ctx.io.peek(1).isspace():
+            ctx.io.skip(1)
 
-        if len(args) == 4:
-            try:
-                corners = [float(arg[0]) for arg in args]
-            except ValueError as exc:
-                raise BadAssTagArgument(
-                    ctx.io.global_pos,
-                    f"{prefix} takes only decimal coordinates",
-                ) from exc
-            return AssTagClipRectangle(
-                corners[0], corners[1], corners[2], corners[3], inverse=inverse
-            )
 
-        assert False
-
-    for prefix, cls, arg_func in _PARSING_MAP:
-        if ctx.io.peek(len(prefix)) == prefix:
+        for prefix in [r"clip", r"iclip"]:
+            if ctx.io.peek(len(prefix)) != prefix:
+                continue
             ctx.io.skip(len(prefix))
-            try:
-                args = arg_func(ctx, prefix)
-                ret: AssTag = cls(*args)
-                ret.meta = Meta(
-                    i, ctx.io.global_pos, ctx.io.global_text[i : ctx.io.global_pos]
+            inverse = prefix == r"iclip"
+            args = _complex_args(ctx, prefix, {1, 2, 4})
+
+            scale: Optional[int]
+            if len(args) == 1:
+                scale = None
+                path = args[0][0]
+                return AssTagClipVector(
+                    scale=scale, path=parse_draw_commands(path), inverse=inverse
                 )
 
-                if (
-                    isinstance(ret, AssTagDraw)
-                    and ret.scale is not None
-                    and ret.scale > 0
-                ):
-                    ctx.drawing_tag = ret
-            except ass_tag_parser.errors.BadAssTagArgument:
+            if len(args) == 2:
+                scale_str = args[0][0]
+                path = args[1][0]
+                try:
+                    scale = int(scale_str)
+                except ValueError as exc:
+                    raise BadAssTagArgument(
+                        ctx.io.global_pos, f"{prefix} scale must be integer"
+                    ) from exc
+                if scale < 0:
+                    raise BadAssTagArgument(
+                        ctx.io.global_pos,
+                        f"{prefix} scale must be positive integer",
+                    )
+                return AssTagClipVector(
+                    scale=scale, path=parse_draw_commands(path), inverse=inverse
+                )
 
-                j = getNextTagPos(i_pos, ctx)
-                ret = AssTagComment(ctx.io.global_text[i:j])
-                ret.meta = Meta(i, j, ret.text)
-            return ret
+            if len(args) == 4:
+                try:
+                    corners = [float(arg[0]) for arg in args]
+                except ValueError as exc:
+                    raise BadAssTagArgument(
+                        ctx.io.global_pos,
+                        f"{prefix} takes only decimal coordinates",
+                    ) from exc
+                return AssTagClipRectangle(
+                    corners[0], corners[1], corners[2], corners[3], inverse=inverse
+                )
+
+            assert False
+
+        for prefix, cls, arg_func in _PARSING_MAP:
+            if ctx.io.peek(len(prefix)) == prefix:
+                print("test")
+                ctx.io.skip(len(prefix))
+                try:
+                    args = arg_func(ctx, prefix)
+                    ret: AssTag = cls(*args)
+                    ret.meta = Meta(
+                        i, ctx.io.global_pos, ctx.io.global_text[i : ctx.io.global_pos]
+                    )
+
+                    if (
+                        isinstance(ret, AssTagDraw)
+                        and ret.scale is not None
+                        and ret.scale > 0
+                    ):
+                        ctx.drawing_tag = ret
+                except BadAssTagArgument:
+
+                    j = getNextTagPos(i_pos, ctx)
+                    ret = AssTagComment(ctx.io.global_text[i:j])
+                    ret.meta = Meta(i, j, ret.text)
+                return ret
 
     j = getNextTagPos(i_pos, ctx)
     ret = AssTagComment(ctx.io.global_text[i:j])
