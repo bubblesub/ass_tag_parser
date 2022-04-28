@@ -607,7 +607,6 @@ def _parse_ass_tag(ctx: _ParseContext) -> AssTag:
 
         for prefix, cls, arg_func in _PARSING_MAP:
             if ctx.io.peek(len(prefix)) == prefix:
-                print("test")
                 ctx.io.skip(len(prefix))
                 try:
                     args = arg_func(ctx, prefix)
