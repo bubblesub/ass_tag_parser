@@ -37,7 +37,7 @@ for ass_item in line:
 
 ### Result
 
-```
+```py console
 [
     AssTagListOpening(),
     AssValidTagAlignment(is_legacy_tag=False, _AssValidTagAlignment__alignment=<Alignment.TOP_LEFT: 7>),
