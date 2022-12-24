@@ -1,6 +1,6 @@
 import os
 import re
-from setuptools import setup
+from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -30,7 +30,7 @@ setup(
     description="Parse .ass tags.",
     long_description_content_type="text/markdown",
     version=find_version("ass_tag_analyzer", "__init__.py"),
-    packages=["ass_tag_analyzer"],
+    packages=['ass_tag_analyzer'] + ['ass_tag_analyzer.' + pkg for pkg in find_packages('ass_tag_analyzer')],
     python_requires=">=3.8",
     extras_require={
         "dev": [
