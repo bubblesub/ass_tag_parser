@@ -140,7 +140,6 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
 
         params: List[str] = []
 
-        # TODO Voir si retirer j < len(text)
         if j < len(text) and text[j] == "(":
 
             param: str = ""
@@ -616,7 +615,6 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
 
             t_tags, is_draw = parse_tags(p, is_draw)
 
-            # TODO Verify recursivity
             tags.append(
                 AssValidTagAnimation(t_tags, m_animAccel, m_animStart, m_animEnd)
             )
