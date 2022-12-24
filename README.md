@@ -4,7 +4,7 @@ This tool allows to parse .ass tag and manipulate them.
 
 ## Installation and Update
 ```
-pip install git+https://github.com/moi15moi/ass_tag_parser.git
+pip install git+https://github.com/moi15moi/ass_tag_analyzer.git
 ```
 
 ## Example
