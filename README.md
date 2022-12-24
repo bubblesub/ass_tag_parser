@@ -31,7 +31,7 @@ for ass_item in line:
             print(f'An \\fn tag has been found and the value is "{ass_item.name}"')
 
         elif isinstance(ass_item, AssInvalidTagFontName):
-            # You need to get the fontname of the line.
+            # You need to get the style that is applied on the line.
             pass
 ```
 
