@@ -9,24 +9,24 @@ from ass_tag_analyzer.ass_item.ass_valid_tag import (
 
 def test_ass_valid_tag_alpha():
 
-    assert str(AssValidTagAlpha(20)) == "\\alpha&H20&"
+    assert str(AssValidTagAlpha(254)) == "\\alpha&HFE&"
 
 
 def test_ass_valid_tag_primary_alpha():
 
-    assert str(AssValidTagPrimaryAlpha(20)) == "\\1a&H20&"
+    assert str(AssValidTagPrimaryAlpha(254)) == "\\1a&HFE&"
 
 
 def test_ass_valid_tag_secondary_alpha():
 
-    assert str(AssValidTagSecondaryAlpha(20)) == "\\2a&H20&"
+    assert str(AssValidTagSecondaryAlpha(254)) == "\\2a&HFE&"
 
 
 def test_ass_valid_tag_outline_alpha():
 
-    assert str(AssValidTagOutlineAlpha(20)) == "\\3a&H20&"
+    assert str(AssValidTagOutlineAlpha(254)) == "\\3a&HFE&"
 
 
 def test_ass_valid_tag_background_alpha():
 
-    assert str(AssValidTagBackgroundAlpha(20)) == "\\4a&H20&"
+    assert str(AssValidTagBackgroundAlpha(254)) == "\\4a&HFE&"
