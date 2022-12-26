@@ -654,6 +654,11 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
 
 def parse_line(text: str) -> List[AssItem]:
     """
+
+    Inpired by:
+        - https://github.com/libass/libass/blob/44f6532daf5eb13cb1aa95f5449a77b5df1dd85b/libass/ass_render.c#L2044-L2064
+        - https://github.com/libass/libass/blob/44f6532daf5eb13cb1aa95f5449a77b5df1dd85b/libass/ass_parse.c#L1050-L1086
+
     Parameters:
         text (str): A .ass line
     Returns:
@@ -670,58 +675,42 @@ def parse_line(text: str) -> List[AssItem]:
     is_draw = False
 
     i = 0
+
+    current_text = ""
     while i < len(text):
+        if text[i] == "{" and (find_right_bracket_index := text.find("}", i + 1)) != -1:
 
-        find_left_bracket_index = text.find("{", i)
+            if len(current_text) > 0:
+                ass_items.append(get_class_type()(current_text))
+                current_text = ""
 
-        if find_left_bracket_index == -1:
-            # There is no tag to parse
-            ass_text = get_class_type()(text[i:])
-            ass_items.append(ass_text)
 
-            i = len(text)
+            tag_list_opening = AssTagListOpening()
+            ass_items.append(tag_list_opening)
 
+            tags, is_draw = parse_tags(
+                text[i + 1 : find_right_bracket_index],
+                is_draw,
+            )
+
+            ass_items.extend(tags)
+
+            tag_list_ending = AssTagListEnding()
+            ass_items.append(tag_list_ending)
+
+            i = find_right_bracket_index + 1
         else:
-            # There can be a tag to parse
-            # Ex:
-            #    - This is a{n example
-            #    - This is a{\\b1}n example
-
-            find_right_bracket_index = text.find("}", find_left_bracket_index)
-
-            if find_right_bracket_index == -1:
-                # There is no tag to parse
-                # Ex: This is a{n example
-
-                ass_text = get_class_type()(text[i:])
-                ass_items.append(ass_text)
-
-                i = len(text)
-
+            if text[i] == "\\" and i + 1 < len(text) and text[i + 1] in ("{", "}"):
+                current_text += text[i+1]
+                i += 2
             else:
-                # There is a tag to parse
-                # Ex: This is a{\\b1}n example
+                current_text += text[i]
+                i += 1
+    
+    if len(current_text) > 0:
+        ass_items.append(get_class_type()(current_text))
 
-                if i < find_left_bracket_index:
-                    # There is some text to parse before the {
-                    # Ex: This is a{\\b1}
-                    ass_text = get_class_type()(text[i:find_left_bracket_index])
-                    ass_items.append(ass_text)
 
-                tag_list_opening = AssTagListOpening()
-                ass_items.append(tag_list_opening)
-
-                tags, is_draw = parse_tags(
-                    text[find_left_bracket_index + 1 : find_right_bracket_index],
-                    is_draw,
-                )
-
-                ass_items.extend(tags)
-
-                tag_list_ending = AssTagListEnding()
-                ass_items.append(tag_list_ending)
-
-                i = find_right_bracket_index + 1
 
     return ass_items
 

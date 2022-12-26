@@ -8,6 +8,24 @@ import ass_tag_analyzer
     "text,expected_result",
     [
         (
+            "\\{\\}",
+            [
+                ass_tag_analyzer.AssText("{}"),
+            ],
+        ),
+        (
+            "\\{}",
+            [
+                ass_tag_analyzer.AssText("{}"),
+            ],
+        ),
+        (
+            "\\{\\\\}",
+            [
+                ass_tag_analyzer.AssText("{\\}"),
+            ],
+        ),
+        (
             "{\\}test",
             [
                 ass_tag_analyzer.AssTagListOpening(),
