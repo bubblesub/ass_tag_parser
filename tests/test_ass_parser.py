@@ -1370,7 +1370,7 @@ import ass_tag_analyzer
             "{\\r }",
             [
                 ass_tag_analyzer.AssTagListOpening(),
-                ass_tag_analyzer.AssValidTagResetStyle(),
+                ass_tag_analyzer.AssInvalidTagResetStyle(""),
                 ass_tag_analyzer.AssTagListEnding(),
             ],
         ),

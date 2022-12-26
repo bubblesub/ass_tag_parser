@@ -6,6 +6,7 @@ from ..ass_tag_general import (
     AssTagFontSize,
     AssTagItalic,
     AssTagLetterSpacing,
+    AssTagResetStyle,
     AssTagStrikeout,
     AssTagUnderline,
 )
@@ -39,6 +40,11 @@ class AssInvalidTagItalic(AssTagItalic, AssInvalidTag):
 
 @dataclass
 class AssInvalidTagLetterSpacing(AssTagLetterSpacing, AssInvalidTag):
+    pass
+
+
+@dataclass
+class AssInvalidTagResetStyle(AssTagResetStyle, AssInvalidTag):
     pass
 
 

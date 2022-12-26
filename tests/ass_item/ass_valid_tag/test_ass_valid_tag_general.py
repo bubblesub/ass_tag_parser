@@ -80,7 +80,6 @@ def test_ass_valid_tag_letter_spacing():
 
 
 def test_ass_valid_tag_reset_style():
-    assert str(AssValidTagResetStyle()) == "\\r"
     assert str(AssValidTagResetStyle("Test")) == "\\rTest"
 
 

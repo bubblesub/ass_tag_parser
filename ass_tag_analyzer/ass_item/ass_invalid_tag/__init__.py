@@ -28,6 +28,7 @@ from .ass_invalid_tag_general import (
     AssInvalidTagFontSize,
     AssInvalidTagItalic,
     AssInvalidTagLetterSpacing,
+    AssInvalidTagResetStyle,
     AssInvalidTagStrikeout,
     AssInvalidTagUnderline,
 )

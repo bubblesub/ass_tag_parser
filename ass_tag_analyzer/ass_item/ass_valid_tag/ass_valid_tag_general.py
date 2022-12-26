@@ -120,11 +120,9 @@ class AssValidTagLetterSpacing(AssTagLetterSpacing):
 
 @dataclass
 class AssValidTagResetStyle(AssTagResetStyle):
-    style: Optional[str] = None
+    style: str
 
     def __str__(self):
-        if self.style is None:
-            return f"\\{self.tag}"
         return f"\\{self.tag}{self.style}"
 
 

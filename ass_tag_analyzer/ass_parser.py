@@ -76,6 +76,7 @@ from ass_tag_analyzer.ass_item.ass_invalid_tag import (
     AssInvalidTagOutlineColor,
     AssInvalidTagPrimaryAlpha,
     AssInvalidTagPrimaryColor,
+    AssInvalidTagResetStyle,
     AssInvalidTagSecondaryAlpha,
     AssInvalidTagSecondaryColor,
     AssInvalidTagShadow,
@@ -576,7 +577,10 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
                     tags.append(AssInvalidTagWrapStyle(p))
 
         elif cmd == "r":
-            tags.append(AssValidTagResetStyle(None if len(p) == 0 else p))
+            if len(p) == 0:
+                tags.append(AssInvalidTagResetStyle(p))
+            else:
+                tags.append(AssValidTagResetStyle(p))
 
         elif cmd == "shad":
             if len(p) == 0:
