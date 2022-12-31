@@ -124,16 +124,11 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
     while (j := text.find("\\", i)) >= 0:
         # Skip the \
         j += 1
-
-        cmd: str = ""
-        for c in text[j:]:
-            if c in ("(", "\\"):
-                break
-            else:
-                cmd += c
-                j += 1
-
-        cmd = TypeParser.strip_whitespace(cmd)
+        k = j
+        while k < len(text) and text[k] not in ("(", "\\"):
+            k += 1
+        cmd = TypeParser.strip_whitespace(text[j:k])
+        j = k
 
         if len(cmd) == 0:
             i = j
@@ -142,18 +137,14 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
         params: List[str] = []
 
         if j < len(text) and text[j] == "(":
-
-            param: str = ""
             # Skip the (
-            j += 1
-            for c in text[j:]:
-                if c == ")":
-                    break
-                else:
-                    param += c
-                    j += 1
-
-            param = TypeParser.strip_whitespace(param)
+            j += 1       
+            k = j
+            while k < len(text) and text[k] != ")":
+                k += 1
+            param = text[j:k]
+            param = TypeParser.strip_whitespace(text[j:k])
+            j = k
 
             temp_j = j
 
