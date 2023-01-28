@@ -134,7 +134,7 @@ class AssValidTagAnimation(AssTagAnimation):
     time2: Optional[int] = None
 
     def __str__(self):
-        tags_text = ",".join([str(tag) for tag in self.tags])
+        tags_text = "".join([str(tag) for tag in self.tags])
 
         if (
             self.time1 is not None
