@@ -1,0 +1,34 @@
+[project]
+name = "ass_tag_analyzer"
+description = "Parse .ass tags."
+authors = [
+    { name = "moi15moi", email = "moi15moismokerlolilol@gmail.com" },
+]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Other Audience",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "License :: OSI Approved :: MIT License",
+]
+dynamic = ["version"]
+
+[project.urls]
+Source = "https://github.com/moi15moi/ass_tag_analyzer/"
+Tracker = "https://github.com/moi15moi/ass_tag_analyzer/issues/"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { attr = "ass_tag_analyzer.__init__.__version__" }
+
+[tool.setuptools]
+packages = ["ass_tag_analyzer"]
