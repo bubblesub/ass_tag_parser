@@ -1,4 +1,5 @@
 from .ass_item import (
+    AssComment,
     AssItem,
     AssTagListOpening,
     AssTagListEnding,

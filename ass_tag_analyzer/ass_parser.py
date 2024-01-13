@@ -90,6 +90,7 @@ from ass_tag_analyzer.ass_item.ass_invalid_tag import (
     AssInvalidTagZRotation,
 )
 from ass_tag_analyzer.ass_item.ass_item import (
+    AssComment,
     AssDraw,
     AssItem,
     AssTag,
@@ -122,6 +123,9 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
     i = 0
 
     while (j := text.find("\\", i)) >= 0:
+        if i != j:
+            tags.append(AssComment(text[i:j]))
+
         # Skip the \
         j += 1
         k = j
@@ -138,12 +142,16 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
 
         if j < len(text) and text[j] == "(":
             # Skip the (
-            j += 1       
+            j += 1
             k = j
             while k < len(text) and text[k] != ")":
                 k += 1
             param = text[j:k]
             param = TypeParser.strip_whitespace(text[j:k])
+
+            if k < len(text) and text[k] == ")":
+                # VSFilter doesn't do this, but it is required to parse the comments properly
+                k += 1
             j = k
 
             temp_j = j
@@ -644,6 +652,9 @@ def parse_tags(text: str, is_draw: bool) -> Tuple[List[AssTag], bool]:
 
         i = j
 
+    if i != len(text):
+        tags.append(AssComment(text[i:]))
+
     return tags, is_draw
 
 
@@ -701,7 +712,7 @@ def parse_line(text: str) -> List[AssItem]:
             else:
                 current_text += text[i]
                 i += 1
-    
+
     if len(current_text) > 0:
         ass_items.append(get_class_type()(current_text))
 
