@@ -1662,6 +1662,46 @@ import ass_tag_analyzer
                 ass_tag_analyzer.AssTagListEnding(),
             ],
         ),
+        (
+            "{\\}test",
+            [
+                ass_tag_analyzer.AssTagListOpening(),
+                ass_tag_analyzer.AssTagListEnding(),
+                ass_tag_analyzer.AssText("test"),
+            ],
+        ),
+        (
+            "{this is a comment}test",
+            [
+                ass_tag_analyzer.AssTagListOpening(),
+                ass_tag_analyzer.AssComment("this is a comment"),
+                ass_tag_analyzer.AssTagListEnding(),
+                ass_tag_analyzer.AssText("test")
+            ],
+        ),
+        (
+            "{ comment1 \\t(20,20,20,230,3.4.3,\\fscx10) comment2 \\t(20,20,20,230,3.4.3,\\fscx10) comment3 }test",
+            [
+                ass_tag_analyzer.AssTagListOpening(),
+                ass_tag_analyzer.AssComment(" comment1 "),
+                ass_tag_analyzer.AssValidTagAnimation([]),
+                ass_tag_analyzer.AssComment(" comment2 "),
+                ass_tag_analyzer.AssValidTagAnimation([]),
+                ass_tag_analyzer.AssComment(" comment3 "),
+                ass_tag_analyzer.AssTagListEnding(),
+                ass_tag_analyzer.AssText("test")
+            ],
+        ),
+        (
+            "{\\t(20,20,20,230,3.4.3,\\fscx10))}test",
+            [
+                ass_tag_analyzer.AssTagListOpening(),
+                ass_tag_analyzer.AssValidTagAnimation([]),
+                ass_tag_analyzer.AssComment(")"),
+                ass_tag_analyzer.AssTagListEnding(),
+                ass_tag_analyzer.AssText("test")
+            ],
+        ),
     ],
 )
 def test_parse_tag(text: str, expected_result: List[ass_tag_analyzer.AssItem]):
